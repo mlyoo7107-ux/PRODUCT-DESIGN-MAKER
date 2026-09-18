@@ -1,0 +1,157 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>COLOR.M Product Design Maker V2</title>
+<style>
+:root{--a:#b22a78;--b:#f7f7fa;--l:#e5e5ec;--t:#24242c;--m:#71717d}*{box-sizing:border-box}body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t)}header{text-align:center;background:white;padding:32px 15px;border-bottom:1px solid var(--l)}header small{color:var(--a);font-weight:bold;letter-spacing:2px}h1{margin:7px 0;font-size:28px}header p{color:var(--m);margin:0}main{max-width:900px;margin:auto;padding:15px 15px 60px}.card{background:white;border:1px solid var(--l);border-radius:17px;padding:20px;margin:13px 0}.step{font-size:12px;color:var(--a);font-weight:bold}.title{font-size:19px;font-weight:bold;margin:5px 0 13px}.hint{font-size:13px;color:var(--m)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:7px}.c{padding:10px 7px;border:1px solid var(--l);border-radius:10px;text-align:center;cursor:pointer;font-size:13px}.c.on{border-color:var(--a);background:#fff2f9;color:var(--a);font-weight:bold}label{font-size:13px;font-weight:bold;display:block;margin:13px 0 6px}input,textarea,select{width:100%;padding:11px;border:1px solid #d9d9e2;border-radius:9px;font-size:14px}textarea{min-height:78px}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{padding:9px;border:1px solid var(--l);border-radius:20px;font-size:12px;cursor:pointer}.tab.on{background:var(--a);color:white}.panel{display:none;margin-top:12px;background:#fafafd;padding:13px;border-radius:10px}.panel.on{display:block}.go{width:100%;padding:16px;background:var(--a);color:white;border:0;border-radius:13px;font-size:16px;font-weight:bold;cursor:pointer}.result{display:none}.result.on{display:block}.box{white-space:pre-wrap;background:#f8f8fb;border:1px solid var(--l);border-radius:10px;padding:14px;line-height:1.55;font-size:13px}.copy{margin-top:7px;padding:8px 10px;border:1px solid var(--a);color:var(--a);background:white;border-radius:8px}@media(max-width:550px){.grid{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
+<header><small>COLOR.M · AI × DESIGN</small><h1>PRODUCT DESIGN MAKER</h1><p>제품 아이디어와 디자인 문제를 구체화해 AI 이미지 프롬프트로 만들어보세요.</p></header><main>
+<div class="card" style="border:2px solid #ead2e0;background:#fffafd">
+  <div class="step">PROJECT</div>
+  <div class="title">새로운 작업을 시작할까요, 기존 작업을 이어갈까요?</div>
+  <p class="hint">이전에 저장한 작업파일(.json)이 있다면 불러와 선택항목과 입력내용을 그대로 이어서 수정할 수 있습니다.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+    <button class="go" style="background:white;color:var(--a);border:1px solid var(--a)" onclick="newProject()">＋ 새 작업 시작</button>
+    <button class="go" onclick="document.getElementById('topLoadProject').click()">📂 기존 작업 불러오기</button>
+  </div>
+  <input id="topLoadProject" type="file" accept=".json,application/json" style="display:none" onchange="loadJSON(event)">
+</div>
+<div class="card"><div class="step">STEP 01</div><div class="title">무엇을 디자인할까요?</div><div class="grid" id="category"></div><label>세부 분야 / 제품명</label><input id="product" placeholder="예: 보행보조기에 장착 가능한 보관 케이스"><label>기타 / 추가 설명</label><textarea id="productNote" placeholder="제품의 목적이나 특징을 자유롭게 적어주세요."></textarea></div>
+<div class="card"><div class="step">STEP 02</div><div class="title">누구를 위한 제품인가요?</div><div class="grid multi" id="user"></div><label>사용자를 더 구체적으로 설명해주세요.</label><textarea id="userText" placeholder="예: 거동이 불편하고 손의 힘이 약한 고령자"></textarea></div>
+<div class="card"><div class="step">STEP 03</div><div class="title">어떤 불편과 문제를 해결하나요?</div><div class="grid multi" id="problem"></div><label>문제를 직접 설명해주세요.</label><textarea id="problemText" placeholder="예: 외출 시 개인 소지품을 보관하기 어렵고 기존 가방은 보행에 방해가 된다."></textarea></div>
+<div class="card"><div class="step">STEP 04 · DESIGN CHALLENGE</div><div class="title">지금 가장 해결하고 싶은 디자인 문제는?</div><div class="grid" id="challenge"></div><label>✏️ 구체적으로 어떤 점을 고민하고 있나요?</label><textarea id="challengeText" placeholder="예: 케이스를 쉽게 탈부착하면서도 보행 중 흔들리거나 빠지지 않는 결착방식을 고민하고 있다."></textarea><label>반드시 지켜야 할 조건</label><textarea id="constraints" placeholder="예: 한 손 조작 / 적은 힘 / 흔들림 최소화 / 돌출부 최소화 / 기존 프레임 변경 최소화"></textarea></div>
+<div class="card"><div class="step">STEP 05</div><div class="title">사용·조작·움직임·설치 방식을 생각해보세요.</div><p class="hint">제품에 해당하는 것만 선택하고, 없으면 ‘해당 없음’을 선택하세요.</p><label>조작 방식</label><div class="grid multi" id="control"></div><label>움직임·변형</label><div class="grid multi" id="motion"></div><label>설치·고정</label><div class="grid multi" id="mount"></div><label>기타 / 직접 입력</label><textarea id="structureText" placeholder="예: 원형 보행보조기 프레임에 공구 없이 탈부착 가능한 구조"></textarea></div>
+<div class="card"><div class="step">STEP 06</div><div class="title">어떤 기능이 필요한가요?</div><div class="grid multi" id="feature"></div><label>핵심 기능 / 기타 직접 입력</label><textarea id="featureText" placeholder="필요한 기능을 자유롭게 적어주세요."></textarea></div>
+<div class="card"><div class="step">STEP 07 · FORM</div><div class="title">제품의 형태를 어떻게 정할까요?</div><div class="tabs"><span class="tab on" data-p="p1">형태 선택</span><span class="tab" data-p="p2">✏️ 직접 설명</span><span class="tab" data-p="p3">내 스케치 활용</span><span class="tab" data-p="p4">레퍼런스 활용</span><span class="tab" data-p="p5">AI 형태 제안</span></div><div class="panel on" id="p1"><div class="grid multi" id="form"></div><label>기타 형태</label><input id="formOther" placeholder="직접 입력"></div><div class="panel" id="p2"><textarea id="formText" placeholder="예: 프레임 측면에 밀착되는 세로형 케이스. 모서리는 라운드 처리하고 결착부는 뒤쪽에 숨겨지는 형태."></textarea></div><div class="panel" id="p3"><textarea id="sketchText" placeholder="스케치에서 반드시 유지할 형태, 비례, 구조를 적어주세요."></textarea><p class="hint">생성된 프롬프트와 스케치 이미지를 AI에 함께 첨부합니다.</p></div><div class="panel" id="p4"><textarea id="refText" placeholder="레퍼런스에서 참고할 형태·구조·디테일만 적어주세요."></textarea><p class="hint">동일하게 복제하지 않고 참고 요소만 활용하도록 프롬프트에 반영됩니다.</p></div><div class="panel" id="p5"><p class="hint">앞에서 작성한 사용자·문제·기능·조건을 바탕으로 적합한 형태를 여러 방향으로 제안하도록 합니다.</p></div></div>
+<div class="card"><div class="step">STEP 08</div><div class="title">디자인 스타일과 CMF</div><div class="grid multi" id="style"></div><label>스타일 기타</label><input id="styleText" placeholder="직접 입력"><label>COLOR</label><input id="color" placeholder="예: 차콜 그레이"><label>MATERIAL</label><input id="material" placeholder="예: ABS + 실리콘"><label>FINISH</label><input id="finish" placeholder="예: 무광, 소프트 터치"></div>
+<div class="card"><div class="step">STEP 09</div><div class="title">어떤 결과를 보고 싶나요?</div><div class="grid" id="output"></div><label>아이디어 개수</label><select id="count"><option>1</option><option>3</option><option selected>4</option><option>6</option></select><label>① 이미지 표현 스타일</label><div class="grid" id="renderStyle"></div><label>기타 / 직접 입력</label><input id="renderStyleText" placeholder="원하는 표현 스타일을 직접 입력하세요."><label>② 보여줄 View</label><div class="grid" id="view"></div><label>기타 / 직접 입력</label><input id="viewText" placeholder="예: 결착부와 작동 구조가 동시에 보이도록">
+<label>③ 출력물 사이즈 (이미지 비율)</label><div class="grid" id="aspect"></div>
+<label>자유 비율 / 직접 입력</label><input id="aspectText" placeholder="예: 4:3, 3:4, 1:1">
+<p class="hint">A4 가로: 297×210mm (약 1.414:1) · 16:9: 1920×1080</p></div>
+<button class="go" onclick="make()">✨ PRODUCT DESIGN PROMPT 만들기</button>
+<div class="card result" id="result"><div class="step">RESULT</div><div class="title">완성된 제품디자인 프롬프트</div><label>디자인 기획 요약</label><div class="box" id="summary"></div><label>한글 프롬프트</label><div class="box" id="ko"></div><button class="copy" onclick="cp('ko')">복사하기</button><label>영문 이미지 생성 프롬프트</label><div class="box" id="en"></div><button class="copy" onclick="cp('en')">복사하기</button><div style="margin-top:18px;border-top:1px solid var(--l);padding-top:16px">
+<label>프로젝트 저장 · 불러오기</label>
+<p class="hint">작업파일을 저장하면 다음 수업에서 다시 불러와 선택항목과 입력내용을 이어서 수정할 수 있습니다.</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="copy" onclick="document.getElementById('loadProject').click()">📂 작업파일 불러오기</button>
+<input id="loadProject" type="file" accept=".json,application/json" style="display:none" onchange="loadJSON(event)">
+<button class="copy" onclick="saveJSON()">💾 작업파일 저장</button>
+<button class="copy" onclick="saveTxt()">📝 TXT 저장</button>
+<button class="copy" onclick="savePDF()">📄 PDF 저장</button>
+</div>
+<p class="hint">※ PDF는 제출·출력용입니다. 다시 수정하려면 ‘작업파일(.json)’을 저장해 주세요.</p>
+</div></div>
+</main><script>
+const D={category:["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"],user:["어린이","청소년","대학생","직장인","1인 가구","가족","시니어","반려인","전문가·작업자","기타"],problem:["사용 편의","휴대","보관","공간 절약","안전","위생","접근성","이동","내구성","친환경","기타"],challenge:["전체 형태","결착·고정","열림·닫힘","수납","조작방법","이동·휴대","접이·변형","높이·각도조절","안전","사용 편의","CMF","기타"],control:["버튼","다이얼","터치","손잡이","레버","센서","자동","한 손 조작","해당 없음"],motion:["회전","접힘","슬라이드","열림·닫힘","높이조절","각도조절","분리·결합","움직임 없음","해당 없음"],mount:["거치","클램프","스트랩","후크","슬라이드 체결","회전 잠금","자석","나사","끼움","해당 없음"],feature:["수납","접이","회전","분리·결합","잠금","높이·각도 조절","센서","디스플레이","터치 UI","조명","무선·충전","기타"],form:["원형","사각형","원통형","슬림","바형","기하학적","유기적","곡선형","모듈형","비대칭"],style:["Minimal","Modern","Soft","Friendly","Futuristic","High-tech","Premium","Natural","Sporty","기타"],output:["하나의 디자인 발전","형태 아이디어 여러 안","구조·결착 아이디어 여러 안","기존 스케치 발전"],renderStyle:["아이디어 스케치","산업디자인 렌더링","사실적 제품 렌더링"],view:["45도 View","삼면도 (정면·측면·탑뷰)","사용 장면","Exploded View","Detail View","결착·구조 확대"],aspect:["A4 가로 (297×210mm · 1.414:1)","16:9 (1920×1080)","자유 비율"]};
+function add(id,a,s=false){let e=document.getElementById(id);a.forEach(x=>{let b=document.createElement("div");b.className="c";b.textContent=x;b.onclick=()=>{if(s)[...e.children].forEach(q=>q.classList.remove("on"));b.classList.toggle("on")};e.appendChild(b)})}
+["user","problem","control","motion","mount","feature","form","style"].forEach(x=>add(x,D[x]));["category","output","renderStyle","view","aspect"].forEach(x=>add(x,D[x],true));
+add("challenge",D.challenge);
+let formMode="p1";document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab,.panel").forEach(x=>x.classList.remove("on"));t.classList.add("on");document.getElementById(t.dataset.p).classList.add("on");formMode=t.dataset.p});
+const v=id=>document.getElementById(id).value.trim(), sel=id=>[...document.querySelectorAll("#"+id+" .c.on")].map(x=>x.textContent), txt=(id,extra="")=>[...sel(id),extra].filter(Boolean).join(", ")||"미정";
+function make(){let product=v("product")||"새로운 제품",user=txt("user",v("userText")),problem=txt("problem",v("problemText")),challenge=sel("challenge").join(", ")||"전체 디자인",ch=v("challengeText")||"핵심 디자인 문제 해결",con=v("constraints")||"사용성, 안전성, 제작 가능성 고려",structure=`조작: ${txt("control")}; 움직임: ${txt("motion")}; 설치·고정: ${txt("mount")}; ${v("structureText")}`,feature=txt("feature",v("featureText")),form=formMode==="p1"?txt("form",v("formOther")):formMode==="p2"?v("formText"):formMode==="p3"?`첨부 스케치 활용 — ${v("sketchText")||"핵심 실루엣과 디자인 의도 유지"}`:formMode==="p4"?`첨부 레퍼런스의 요소만 참고하여 새롭게 발전 — ${v("refText")||"형태 언어와 구조 참고"}`:"사용자·문제·기능에 적합한 형태를 서로 다른 방향으로 제안",style=txt("style",v("styleText")),cmf=`Color ${v("color")||"적합하게 제안"}, Material ${v("material")||"적합하게 제안"}, Finish ${v("finish")||"적합하게 제안"}`,output=sel("output")[0]||"하나의 디자인 발전",count=v("count"),renderChoice=sel("renderStyle")[0]||"산업디자인 렌더링",renderExtra=v("renderStyleText"),renderMap={"아이디어 스케치":"concept ideation sketch, hand-drawn industrial design sketch language, exploratory linework, marker-style shading, clearly communicating form and mechanism","산업디자인 렌더링":"professional industrial design rendering, clean studio background, controlled lighting, clear form hierarchy, precise proportions, functional details and construction visibly communicated, product development presentation quality","사실적 제품 렌더링":"photorealistic commercial product visualization, physically realistic materials and surface finishes, realistic manufacturing details, studio-quality lighting, natural reflections and shadows, highly convincing real-product appearance"},renderPrompt=(renderMap[renderChoice]||renderChoice)+(renderExtra?`, ${renderExtra}`:""),viewChoice=sel("view")[0]||"45도 View",viewExtra=v("viewText"),viewMap={"45도 View":"45-degree perspective view, clearly showing the front and side surfaces, overall silhouette, proportions and key functional details","삼면도 (정면·측면·탑뷰)":"orthographic three-view presentation: front view, side view and top view, aligned layout, consistent scale and proportions, minimal perspective distortion","사용 장면":"realistic use-context scene, clearly showing how the user interacts with the product and how the product is positioned or installed","Exploded View":"exploded view, components separated along logical assembly axes, clearly showing internal structure, joints, fasteners, assembly relationship and transformation mechanism","Detail View":"close-up detail view of the most important functional components, interfaces, joints and manufacturing details","결착·구조 확대":"magnified attachment and structural mechanism view, clearly showing how parts connect, lock, release, rotate, slide or detach, with the connection principle visually understandable"},viewPrompt=(viewMap[viewChoice]||viewChoice)+(viewExtra?`, ${viewExtra}`:""),
+aspectChoice=sel("aspect")[0]||"16:9 (1920×1080)", aspectExtra=v("aspectText"),
+aspectPrompt=aspectChoice.startsWith("A4")?"A4 landscape aspect ratio, 297:210, approximately 1.414:1, landscape composition":aspectChoice.startsWith("16:9")?"16:9 widescreen aspect ratio, 1920x1080 landscape composition":(aspectExtra||"custom aspect ratio");
+let sum=`제품: ${product}\n사용자: ${user}\n문제: ${problem}\n집중 과제: ${challenge}\n구체적 고민: ${ch}\n필수 조건: ${con}\n사용·구조: ${structure}\n기능: ${feature}\n형태: ${form}\n스타일/CMF: ${style} / ${cmf}\n결과: ${output} ${count}안\n표현 스타일: ${renderChoice}${renderExtra ? " / "+renderExtra : ""}\nView: ${viewChoice}${viewExtra ? " / "+viewExtra : ""}\n출력물 사이즈: ${aspectChoice}${aspectChoice==="자유 비율"&&aspectExtra ? " / "+aspectExtra : ""}`;
+let ko=`${user}을(를) 위한 '${product}' 제품디자인을 제안한다. 주요 사용자 문제는 ${problem}이다.\n\n[집중 디자인 과제]\n${challenge}: ${ch}\n\n[필수 조건]\n${con}\n\n[사용·구조 조건]\n${structure}\n\n[핵심 기능]\n${feature}\n\n[형태 방향]\n${form}\n\n[디자인 스타일 및 CMF]\n${style}. ${cmf}.\n\n외형 장식보다 '${challenge}' 문제를 해결하는 기능적·구조적 원리가 명확해야 한다. 사용성, 인체공학, 안전성, 안정성, 조립·결착, 비례와 실제 제작 가능성을 고려한다. ${output} 방향으로 서로 차별화된 ${count}개의 콘셉트를 제안한다. 여러 안은 단순한 외형 변형이 아니라 서로 다른 구조 원리와 사용방법을 탐색한다. 이미지 표현 스타일은 '${renderChoice}'로 하며 해당 스타일의 특성이 분명하게 드러나도록 표현한다. View는 '${viewChoice}'를 사용한다. ${viewExtra ? "추가 표현 요구: "+viewExtra+"." : ""} 핵심 구조와 작동·결착 원리가 명확하게 이해되도록 한다. 최종 이미지는 ${aspectChoice}${aspectChoice==="자유 비율"&&aspectExtra ? " ("+aspectExtra+")" : ""} 비율로 구성한다.`;
+let en=`Design a ${product} for ${user}. Solve these user problems: ${problem}. PRIMARY DESIGN CHALLENGE: ${challenge} — ${ch}. MANDATORY CONSTRAINTS: ${con}. USE / CONTROL / MOTION / MOUNTING: ${structure}. CORE FUNCTIONS: ${feature}. FORM DIRECTION: ${form}. DESIGN LANGUAGE & CMF: ${style}; ${cmf}. Focus on functional and structural problem-solving rather than decorative styling. Consider ergonomics, safety, stability, assembly, attachment, proportions, interaction and realistic manufacturability. Generate ${count} clearly differentiated concepts for ${output}; explore genuinely different structural principles rather than minor cosmetic variations. RENDERING STYLE: ${renderPrompt}. VIEW / COMPOSITION: ${viewPrompt}. Clearly show the key mechanism, attachment/connection details, overall product form and functional logic. OUTPUT FORMAT: ${aspectPrompt}.`;
+document.getElementById("summary").textContent=sum;document.getElementById("ko").textContent=ko;document.getElementById("en").textContent=en;document.getElementById("result").classList.add("on");document.getElementById("result").scrollIntoView({behavior:"smooth"})}
+function cp(id){navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>alert("복사되었습니다."))}
+
+function collectData(){
+ return {
+  savedAt:new Date().toLocaleString("ko-KR"),
+  product:v("product"), productNote:v("productNote"),
+  user:sel("user"), userText:v("userText"),
+  problem:sel("problem"), problemText:v("problemText"),
+  challenge:sel("challenge"), challengeText:v("challengeText"),
+  constraints:v("constraints"),
+  control:sel("control"), motion:sel("motion"), mount:sel("mount"),
+  structureText:v("structureText"), feature:sel("feature"), featureText:v("featureText"),
+  formMode:formMode, form:sel("form"), formOther:v("formOther"), formText:v("formText"),
+  sketchText:v("sketchText"), refText:v("refText"),
+  style:sel("style"), styleText:v("styleText"), color:v("color"), material:v("material"), finish:v("finish"),
+  output:sel("output"), count:v("count"), renderStyle:sel("renderStyle"), renderStyleText:v("renderStyleText"),
+  view:sel("view"), viewText:v("viewText"), aspect:sel("aspect"), aspectText:v("aspectText"),
+  summary:document.getElementById("summary").textContent,
+  koreanPrompt:document.getElementById("ko").textContent,
+  englishPrompt:document.getElementById("en").textContent
+ };
+}
+function downloadFile(name,content,type){
+ const blob=new Blob([content],{type:type});
+ const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name;
+ document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),500);
+}
+function saveTxt(){
+ const d=collectData();
+ const content=`COLOR.M PRODUCT DESIGN MAKER\n저장일: ${d.savedAt}\n\n[디자인 기획 요약]\n${d.summary}\n\n[한글 프롬프트]\n${d.koreanPrompt}\n\n[영문 이미지 생성 프롬프트]\n${d.englishPrompt}`;
+ downloadFile("COLOR-M_Product_Design.txt",content,"text/plain;charset=utf-8");
+}
+function saveJSON(){
+ const d=collectData();
+ const base=(d.product||"제품디자인").replace(/[\\/:*?"<>|]/g,"_").replace(/\s+/g,"_");
+ downloadFile(base+"_제품디자인작업.json",JSON.stringify(d,null,2),"application/json;charset=utf-8");
+}
+
+function setVal(id,value){const e=document.getElementById(id);if(e)e.value=value||"";}
+function setChoices(id,values){
+ const wanted=new Set(Array.isArray(values)?values:[]);
+ document.querySelectorAll("#"+id+" .c").forEach(e=>e.classList.toggle("on",wanted.has(e.textContent)));
+}
+function setSingle(id,values){
+ const wanted=new Set(Array.isArray(values)?values:[]);
+ document.querySelectorAll("#"+id+" .c").forEach(e=>e.classList.toggle("on",wanted.has(e.textContent)));
+}
+function setFormMode(mode){
+ const valid=["p1","p2","p3","p4","p5"]; formMode=valid.includes(mode)?mode:"p1";
+ document.querySelectorAll(".tab,.panel").forEach(x=>x.classList.remove("on"));
+ const tab=document.querySelector('.tab[data-p="'+formMode+'"]'); if(tab)tab.classList.add("on");
+ const panel=document.getElementById(formMode); if(panel)panel.classList.add("on");
+}
+function loadJSON(ev){
+ const f=ev.target.files&&ev.target.files[0]; if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{
+  try{
+   const d=JSON.parse(r.result);
+   setVal("product",d.product); setVal("productNote",d.productNote);
+   setChoices("user",d.user); setVal("userText",d.userText);
+   setChoices("problem",d.problem); setVal("problemText",d.problemText);
+   setChoices("challenge",d.challenge); setVal("challengeText",d.challengeText); setVal("constraints",d.constraints);
+   setChoices("control",d.control); setChoices("motion",d.motion); setChoices("mount",d.mount); setVal("structureText",d.structureText);
+   setChoices("feature",d.feature); setVal("featureText",d.featureText);
+   setFormMode(d.formMode); setChoices("form",d.form); setVal("formOther",d.formOther); setVal("formText",d.formText);
+   setVal("sketchText",d.sketchText); setVal("refText",d.refText);
+   setChoices("style",d.style); setVal("styleText",d.styleText); setVal("color",d.color); setVal("material",d.material); setVal("finish",d.finish);
+   setSingle("output",d.output); setVal("count",d.count);
+   setSingle("renderStyle",d.renderStyle); setVal("renderStyleText",d.renderStyleText);
+   setSingle("view",d.view); setVal("viewText",d.viewText); setSingle("aspect",d.aspect); setVal("aspectText",d.aspectText);
+   make();
+   alert("작업파일을 불러왔습니다. 원하는 항목을 수정한 뒤 프롬프트를 다시 만들 수 있습니다.");
+  }catch(e){alert("작업파일을 읽을 수 없습니다. 이 메이커에서 저장한 JSON 파일인지 확인해주세요.");}
+  ev.target.value="";
+ };
+ r.readAsText(f,"utf-8");
+}
+function savePDF(){
+ const title=(v("product")||"제품디자인")+" · COLOR.M PRODUCT DESIGN MAKER";
+ const w=window.open("","_blank");
+ if(!w){alert("팝업이 차단되었습니다. 브라우저에서 팝업을 허용해주세요.");return;}
+ const esc=x=>(x||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+ w.document.write(`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${esc(title)}</title>
+ <style>body{font-family:Arial,"Noto Sans KR",sans-serif;max-width:850px;margin:35px auto;color:#222;line-height:1.55}h1{font-size:24px}h2{font-size:16px;margin-top:24px;border-bottom:1px solid #ddd;padding-bottom:7px}.box{white-space:pre-wrap;background:#f7f7f9;padding:15px;border-radius:8px;font-size:12px}@media print{body{margin:12mm}.box{break-inside:avoid}}</style></head><body>
+ <h1>${esc(title)}</h1><h2>디자인 기획 요약</h2><div class="box">${esc(document.getElementById("summary").textContent)}</div>
+ <h2>한글 프롬프트</h2><div class="box">${esc(document.getElementById("ko").textContent)}</div>
+ <h2>영문 이미지 생성 프롬프트</h2><div class="box">${esc(document.getElementById("en").textContent)}</div>
+ <script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>`);
+ w.document.close();
+}
+
+function newProject(){
+ if(!confirm("현재 입력한 내용을 지우고 새 작업을 시작할까요?\n필요한 경우 먼저 작업파일을 저장해 주세요."))return;
+ document.querySelectorAll("input[type=text], textarea").forEach(e=>e.value="");
+ document.querySelectorAll(".c.on").forEach(e=>e.classList.remove("on"));
+ const count=document.getElementById("count"); if(count)count.value="4";
+ setFormMode("p1");
+ ["summary","ko","en"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=""});
+ const result=document.getElementById("result"); if(result)result.classList.remove("on");
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+</script></body></html>
