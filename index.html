@@ -81,7 +81,40 @@
 <button type="button" class="copy" onclick="toggleTitleEdit()">✏️ 직접 수정</button>
 </div>
 <input id="titleEditInput" style="display:none;margin-top:8px" placeholder="제목을 직접 입력하세요">
-<label>디자인 기획 요약</label><div class="box" id="summary"></div><div id="resultImages" style="display:none;gap:10px;margin-top:10px"></div><label>한글 프롬프트</label><div class="box" id="ko"></div><button class="copy" onclick="cp('ko')">복사하기</button><label>영문 이미지 생성 프롬프트</label><div class="box" id="en"></div><button class="copy" onclick="cp('en')">복사하기</button><div style="margin-top:18px;border-top:1px solid var(--l);padding-top:16px">
+<label>디자인 기획 요약</label><div class="box" id="summary"></div><div id="resultImages" style="display:none;gap:10px;margin-top:10px"></div><label>한글 프롬프트</label><div class="box" id="ko"></div><button class="copy" onclick="cp('ko')">복사하기</button><label>영문 이미지 생성 프롬프트</label><div class="box" id="en"></div><button class="copy" onclick="cp('en')">복사하기</button>
+<!-- AI 이미지 생성 (준비 중) -->
+<style>
+#aiImageSection{margin-top:18px;border-top:1px solid var(--l);padding-top:16px}
+#aiImageSection .ai-badge{display:inline-block;background:#ffe6f1;color:var(--a);font-size:11px;font-weight:bold;padding:3px 9px;border-radius:20px;margin-left:6px;vertical-align:middle}
+#aiImageSection .ai-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#aiImageSection select{padding:10px;border:1px solid var(--l);border-radius:8px;background:white;font-size:14px;font-family:inherit}
+#aiImageSection .ai-go{flex:1;min-width:180px;padding:14px;background:var(--a);color:white;border:0;border-radius:28px;font-size:15px;font-weight:bold;cursor:pointer;transition:background .15s}
+#aiImageSection .ai-go:hover{background:#e0247a}
+#aiImageSection .ai-go:disabled{opacity:.6;cursor:not-allowed}
+#aiStatus{margin-top:10px;font-size:13px;color:var(--m);min-height:18px}
+#aiStatus.on{background:#faf7f0;border:1px solid var(--l);border-radius:10px;padding:12px 14px;color:var(--t)}
+#aiResult{display:none;margin-top:12px}
+#aiResult img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--l)}
+</style>
+<div id="aiImageSection">
+<label style="margin-top:0">🎨 AI 이미지 생성<span class="ai-badge">준비 중</span></label>
+<p class="hint">위 영문 프롬프트로 이미지를 바로 만들어 볼 수 있는 기능이에요. 지금은 준비 중이며, 준비되는 대로 이 버튼이 실제로 동작합니다.</p>
+<div class="ai-row">
+<select id="aiSize" aria-label="이미지 비율">
+<option value="1:1">1 : 1 정사각</option>
+<option value="16:9">16 : 9 가로</option>
+<option value="4:3">4 : 3 가로</option>
+<option value="3:4">3 : 4 세로</option>
+</select>
+<button type="button" class="ai-go" id="aiGenerateBtn" onclick="generateAIImage()">✨ AI 이미지 생성하기</button>
+</div>
+<div id="aiStatus" role="status" aria-live="polite"></div>
+<div id="aiResult">
+<img id="aiResultImg" alt="AI가 생성한 제품 디자인 이미지">
+<button type="button" class="copy" onclick="downloadAIImage()">⬇️ 이미지 저장</button>
+</div>
+</div>
+<div style="margin-top:18px;border-top:1px solid var(--l);padding-top:16px">
 <label>프로젝트 저장 · 불러오기</label>
 <p class="hint">작업파일을 저장하면 다음 수업에서 다시 불러와 선택항목과 입력내용을 이어서 수정할 수 있습니다.</p>
 <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -94,6 +127,12 @@
 <p class="hint">※ PDF는 제출·출력용입니다. 다시 수정하려면 ‘작업파일(.json)’을 저장해 주세요.</p>
 </div></div>
 </main><footer style="text-align:center;padding:30px 15px 40px"><img src="logo-colorm.png" alt="COLOR.M" style="max-width:150px;width:100%;height:auto"></footer><script>
+// 설정 상수 — API 키·비밀키는 절대 이곳에 넣지 않습니다 (키는 Cloudflare Workers 환경변수에만 보관)
+const CONFIG = {
+  API_URL: "",          // Cloudflare Workers 주소 (예: https://xxxx.workers.dev/generate)
+  TIMEOUT_MS: 30000,
+  TOSS_CLIENT_KEY: ""   // 토스페이먼츠 클라이언트 키 (공개용 키만)
+};
 const D={category:["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"],user:["어린이","청소년","대학생","직장인","1인 가구","가족","시니어","반려인","전문가·작업자","기타"],problem:["사용 편의","휴대","보관","공간 절약","안전","위생","접근성","이동","내구성","친환경","기타"],challenge:["전체 형태","결착·고정","열림·닫힘","수납","조작방법","이동·휴대","접이·변형","높이·각도조절","안전","사용 편의","CMF","기타"],control:["버튼","다이얼","터치","손잡이","레버","센서","자동","한 손 조작","해당 없음"],motion:["회전","접힘","슬라이드","열림·닫힘","높이조절","각도조절","분리·결합","움직임 없음","해당 없음"],mount:["거치","클램프","스트랩","후크","슬라이드 체결","회전 잠금","자석","나사","끼움","해당 없음"],feature:["수납","접이","회전","분리·결합","잠금","높이·각도 조절","센서","디스플레이","터치 UI","조명","무선·충전","기타"],form:["원형","사각형","원통형","슬림","바형","기하학적","유기적","곡선형","모듈형","비대칭"],style:["Minimal","Modern","Soft","Friendly","Futuristic","High-tech","Premium","Natural","Sporty","기타"],output:["하나의 디자인 완성","형태 아이디어 여러 안","구조·결착 아이디어 여러 안","기존 스케치 발전"],renderStyle:["아이디어 스케치","산업디자인 렌더링","사실적 제품 렌더링","컬러링 도안 (아웃라인)","기타"],aspect:["A4 가로 (297×210mm · 1.414:1)","16:9 (1920×1080)","자유 비율"],
 colorChips:["화이트","블랙","그레이","차콜","베이지","브라운","네이비","블루","그린","옐로우","레드","핑크","실버","골드"],
 tone:["Pastel · 파스텔","Light · 라이트","Bright · 브라이트","Vivid · 비비드","Soft · 소프트","Muted · 뮤트","Deep · 딥","Dark · 다크","기타"],
@@ -551,4 +590,17 @@ function useFreeTry(){
  updateFreeStatus();
 }
 updateFreeStatus();
+
+/* ===== AI 이미지 생성 (껍데기만 — 아직 API 호출 없음) ===== */
+function generateAIImage(){
+  const st=document.getElementById('aiStatus');
+  st.className='on';
+  st.textContent='준비 중입니다. 곧 이용하실 수 있어요!';
+  // TODO: CONFIG.API_URL이 채워지면 이곳에서 영문 프롬프트(#en)와 비율(#aiSize)을 Workers로 전송하고 결과를 #aiResultImg에 표시
+}
+function downloadAIImage(){
+  const st=document.getElementById('aiStatus');
+  st.className='on';
+  st.textContent='준비 중입니다.';
+}
 </script></body></html>
