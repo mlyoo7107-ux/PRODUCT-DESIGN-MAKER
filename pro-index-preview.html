@@ -656,7 +656,7 @@ function generateAIImage(){
   // 영문 프롬프트에서 미드저니용 옵션(--ar 등)은 제거하고 전송
   const prompt=(document.getElementById('en').textContent||'').replace(/\s--[a-z]+\s+[\w:.]+/gi,'').trim();
   if(!prompt){aiSetStatus('먼저 「프롬프트 만들기」를 눌러 주세요.');return;}
-  requestAIImage(prompt,'새 시안',null);
+  return requestAIImage(prompt,'새 시안',null);
 }
 
 const DEV_ACTIONS={
@@ -673,7 +673,7 @@ function developImage(key){
   if(!base){aiSetStatus('먼저 시안을 하나 선택하거나 생성해 주세요.');return;}
   const action=DEV_ACTIONS[key]; if(!action)return;
   const prompt=base.prompt+' '+action.suffix;
-  requestAIImage(prompt,action.label,base.id);
+  return requestAIImage(prompt,action.label,base.id);
 }
 function renderGallery(){
   const wrap=document.getElementById('aiGallery');
