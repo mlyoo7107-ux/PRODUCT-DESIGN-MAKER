@@ -120,6 +120,7 @@
 <button type="button" class="ai-go" id="aiGenerateBtn" onclick="generateAIImage()">✨ 새 시안 생성하기</button>
 </div>
 <div id="aiStatus" role="status" aria-live="polite"></div>
+<p class="hint" id="galleryHint" style="display:none;margin-top:10px">👇 아래 작은 이미지(시안)를 눌러 선택하세요. 선택한 시안이 크게 보이고, 그 시안을 기준으로 발전시킬 수 있어요.</p>
 <div class="ai-gallery" id="aiGallery"></div>
 <div id="aiPreview">
 <img id="aiPreviewImg" alt="선택한 AI 디자인 시안">
@@ -677,7 +678,12 @@ function developImage(key){
 }
 function renderGallery(){
   const wrap=document.getElementById('aiGallery');
-  wrap.innerHTML=aiImages.map(img=>`<div class="ai-thumb${img.id===selectedImageId?' sel':''}" onclick="selectImage('${img.id}')"><img src="${img.src}" alt="${img.label}"><span class="tag">${img.label}</span></div>`).join('');
+  wrap.innerHTML=aiImages.map(img=>{
+    const sel=img.id===selectedImageId;
+    return `<div class="ai-thumb${sel?' sel':''}" onclick="selectImage('${img.id}')"><img src="${img.src}" alt="${img.label}"><span class="tag">${sel?'✓ 선택됨':img.label}</span></div>`;
+  }).join('');
+  const hint=document.getElementById('galleryHint');
+  if(hint)hint.style.display=aiImages.length>1?'block':'none';
 }
 function selectImage(id){
   selectedImageId=id;
