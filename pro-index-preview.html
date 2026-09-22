@@ -105,6 +105,14 @@
 .dev-actions button{padding:10px 6px;border:1px solid var(--a);color:var(--a);background:white;border-radius:10px;font-size:12.5px;cursor:pointer;transition:background .15s}
 .dev-actions button:hover{background:#ffe6f1}
 .dev-actions button:disabled{opacity:.5;cursor:not-allowed}
+.dev-mode{display:flex;gap:8px;margin-top:14px}
+.dev-mode button{flex:1;padding:10px;border:1px solid var(--l);border-radius:20px;background:white;color:var(--m);font-size:13px;font-weight:bold;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.dev-mode button.on{border-color:var(--a);background:#ffe6f1;color:var(--a)}
+.dev-custom{display:none;margin-top:10px;flex-direction:column;gap:8px}
+.dev-custom textarea{min-height:60px}
+.dev-custom button{padding:12px;background:var(--a);color:white;border:0;border-radius:20px;font-weight:bold;cursor:pointer;transition:background .15s}
+.dev-custom button:hover{background:#e0247a}
+.dev-custom button:disabled{opacity:.5;cursor:not-allowed}
 </style>
 <div id="aiImageSection">
 <label style="margin-top:0">🎨 AI 디자인 스튜디오<span class="ai-badge">PRO</span></label>
@@ -126,6 +134,10 @@
 <img id="aiPreviewImg" alt="선택한 AI 디자인 시안">
 <button type="button" class="copy" onclick="downloadAIImage()">⬇️ 이 시안 저장</button>
 <label style="margin-top:14px">🛠 DESIGN DEVELOPMENT · 선택한 시안 발전시키기</label>
+<div class="dev-mode">
+<button type="button" class="on" id="devModeAiBtn" onclick="setDevMode('ai')">🤖 AI 제안</button>
+<button type="button" id="devModeCustomBtn" onclick="setDevMode('custom')">✏️ 내가 직접 수정하기</button>
+</div>
 <div class="dev-actions" id="devActions">
 <button type="button" onclick="developImage('form')">형태 발전</button>
 <button type="button" onclick="developImage('structure')">구조 개선</button>
@@ -134,6 +146,10 @@
 <button type="button" onclick="developImage('view')">View 변경</button>
 <button type="button" onclick="developImage('scene')">사용 장면</button>
 <button type="button" onclick="developImage('final')">최종 렌더링</button>
+</div>
+<div class="dev-custom" id="devCustom">
+<textarea id="devCustomText" placeholder="예: 손잡이를 가죽 소재로 바꿔줘 / 버튼을 다이얼로 바꿔줘 / 조명을 더 밝게 해줘"></textarea>
+<button type="button" id="devCustomBtn" onclick="developCustom()">✏️ 이 내용으로 발전시키기</button>
 </div>
 </div>
 </div>
@@ -605,6 +621,7 @@ function updateCreditUI(){
   document.getElementById("creditTotal").textContent=IMAGE_CREDIT_TOTAL;
   document.getElementById("aiGenerateBtn").disabled=(left<=0)||aiBusy;
   document.querySelectorAll("#devActions button").forEach(b=>b.disabled=(left<=0)||aiBusy||!selectedImageId);
+  const customBtn=document.getElementById("devCustomBtn"); if(customBtn)customBtn.disabled=(left<=0)||aiBusy||!selectedImageId;
   if(left<=0)aiSetStatus("이미지 크레딧을 모두 사용했어요. 추가 크레딧 구매 기능은 준비 중이에요.");
 }
 updateCreditUI();
@@ -675,6 +692,21 @@ function developImage(key){
   const action=DEV_ACTIONS[key]; if(!action)return;
   const prompt=base.prompt+' '+action.suffix;
   return requestAIImage(prompt,action.label,base.id);
+}
+// AI 제안 / 직접 수정 모드 전환
+function setDevMode(mode){
+  document.getElementById('devModeAiBtn').classList.toggle('on',mode==='ai');
+  document.getElementById('devModeCustomBtn').classList.toggle('on',mode==='custom');
+  document.getElementById('devActions').style.display=mode==='ai'?'grid':'none';
+  document.getElementById('devCustom').style.display=mode==='custom'?'flex':'none';
+}
+function developCustom(){
+  const txt=document.getElementById('devCustomText').value.trim();
+  if(!txt){aiSetStatus('발전시킬 내용을 직접 입력해 주세요. 예: "손잡이를 가죽 소재로 바꿔줘"');return;}
+  const base=aiImages.find(x=>x.id===selectedImageId);
+  if(!base){aiSetStatus('먼저 시안을 하나 선택하거나 생성해 주세요.');return;}
+  const prompt=base.prompt+' Keep the same overall design, but apply this specific change: '+txt;
+  return requestAIImage(prompt,'직접 수정',base.id);
 }
 function renderGallery(){
   const wrap=document.getElementById('aiGallery');
