@@ -251,7 +251,7 @@ footer img{max-width:130px}
 const CONFIG = {
   PAYAPP_USERID: "colorm",
   FEEDBACK_API_URL: "https://colorm-pdm-payment.milan71.workers.dev/", // 페이앱 웹훅을 받을 Cloudflare Workers 주소 (배포되면 채워요)
-  PAYMENTS_LIVE: true // ⚠️ Workers 배포 + 테스트 완료 전까지는 반드시 false로 두세요.
+  PAYMENTS_LIVE: false // ⚠️ Workers 배포 + 테스트 완료 전까지는 반드시 false로 두세요.
 };
 PayApp.setDefault('userid', CONFIG.PAYAPP_USERID);
 PayApp.setDefault('shopname', 'COLOR.M');
