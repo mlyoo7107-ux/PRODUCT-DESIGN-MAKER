@@ -160,8 +160,15 @@ footer img{max-width:130px}
 <li class="on"><span class="ico">✓</span>수업 / 과제 / 포트폴리오에 활용</li>
 <li class="off"><span class="ico">✕</span>AI 이미지 생성 기능 제외</li>
 </ul>
+<div id="paidAreaBasic" style="display:none;background:#f2fbf5;border:1px solid #1f9d55;border-radius:12px;padding:14px;text-align:left">
+<div style="font-weight:bold;color:#1f9d55;margin-bottom:6px">✅ 이미 구매하셨어요</div>
+<p style="font-size:13px;margin:0 0 12px">이 기기에서는 이미 BASIC을 구매하셨어요.</p>
+<a class="go go-outline" href="index.html" style="margin-top:0;text-decoration:none">메이커로 이동하기 →</a>
+</div>
+<div id="payAreaBasic">
 <label class="agree"><input type="checkbox" id="agreeRefundBasic" onchange="syncPayBtn('Basic')"><span>디지털 콘텐츠 특성상 <b>이용 시작 후 환불이 제한</b>된다는 안내를 확인했습니다. <span style="color:var(--a)">(필수)</span></span></label>
 <button class="go go-outline" id="payBtnBasic" onclick="startPayment('BASIC')" disabled>9,900원 결제하기 →</button>
+</div>
 </div>
 
 <div class="plan pro">
@@ -185,8 +192,15 @@ footer img{max-width:130px}
 <li class="on"><span class="ico">✓</span>수업 / 과제 / 포트폴리오에 바로 활용</li>
 <li class="on"><span class="ico">✓</span>이미지 소진 후 추가 크레딧 구매 가능</li>
 </ul>
+<div id="paidAreaPro" style="display:none;background:#f2fbf5;border:1px solid #1f9d55;border-radius:12px;padding:14px;text-align:left">
+<div style="font-weight:bold;color:#1f9d55;margin-bottom:6px">✅ 이미 구매하셨어요</div>
+<p style="font-size:13px;margin:0 0 12px">이 기기에서는 이미 PRO를 구매하셨어요.</p>
+<a class="go" href="pro-index-preview.html" style="margin-top:0;text-decoration:none">메이커로 이동하기 →</a>
+</div>
+<div id="payAreaPro">
 <label class="agree"><input type="checkbox" id="agreeRefundPro" onchange="syncPayBtn('Pro')"><span>디지털 콘텐츠 특성상 <b>이용 시작 후 환불이 제한</b>된다는 안내를 확인했습니다. <span style="color:var(--a)">(필수)</span></span></label>
 <button class="go" id="payBtnPro" onclick="startPayment('PRO')" disabled>19,700원 결제하기 →</button>
+</div>
 </div>
 </div>
 
@@ -245,6 +259,20 @@ const PLAN_INFO = {
   BASIC: { amount: 9900, orderName: "COLOR.M BASIC · Product Design Maker", prefix: "basic" },
   PRO: { amount: 19700, orderName: "COLOR.M PRO · AI Design Studio", prefix: "pro" }
 };
+
+// 카드별로 각자 독립적으로 확인해요 — BASIC만 샀으면 BASIC 카드만 "구매완료"로 바뀌고, PRO 카드는 그대로예요.
+(function checkAlreadyPaid(){
+ try{
+  if(localStorage.getItem('cmPdmPaid')==='1'){
+   document.getElementById('paidAreaBasic').style.display='block';
+   document.getElementById('payAreaBasic').style.display='none';
+  }
+  if(localStorage.getItem('cmPdmProPaid')==='1'){
+   document.getElementById('paidAreaPro').style.display='block';
+   document.getElementById('payAreaPro').style.display='none';
+  }
+ }catch(e){}
+})();
 
 function syncPayBtn(tier){
  document.getElementById("payBtn"+tier).disabled=!document.getElementById("agreeRefund"+tier).checked;
