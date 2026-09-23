@@ -91,6 +91,7 @@ function escapeHtml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,
             <p style="margin:0 0 10px">아래 주소를 복사해서 그 기기의 브라우저 주소창에 붙여넣으면 똑같이 이용하실 수 있어요. 이 링크는 본인만 사용해 주세요.</p>
             <div id="deviceLinkText" style="word-break:break-all;background:#faf7f0;border:1px solid var(--l);border-radius:8px;padding:10px;font-size:12px">${escapeHtml(deviceLink)}</div>
             <button class="go go-outline" style="margin-top:10px" onclick="copyDeviceLink()">🔗 링크 복사하기</button>
+            <p class="notice">📌 지금 복사 못 하셔도 괜찮아요 — 이 화면을 즐겨찾기하거나 캡처해두시면 나중에 이 주소로 다시 들어와서 확인할 수 있어요. 그래도 못 찾으시면 결제하신 정보로 문의해 주세요.</p>
           </div>` : `<p class="notice">다른 기기(폰 등)에서도 쓰고 싶으시면, 결제하신 이메일로 문의해 주세요. 이용 링크를 보내드릴게요.</p>`}
         `);
         window.__deviceLink = deviceLink;
