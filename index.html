@@ -131,7 +131,7 @@
 const CONFIG = {
   API_URL: "",          // Cloudflare Workers 주소 (예: https://xxxx.workers.dev/generate)
   TIMEOUT_MS: 60000,
-  TOSS_CLIENT_KEY: ""   // 토스페이먼츠 클라이언트 키 (공개용 키만)
+  PAYMENT_STATUS_API_URL: "https://colorm-pdm-payment.milan71.workers.dev/" // 결제 상태 확인용 (개인 링크 잠금해제)
 };
 const D={category:["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"],user:["어린이","청소년","대학생","직장인","1인 가구","가족","시니어","반려인","전문가·작업자","기타"],problem:["사용 편의","휴대","보관","공간 절약","안전","위생","접근성","이동","내구성","친환경","기타"],challenge:["전체 형태","결착·고정","열림·닫힘","수납","조작방법","이동·휴대","접이·변형","높이·각도조절","안전","사용 편의","CMF","기타"],control:["버튼","다이얼","터치","손잡이","레버","센서","자동","한 손 조작","해당 없음"],motion:["회전","접힘","슬라이드","열림·닫힘","높이조절","각도조절","분리·결합","움직임 없음","해당 없음"],mount:["거치","클램프","스트랩","후크","슬라이드 체결","회전 잠금","자석","나사","끼움","해당 없음"],feature:["수납","접이","회전","분리·결합","잠금","높이·각도 조절","센서","디스플레이","터치 UI","조명","무선·충전","기타"],form:["원형","사각형","원통형","슬림","바형","기하학적","유기적","곡선형","모듈형","비대칭"],style:["Minimal","Modern","Soft","Friendly","Futuristic","High-tech","Premium","Natural","Sporty","기타"],output:["하나의 디자인 완성","형태 아이디어 여러 안","구조·결착 아이디어 여러 안","기존 스케치 발전"],renderStyle:["아이디어 스케치","산업디자인 렌더링","사실적 제품 렌더링","컬러링 도안 (아웃라인)","기타"],aspect:["A4 가로 (297×210mm · 1.414:1)","16:9 (1920×1080)","자유 비율"],
 colorChips:["화이트","블랙","그레이","차콜","베이지","브라운","네이비","블루","그린","옐로우","레드","핑크","실버","골드"],
@@ -565,9 +565,29 @@ document.querySelector("main").addEventListener("click",e=>{if(e.target.classLis
 })();
 
 const FREE_LIMIT=3;
-// ⚠️ 결제 승인 서버가 없는 프로토타입 단계라, 잠금해제는 기기별 localStorage로만 관리돼요.
-// 이 값을 아는 사람은 누구나 풀 수 있으니, ?unlock= 뒤의 문구는 공개하지 말고
-// 결제 확인 후 개별적으로만 안내해 주세요.
+// 다른 기기(폰 등)에서 쓰기 위한 개인 링크: index.html?order=<주문번호>
+// 결제 성공 화면에서 자동으로 이 형태의 링크를 보여줘요. 이 주문번호가 실제로
+// 결제된 게 맞는지 매번 서버(Workers)에 물어봐서 확인하기 때문에, 남이 봐도
+// 자기 결제로는 못 풀고 그 주문 본인만 풀 수 있어요.
+(function applyOrderUnlockParam(){
+ try{
+  const q=new URLSearchParams(location.search);
+  const orderId=q.get("order");
+  if(!orderId||!CONFIG.PAYMENT_STATUS_API_URL)return;
+  fetch(CONFIG.PAYMENT_STATUS_API_URL+"?orderId="+encodeURIComponent(orderId))
+   .then(r=>r.json()).then(data=>{
+    if(data&&data.paid&&data.plan==="basic"){
+     localStorage.setItem("cmPdmPaid","1");
+     updateFreeStatus();
+    }
+   }).catch(()=>{}).finally(()=>{
+    const url=new URL(location.href); url.searchParams.delete("order");
+    history.replaceState(null,"",url.toString());
+   });
+ }catch(e){}
+})();
+// 예전 방식(고정 비밀 코드)도 남겨둬요 — 개인 링크를 못 쓰는 특수한 경우의 수동 대응용입니다.
+// 공개하지 말고, 결제 확인 후 개별적으로만 안내해 주세요.
 const UNLOCK_CODE="colorm-basic-2026";
 (function applyUnlockParam(){
  try{
