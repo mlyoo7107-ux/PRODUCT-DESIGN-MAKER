@@ -200,6 +200,7 @@ footer img{max-width:130px}
 <div id="payAreaPro">
 <label class="agree"><input type="checkbox" id="agreeRefundPro" onchange="syncPayBtn('Pro')"><span>디지털 콘텐츠 특성상 <b>이용 시작 후 환불이 제한</b>된다는 안내를 확인했습니다. <span style="color:var(--a)">(필수)</span></span></label>
 <button class="go" id="payBtnPro" onclick="startPayment('PRO')" disabled>19,700원 결제하기 →</button>
+<p class="notice" style="margin-top:8px">🔧 AI 이미지 생성 기능 연결 준비 중이에요</p>
 </div>
 </div>
 </div>
@@ -216,7 +217,7 @@ footer img{max-width:130px}
 </div>
 
 <p class="notice">📌 결제 후 전용 이용 링크가 발급되며 바로 사용하실 수 있습니다. 구매 전 무료 체험 3회로 미리 확인해 주세요.</p>
-<p class="notice">🔧 결제 시스템 최종 점검 중입니다. 준비되는 대로 실제 결제로 연결됩니다.</p>
+<p class="notice">🔒 BASIC은 페이앱을 통한 안전한 결제로 바로 이용하실 수 있어요. PRO의 AI 이미지 생성 기능은 연결 준비 중이라, 준비되는 대로 결제가 열려요.</p>
 </section>
 
 <section class="wrap">
@@ -251,7 +252,7 @@ footer img{max-width:130px}
 const CONFIG = {
   PAYAPP_USERID: "colorm",
   FEEDBACK_API_URL: "https://colorm-pdm-payment.milan71.workers.dev/", // 페이앱 웹훅을 받을 Cloudflare Workers 주소 (배포되면 채워요)
-  PAYMENTS_LIVE: false // ⚠️ Workers 배포 + 테스트 완료 전까지는 반드시 false로 두세요.
+  PAYMENTS_LIVE: true // ⚠️ Workers 배포 + 테스트 완료 전까지는 반드시 false로 두세요.
 };
 PayApp.setDefault('userid', CONFIG.PAYAPP_USERID);
 PayApp.setDefault('shopname', 'COLOR.M');
@@ -284,6 +285,10 @@ function startPayment(plan){
  const tier=plan==="PRO"?"Pro":"Basic";
  if(!document.getElementById("agreeRefund"+tier).checked){
   alert("결제 전에 환불 안내 동의(필수)를 체크해 주세요.");
+  return;
+ }
+ if(plan==="PRO"){
+  alert("PRO의 AI 이미지 생성 기능은 아직 연결 준비 중이에요. 조금만 기다려주세요!\n먼저 BASIC으로 시작해보시는 건 어떠세요?");
   return;
  }
  if(!CONFIG.PAYMENTS_LIVE){
