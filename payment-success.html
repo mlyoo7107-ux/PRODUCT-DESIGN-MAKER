@@ -14,19 +14,22 @@ p{color:var(--m);font-size:14px;line-height:1.6}
 .box b{color:var(--t)}
 .go{display:block;width:100%;padding:16px;background:var(--a);color:white;border:0;border-radius:28px;font-size:16px;font-weight:bold;cursor:pointer;text-align:center;text-decoration:none;margin-top:22px}
 .go:hover{background:#e0247a}
+.go-outline{background:white;color:var(--a);border:1px solid var(--a)}
 .notice{font-size:12px;color:var(--m);margin-top:14px}
+.spinner{width:28px;height:28px;border:3px solid var(--l);border-top-color:var(--a);border-radius:50%;margin:0 auto;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 footer{text-align:center;padding:40px 20px}
 footer img{max-width:120px}
 </style></head><body>
 <div class="wrap" id="app">
-<div class="icon">⏳</div>
-<h1>결제 확인 중이에요…</h1>
+<div class="spinner"></div>
+<h1 style="margin-top:20px">결제 확인 중이에요…</h1>
 <p>잠시만 기다려 주세요.</p>
 </div>
 <footer><img src="logo-colorm.png" alt="COLOR.M"></footer>
 <script>
-// 결제 승인 서버(Workers) 주소.
-const CONFIRM_API_URL = "https://colorm-pdm-payment.milan71.workers.dev/";
+// 결제 상태 확인용 Cloudflare Workers 주소. worker-payment 배포 후 채워야 실제로 동작합니다.
+const STATUS_API_URL = "";
 
 const PLAN_BY_PREFIX = {
   basic: { label: "BASIC", makerUrl: "index.html", unlockKey: "cmPdmPaid" },
@@ -38,11 +41,9 @@ function escapeHtml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,
 
 (async function(){
   const q = new URLSearchParams(location.search);
-  const paymentKey = q.get("paymentKey");
   const orderId = q.get("orderId");
-  const amount = q.get("amount");
 
-  if(!paymentKey || !orderId || !amount){
+  if(!orderId){
     render(`<div class="icon">⚠️</div><h1>결제 정보를 확인할 수 없어요</h1><p>결제창을 통하지 않고 이 페이지로 바로 들어오신 것 같아요.</p><a class="go go-outline" href="landing.html">돌아가기</a>`);
     return;
   }
@@ -51,59 +52,49 @@ function escapeHtml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,
   const plan = PLAN_BY_PREFIX[prefix];
   const planLabel = plan ? plan.label : "알 수 없음";
 
-  if(!CONFIRM_API_URL){
-    // ⚠️ 프로토타입 단계: 결제 승인 서버가 아직 없어서, 여기서는 "접수"만 안내하고
-    // 자동으로 잠금을 풀지 않습니다. 서버가 준비되면 아래 confirm 로직으로 교체하세요.
+  if(!STATUS_API_URL){
+    // ⚠️ 프로토타입 단계: 상태 확인 서버가 아직 없어서, 여기서는 "접수"만 안내합니다.
     render(`
       <div class="icon">🙏</div>
       <h1>결제 요청이 접수됐어요</h1>
-      <p>결제 승인을 최종 확인하는 서버가 아직 준비 중이에요. 확인되는 대로 이용 안내를 보내드릴게요.</p>
-      <div class="box">
-        <div><b>상품</b>: ${escapeHtml(planLabel)}</div>
-        <div><b>주문번호</b>: ${escapeHtml(orderId)}</div>
-        <div><b>결제금액</b>: ${escapeHtml(amount)}원</div>
-        <div><b>paymentKey</b>: ${escapeHtml(paymentKey)}</div>
-      </div>
+      <p>결제 확인 서버가 아직 준비 중이에요. 확인되는 대로 이용 안내를 보내드릴게요.</p>
+      <div class="box"><div><b>상품</b>: ${escapeHtml(planLabel)}</div><div><b>주문번호</b>: ${escapeHtml(orderId)}</div></div>
       <p class="notice">이 화면을 캡처해서 문의해주시면 더 빠르게 확인해드릴 수 있어요.</p>
     `);
     return;
   }
 
-  try{
-    const res = await fetch(CONFIRM_API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ paymentKey, orderId, amount })
-    });
-    const data = await res.json().catch(()=>({}));
-    if(res.status === 409){
-      // 이미 승인 처리된(정상적인) 주문 — 새로고침 등으로 다시 들어온 경우. 실패가 아니라 안내만 다르게.
-      if(plan){ try{ localStorage.setItem(plan.unlockKey, "1"); }catch(e){} }
-      render(`
-        <div class="icon">✅</div>
-        <h1>이미 처리된 결제예요</h1>
-        <p>${escapeHtml(planLabel)}은 이미 이용 가능한 상태예요. 이 기기에서 바로 이용하실 수 있어요.</p>
-        <a class="go" href="${plan ? plan.makerUrl : 'landing.html'}">메이커로 이동하기 →</a>
-      `);
-      return;
-    }
-    if(!res.ok || !data.ok){
-      render(`<div class="icon">⚠️</div><h1>결제 확인에 실패했어요</h1><p>${escapeHtml(data.error||"잠시 후 다시 시도해 주세요.")}</p><a class="go go-outline" href="landing.html">돌아가기</a>`);
-      return;
-    }
-    if(plan){
-      try{ localStorage.setItem(plan.unlockKey, "1"); }catch(e){}
-    }
-    render(`
-      <div class="icon">🎉</div>
-      <h1>결제가 완료됐어요!</h1>
-      <p>${escapeHtml(planLabel)} 이용이 바로 시작돼요. 이 기기에서는 지금 바로 이용하실 수 있어요.</p>
-      <a class="go" href="${plan ? plan.makerUrl : 'landing.html'}">메이커로 이동하기 →</a>
-      <p class="notice">다른 기기(폰 등)에서도 쓰고 싶으시면, 결제하신 이메일로 문의해 주세요. 이용 링크를 보내드릴게요.</p>
-    `);
-  }catch(e){
-    render(`<div class="icon">⚠️</div><h1>연결에 문제가 있어요</h1><p>인터넷 연결을 확인하고 다시 시도해 주세요.</p><a class="go go-outline" href="landing.html">돌아가기</a>`);
+  // 페이앱은 결제 결과를 서버(웹훅)로 비동기 전달해요. 우리 브라우저가 도착했을 때
+  // 아직 그 통보가 안 왔을 수 있어서, 몇 초간 짧게 재확인(polling)합니다.
+  const MAX_TRIES = 10, INTERVAL_MS = 1500;
+  for(let i=0;i<MAX_TRIES;i++){
+    try{
+      const res = await fetch(STATUS_API_URL + "?orderId=" + encodeURIComponent(orderId));
+      const data = await res.json().catch(()=>({}));
+      if(data && data.paid){
+        if(plan){ try{ localStorage.setItem(plan.unlockKey, "1"); }catch(e){} }
+        render(`
+          <div class="icon">🎉</div>
+          <h1>결제가 완료됐어요!</h1>
+          <p>${escapeHtml(planLabel)} 이용이 바로 시작돼요. 이 기기에서는 지금 바로 이용하실 수 있어요.</p>
+          <a class="go" href="${plan ? plan.makerUrl : 'landing.html'}">메이커로 이동하기 →</a>
+          <p class="notice">다른 기기(폰 등)에서도 쓰고 싶으시면, 결제하신 이메일로 문의해 주세요. 이용 링크를 보내드릴게요.</p>
+        `);
+        return;
+      }
+    }catch(e){ /* 네트워크 오류는 무시하고 재시도 */ }
+    await new Promise(r=>setTimeout(r, INTERVAL_MS));
   }
+
+  // 시간 내에 확인이 안 된 경우 — 실패로 단정하지 않고, 결제 자체는 처리 중일 수 있음을 안내
+  render(`
+    <div class="icon">⏳</div>
+    <h1>결제 확인이 늦어지고 있어요</h1>
+    <p>결제는 정상적으로 진행됐을 수 있어요. 잠시 후 아래 버튼으로 다시 확인해 주세요.</p>
+    <div class="box"><div><b>상품</b>: ${escapeHtml(planLabel)}</div><div><b>주문번호</b>: ${escapeHtml(orderId)}</div></div>
+    <button class="go" onclick="location.reload()">다시 확인하기</button>
+    <p class="notice">계속 안 되면 이 화면을 캡처해서 문의해 주세요.</p>
+  `);
 })();
 </script>
 </body></html>
