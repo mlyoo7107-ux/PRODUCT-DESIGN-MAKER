@@ -33,6 +33,9 @@ h2{font-size:22px;font-weight:900;margin:0 0 20px}
 .price-card .amount small{font-size:16px;font-weight:normal;color:var(--m)}
 .go{display:block;width:100%;padding:18px;background:var(--a);color:white;border:0;border-radius:32px;font-size:17px;font-weight:bold;cursor:pointer;text-align:center;text-decoration:none;transition:background .15s;margin-top:20px}
 .go:hover{background:#e0247a}
+.go:disabled{background:#d9d3c7;cursor:not-allowed}
+.agree{display:flex;gap:10px;align-items:flex-start;text-align:left;font-size:13px;line-height:1.55;color:var(--t);background:#faf7f0;border:1px solid var(--l);border-radius:10px;padding:12px 14px;margin:18px 0 0;cursor:pointer;font-weight:normal}
+.agree input{margin-top:3px;width:18px;height:18px;accent-color:var(--a);flex:none;cursor:pointer}
 .go-outline{background:white;color:var(--a);border:1px solid var(--a)}
 .go-outline:hover{background:#ffe6f1}
 .faq{margin-top:10px}
@@ -42,6 +45,12 @@ h2{font-size:22px;font-weight:900;margin:0 0 20px}
 footer{text-align:center;padding:40px 20px 50px}
 footer img{max-width:130px}
 .notice{font-size:12px;color:var(--m);text-align:center;margin-top:10px}
+.biz-info{margin-top:16px;font-size:11.5px;color:var(--m);text-align:center}
+.biz-info summary{cursor:pointer;display:inline-block;padding:4px 10px;list-style:none}
+.biz-info summary::-webkit-details-marker{display:none}
+.biz-info summary:after{content:" ▾"}
+.biz-info[open] summary:after{content:" ▴"}
+.biz-info p{margin:8px auto 0;line-height:1.8;max-width:420px}
 </style>
 </head><body>
 <header class="wrap">
@@ -102,7 +111,8 @@ footer img{max-width:130px}
 <div class="amount">9,900<small>원</small></div>
 <p style="color:var(--m);font-size:13px;margin:2px 0 0">1회 결제 · 추가 이용료 없음</p>
 <p style="color:var(--m);font-size:14px;margin:10px 0 0">커피 한 잔 가격으로, 횟수 제한 없이 계속 사용하세요.</p>
-<button class="go" onclick="startPayment()">9,900원 결제하고 시작하기</button>
+<label class="agree"><input type="checkbox" id="agreeRefund" onchange="syncPayBtn()"><span>디지털 콘텐츠 특성상 <b>이용 시작 후에는 청약철회(환불)가 제한</b>된다는 안내를 확인했으며, 무료 체험 3회로 충분히 확인한 뒤 결제합니다. <span style="color:var(--a)">(필수)</span></span></label>
+<button class="go" id="payBtn" onclick="startPayment()" disabled>9,900원 결제하고 시작하기</button>
 <a class="go go-outline" href="https://mlyoo7107-ux.github.io/PRODUCT-DESIGN-MAKER/" style="margin-top:10px">먼저 무료로 3회 체험하기 →</a>
 <div style="text-align:left;background:#faf7f0;border-radius:10px;padding:12px 14px;margin-top:16px">
 <p class="notice" style="margin:0">📌 결제 후 전용 이용 링크가 발급되며 바로 사용하실 수 있습니다.<br>구매 전 무료 체험 3회로 충분히 확인해 주세요.<br>디지털 콘텐츠 특성상 이용 시작 후에는 환불이 제한될 수 있습니다.</p>
@@ -123,10 +133,26 @@ footer img{max-width:130px}
 
 <footer>
 <img src="logo-colorm.png" alt="COLOR.M">
+<details class="biz-info">
+<summary>사업자정보</summary>
+<p>
+상호명: 컬러엠 &nbsp;|&nbsp; 대표자: 유미란<br>
+사업자등록번호: 126-30-29572 &nbsp;|&nbsp; 통신판매업신고번호: 제2022-경기하남-2183호<br>
+주소: 경기도 하남시 미사강변동로72, 904호<br>
+전화: 0507-1312-4595 &nbsp;|&nbsp; 이메일: mlyoo71@naver.com
+</p>
+</details>
 </footer>
 
 <script>
+function syncPayBtn(){
+ document.getElementById("payBtn").disabled=!document.getElementById("agreeRefund").checked;
+}
 function startPayment(){
+ if(!document.getElementById("agreeRefund").checked){
+  alert("결제 전에 환불 안내 동의(필수)를 체크해 주세요.");
+  return;
+ }
  alert("결제 시스템을 연동하는 중입니다. 조금만 기다려주세요!\n먼저 무료로 체험해보시려면 아래 버튼을 눌러주세요.");
 }
 </script>
