@@ -78,6 +78,12 @@ h2{font-size:22px;font-weight:900;margin:0 0 20px}
 footer{text-align:center;padding:40px 20px 50px}
 footer img{max-width:130px}
 .notice{font-size:12px;color:var(--m);text-align:center;margin-top:10px}
+.biz-info{margin-top:16px;font-size:11.5px;color:var(--m);text-align:center}
+.biz-info summary{cursor:pointer;display:inline-block;padding:4px 10px;list-style:none}
+.biz-info summary::-webkit-details-marker{display:none}
+.biz-info summary:after{content:" ▾"}
+.biz-info[open] summary:after{content:" ▴"}
+.biz-info p{margin:8px auto 0;line-height:1.8;max-width:420px}
 </style>
 </head><body>
 <header class="wrap">
@@ -211,6 +217,15 @@ footer img{max-width:130px}
 
 <footer>
 <img src="logo-colorm.png" alt="COLOR.M">
+<details class="biz-info">
+<summary>사업자정보</summary>
+<p>
+상호명: 컬러엠 &nbsp;|&nbsp; 대표자: 유미란<br>
+사업자등록번호: 126-30-29572 &nbsp;|&nbsp; 통신판매업신고번호: 제2022-경기하남-2183호<br>
+주소: 경기도 하남시 미사강변동로72, 904호<br>
+전화: 0507-1312-4595 &nbsp;|&nbsp; 이메일: mlyoo71@naver.com
+</p>
+</details>
 </footer>
 
 <script>
