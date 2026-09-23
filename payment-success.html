@@ -76,6 +76,17 @@ function escapeHtml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,
       body: JSON.stringify({ paymentKey, orderId, amount })
     });
     const data = await res.json().catch(()=>({}));
+    if(res.status === 409){
+      // 이미 승인 처리된(정상적인) 주문 — 새로고침 등으로 다시 들어온 경우. 실패가 아니라 안내만 다르게.
+      if(plan){ try{ localStorage.setItem(plan.unlockKey, "1"); }catch(e){} }
+      render(`
+        <div class="icon">✅</div>
+        <h1>이미 처리된 결제예요</h1>
+        <p>${escapeHtml(planLabel)}은 이미 이용 가능한 상태예요. 이 기기에서 바로 이용하실 수 있어요.</p>
+        <a class="go" href="${plan ? plan.makerUrl : 'landing.html'}">메이커로 이동하기 →</a>
+      `);
+      return;
+    }
     if(!res.ok || !data.ok){
       render(`<div class="icon">⚠️</div><h1>결제 확인에 실패했어요</h1><p>${escapeHtml(data.error||"잠시 후 다시 시도해 주세요.")}</p><a class="go go-outline" href="landing.html">돌아가기</a>`);
       return;
