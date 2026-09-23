@@ -130,7 +130,7 @@
 // 설정 상수 — API 키·비밀키는 절대 이곳에 넣지 않습니다 (키는 Cloudflare Workers 환경변수에만 보관)
 const CONFIG = {
   API_URL: "",          // Cloudflare Workers 주소 (예: https://xxxx.workers.dev/generate)
-  TIMEOUT_MS: 30000,
+  TIMEOUT_MS: 60000,
   TOSS_CLIENT_KEY: ""   // 토스페이먼츠 클라이언트 키 (공개용 키만)
 };
 const D={category:["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"],user:["어린이","청소년","대학생","직장인","1인 가구","가족","시니어","반려인","전문가·작업자","기타"],problem:["사용 편의","휴대","보관","공간 절약","안전","위생","접근성","이동","내구성","친환경","기타"],challenge:["전체 형태","결착·고정","열림·닫힘","수납","조작방법","이동·휴대","접이·변형","높이·각도조절","안전","사용 편의","CMF","기타"],control:["버튼","다이얼","터치","손잡이","레버","센서","자동","한 손 조작","해당 없음"],motion:["회전","접힘","슬라이드","열림·닫힘","높이조절","각도조절","분리·결합","움직임 없음","해당 없음"],mount:["거치","클램프","스트랩","후크","슬라이드 체결","회전 잠금","자석","나사","끼움","해당 없음"],feature:["수납","접이","회전","분리·결합","잠금","높이·각도 조절","센서","디스플레이","터치 UI","조명","무선·충전","기타"],form:["원형","사각형","원통형","슬림","바형","기하학적","유기적","곡선형","모듈형","비대칭"],style:["Minimal","Modern","Soft","Friendly","Futuristic","High-tech","Premium","Natural","Sporty","기타"],output:["하나의 디자인 완성","형태 아이디어 여러 안","구조·결착 아이디어 여러 안","기존 스케치 발전"],renderStyle:["아이디어 스케치","산업디자인 렌더링","사실적 제품 렌더링","컬러링 도안 (아웃라인)","기타"],aspect:["A4 가로 (297×210mm · 1.414:1)","16:9 (1920×1080)","자유 비율"],
@@ -424,7 +424,7 @@ if(images.ref)imgHtml+=`<div><label>첨부한 레퍼런스</label><img src="${im
 const resultImages=document.getElementById("resultImages");
 resultImages.innerHTML=imgHtml; resultImages.style.display=imgHtml?"grid":"none";
 document.getElementById("result").classList.add("on");document.getElementById("result").scrollIntoView({behavior:"smooth"});
-useFreeTry();}
+useFreeTry();aiOnNewPrompt();}
 function cp(id){navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>alert("복사되었습니다."))}
 
 function collectData(){
@@ -565,10 +565,31 @@ document.querySelector("main").addEventListener("click",e=>{if(e.target.classLis
 })();
 
 const FREE_LIMIT=3;
+// ⚠️ 결제 승인 서버가 없는 프로토타입 단계라, 잠금해제는 기기별 localStorage로만 관리돼요.
+// 이 값을 아는 사람은 누구나 풀 수 있으니, ?unlock= 뒤의 문구는 공개하지 말고
+// 결제 확인 후 개별적으로만 안내해 주세요.
+const UNLOCK_CODE="colorm-basic-2026";
+(function applyUnlockParam(){
+ try{
+  const q=new URLSearchParams(location.search);
+  const code=q.get("unlock");
+  if(code && code===UNLOCK_CODE){
+   localStorage.setItem("cmPdmPaid","1");
+   const url=new URL(location.href); url.searchParams.delete("unlock");
+   history.replaceState(null,"",url.toString());
+  }
+ }catch(e){}
+})();
+function isPaid(){try{return localStorage.getItem("cmPdmPaid")==="1"}catch(e){return false}}
 function getFreeUsed(){try{return parseInt(localStorage.getItem("cmPdmFreeUsed")||"0",10)||0}catch(e){return 0}}
 function updateFreeStatus(){
- const used=getFreeUsed(), left=Math.max(0,FREE_LIMIT-used);
  const statusEl=document.getElementById("freeStatus"), payEl=document.getElementById("paywall");
+ if(isPaid()){
+  statusEl.textContent="⭐ 구매해주셔서 감사해요! 횟수 제한 없이 계속 사용하실 수 있어요.";
+  payEl.style.display="none";
+  return;
+ }
+ const used=getFreeUsed(), left=Math.max(0,FREE_LIMIT-used);
  if(left>0){
   statusEl.textContent=`🎁 무료 체험 ${left}회 남음 (총 ${FREE_LIMIT}회)`;
   payEl.style.display="none";
@@ -578,6 +599,7 @@ function updateFreeStatus(){
  }
 }
 function checkFreeLimit(){
+ if(isPaid())return true;
  if(getFreeUsed()>=FREE_LIMIT){
   document.getElementById("paywall").style.display="block";
   document.getElementById("paywall").scrollIntoView({behavior:"smooth"});
@@ -586,21 +608,64 @@ function checkFreeLimit(){
  return true;
 }
 function useFreeTry(){
+ if(isPaid())return;
  try{localStorage.setItem("cmPdmFreeUsed",String(getFreeUsed()+1))}catch(e){}
  updateFreeStatus();
 }
 updateFreeStatus();
 
-/* ===== AI 이미지 생성 (껍데기만 — 아직 API 호출 없음) ===== */
-function generateAIImage(){
-  const st=document.getElementById('aiStatus');
-  st.className='on';
-  st.textContent='준비 중입니다. 곧 이용하실 수 있어요!';
-  // TODO: CONFIG.API_URL이 채워지면 이곳에서 영문 프롬프트(#en)와 비율(#aiSize)을 Workers로 전송하고 결과를 #aiResultImg에 표시
+/* ===== AI 이미지 생성 (CONFIG.API_URL이 비어 있으면 '준비 중'만 표시) ===== */
+// 무료 체험: 프롬프트 만들기 1회당 이미지 1장 (서버에서도 별도로 한도를 검사합니다)
+let aiCredit=false,aiBusy=false;
+function aiSetStatus(msg){const st=document.getElementById('aiStatus');st.className=msg?'on':'';st.textContent=msg||'';}
+function aiDeviceId(){
+  try{
+    let id=localStorage.getItem('cmPdmDeviceId');
+    if(!id){id=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(16).slice(2));localStorage.setItem('cmPdmDeviceId',id);}
+    return id;
+  }catch(e){return '';}
+}
+function aiOnNewPrompt(){
+  aiCredit=true;
+  document.getElementById('aiResult').style.display='none';
+  aiSetStatus('');
+}
+async function generateAIImage(){
+  if(!CONFIG.API_URL){aiSetStatus('준비 중입니다. 곧 이용하실 수 있어요!');return;}
+  if(aiBusy)return;
+  // 영문 프롬프트에서 미드저니용 옵션(--ar 등)은 제거하고 전송
+  const prompt=(document.getElementById('en').textContent||'').replace(/\s--[a-z]+\s+[\w:.]+/gi,'').trim();
+  if(!prompt){aiSetStatus('먼저 「프롬프트 만들기」를 눌러 주세요.');return;}
+  if(!aiCredit){aiSetStatus('무료 체험은 프롬프트 1회당 이미지 1장이에요. 프롬프트를 새로 만든 뒤 다시 눌러 주세요.');return;}
+  const btn=document.getElementById('aiGenerateBtn');
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(),CONFIG.TIMEOUT_MS);
+  aiBusy=true;btn.disabled=true;
+  aiSetStatus('이미지를 만드는 중이에요… 보통 20~40초 걸려요.');
+  try{
+    const res=await fetch(CONFIG.API_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt:prompt,ratio:document.getElementById('aiSize').value,deviceId:aiDeviceId()}),
+      signal:ctrl.signal
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok||!data.image){aiSetStatus(data.error||'이미지를 만들지 못했어요. 잠시 후 다시 시도해 주세요.');return;}
+    document.getElementById('aiResultImg').src=data.image;
+    document.getElementById('aiResult').style.display='block';
+    aiCredit=false;
+    aiSetStatus('완성! 마음에 들면 이미지를 저장해 두세요.');
+  }catch(e){
+    aiSetStatus(e&&e.name==='AbortError'?'시간이 너무 오래 걸려 중단됐어요. 다시 시도해 주세요.':'연결에 문제가 있어요. 인터넷을 확인하고 다시 시도해 주세요.');
+  }finally{
+    clearTimeout(timer);aiBusy=false;btn.disabled=false;
+  }
 }
 function downloadAIImage(){
-  const st=document.getElementById('aiStatus');
-  st.className='on';
-  st.textContent='준비 중입니다.';
+  const src=document.getElementById('aiResultImg').src;
+  if(!src||src.indexOf('data:image')!==0){aiSetStatus('저장할 이미지가 아직 없어요.');return;}
+  const a=document.createElement('a');
+  a.href=src;a.download='colorm-product-design.jpg';
+  document.body.appendChild(a);a.click();a.remove();
 }
 </script></body></html>
