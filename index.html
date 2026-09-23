@@ -586,14 +586,17 @@ const FREE_LIMIT=3;
    });
  }catch(e){}
 })();
-// 예전 방식(고정 비밀 코드)도 남겨둬요 — 개인 링크를 못 쓰는 특수한 경우의 수동 대응용입니다.
+// 고정 비밀 코드 — 개인 링크를 못 쓰는 특수한 경우의 수동 대응용입니다.
 // 공개하지 말고, 결제 확인 후 개별적으로만 안내해 주세요.
 const UNLOCK_CODE="colorm-basic-2026";
+// 수업 수강생 전용 무료 이용 코드 — LMS·수업 게시판 등 수강생만 보는 곳에만 공유하세요.
+// 학기마다 바꾸고 싶으면 이 값만 수정하면 돼요.
+const CLASS_UNLOCK_CODE="colorm-class-2026";
 (function applyUnlockParam(){
  try{
   const q=new URLSearchParams(location.search);
   const code=q.get("unlock");
-  if(code && code===UNLOCK_CODE){
+  if(code && (code===UNLOCK_CODE||code===CLASS_UNLOCK_CODE)){
    localStorage.setItem("cmPdmPaid","1");
    const url=new URL(location.href); url.searchParams.delete("unlock");
    history.replaceState(null,"",url.toString());
