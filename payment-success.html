@@ -29,7 +29,7 @@ footer img{max-width:120px}
 <footer><img src="logo-colorm.png" alt="COLOR.M"></footer>
 <script>
 // 결제 상태 확인용 Cloudflare Workers 주소. worker-payment 배포 후 채워야 실제로 동작합니다.
-const STATUS_API_URL = "";
+const STATUS_API_URL = "https://colorm-pdm-payment.milan71.workers.dev/";
 
 const PLAN_BY_PREFIX = {
   basic: { label: "BASIC", makerUrl: "index.html", unlockKey: "cmPdmPaid" },
