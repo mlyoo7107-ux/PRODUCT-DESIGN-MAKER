@@ -38,7 +38,7 @@
 </div></div></div>
 <div class="card"><div class="step">STEP 08</div><div class="title">디자인 스타일과 CMF는 어떻게 할까요?</div><div class="grid multi" id="style"></div><label>스타일 기타</label><input id="styleText" placeholder="직접 입력">
 <label>COLOR</label><div class="grid multi" id="colorChips"></div><input id="color" placeholder="직접 입력 (예: 세이지 그린)">
-<label>TONE | 색조</label><div class="grid" id="tone"></div><label>"기타"를 선택했다면 직접 입력하세요</label><input id="toneText" placeholder="직접 입력">
+<label>TONE | 색조</label><p class="hint" style="margin-top:-8px">색상을 여러 개 고르셨어도, 보통은 톤 하나로 통일하는 게 제품이 더 완성도 있어 보여요.</p><div class="grid" id="tone"></div><label>색상마다 톤을 다르게 하고 싶다면 여기에 직접 적어주세요 (예: "기타" 선택 불필요)</label><input id="toneText" placeholder="예: 화이트는 파스텔 톤, 그린은 비비드 톤으로">
 <label>COLOR SCHEME | 배색 방식</label><div class="grid" id="scheme"></div><label>"기타"를 선택했다면 직접 입력하세요</label><input id="schemeText" placeholder="직접 입력">
 <label>MATERIAL</label><div class="grid multi" id="materialChips"></div><input id="material" placeholder="직접 입력 (예: ABS + 실리콘 손잡이)">
 <label>FINISH</label><div class="grid multi" id="finishChips"></div><input id="finish" placeholder="직접 입력 (예: 무광, 고무 그립감)"></div>
@@ -243,7 +243,7 @@ function buildColorClauseKo(){
  const schemeChoice=sel("scheme")[0]||"", schemeExtra=v("schemeText").trim();
  const parts=[];
  if(colorVal!=="미정")parts.push(colorVal+" 계열");
- if(toneExtra)parts.push(toneExtra+" 톤");
+ if(toneExtra)parts.push(toneExtra);
  else if(toneChoice&&toneChoice!=="기타")parts.push((toneChoice.includes("·")?toneChoice.split("·")[1].trim():toneChoice)+" 톤");
  if(schemeExtra)parts.push(schemeExtra+" 배색");
  else if(schemeChoice&&schemeChoice!=="기타")parts.push(schemeChoice+" 배색");
