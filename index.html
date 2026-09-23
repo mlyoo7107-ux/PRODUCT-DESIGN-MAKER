@@ -586,29 +586,50 @@ const FREE_LIMIT=3;
    });
  }catch(e){}
 })();
-// 고정 비밀 코드 — 개인 링크를 못 쓰는 특수한 경우의 수동 대응용입니다.
+// 고정 비밀 코드 — 개인 링크를 못 쓰는 특수한 경우의 수동 대응용입니다. (결제 고객 · 평생 이용)
 // 공개하지 말고, 결제 확인 후 개별적으로만 안내해 주세요.
 const UNLOCK_CODE="colorm-basic-2026";
-// 수업 수강생 전용 무료 이용 코드 — LMS·수업 게시판 등 수강생만 보는 곳에만 공유하세요.
-// 학기마다 바꾸고 싶으면 이 값만 수정하면 돼요.
+// 수업 수강생 전용 무료 이용 코드 — 결제 없이 30일 동안만 무제한 이용할 수 있어요.
+// LMS·수업 게시판 등 수강생만 보는 곳에만 공유하세요. 학기마다 바꾸고 싶으면 이 값만 수정하면 돼요.
 const CLASS_UNLOCK_CODE="colorm-class-2026";
+const CLASS_TRIAL_DAYS=30;
 (function applyUnlockParam(){
  try{
   const q=new URLSearchParams(location.search);
   const code=q.get("unlock");
-  if(code && (code===UNLOCK_CODE||code===CLASS_UNLOCK_CODE)){
+  if(code===UNLOCK_CODE){
    localStorage.setItem("cmPdmPaid","1");
+  }else if(code===CLASS_UNLOCK_CODE){
+   if(!localStorage.getItem("cmPdmClassExpiry")){
+    localStorage.setItem("cmPdmClassExpiry",String(Date.now()+CLASS_TRIAL_DAYS*24*60*60*1000));
+   }
+  }
+  if(code===UNLOCK_CODE||code===CLASS_UNLOCK_CODE){
    const url=new URL(location.href); url.searchParams.delete("unlock");
    history.replaceState(null,"",url.toString());
   }
  }catch(e){}
 })();
-function isPaid(){try{return localStorage.getItem("cmPdmPaid")==="1"}catch(e){return false}}
+function isReallyPaid(){try{return localStorage.getItem("cmPdmPaid")==="1"}catch(e){return false}}
+function classDaysLeft(){
+ try{
+  const exp=parseInt(localStorage.getItem("cmPdmClassExpiry")||"0",10);
+  if(!exp)return 0;
+  return Math.max(0,Math.ceil((exp-Date.now())/(24*60*60*1000)));
+ }catch(e){return 0}
+}
+function isPaid(){return isReallyPaid()||classDaysLeft()>0}
 function getFreeUsed(){try{return parseInt(localStorage.getItem("cmPdmFreeUsed")||"0",10)||0}catch(e){return 0}}
 function updateFreeStatus(){
  const statusEl=document.getElementById("freeStatus"), payEl=document.getElementById("paywall");
- if(isPaid()){
+ if(isReallyPaid()){
   statusEl.textContent="⭐ 이용 권한이 확인됐어요! 횟수 제한 없이 계속 사용하실 수 있어요.";
+  payEl.style.display="none";
+  return;
+ }
+ const daysLeft=classDaysLeft();
+ if(daysLeft>0){
+  statusEl.textContent=`🎓 수업용 무료 이용 기간이에요 (앞으로 ${daysLeft}일 남음). 횟수 제한 없이 사용하실 수 있어요.`;
   payEl.style.display="none";
   return;
  }
