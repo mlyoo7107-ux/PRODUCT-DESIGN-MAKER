@@ -608,7 +608,7 @@ function getFreeUsed(){try{return parseInt(localStorage.getItem("cmPdmFreeUsed")
 function updateFreeStatus(){
  const statusEl=document.getElementById("freeStatus"), payEl=document.getElementById("paywall");
  if(isPaid()){
-  statusEl.textContent="⭐ 구매해주셔서 감사해요! 횟수 제한 없이 계속 사용하실 수 있어요.";
+  statusEl.textContent="⭐ 이용 권한이 확인됐어요! 횟수 제한 없이 계속 사용하실 수 있어요.";
   payEl.style.display="none";
   return;
  }
