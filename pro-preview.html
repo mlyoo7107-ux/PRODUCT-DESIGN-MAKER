@@ -268,7 +268,7 @@ function startPayment(plan){
  PayApp.setParam('price',String(info.amount));
  PayApp.setParam('var1',orderId);
  PayApp.setParam('feedbackurl',CONFIG.FEEDBACK_API_URL);
- PayApp.setParam('returnurl',siteRoot()+'payment-success.html?orderId='+orderId);
+ PayApp.setParam('returnurl',CONFIG.FEEDBACK_API_URL+'return?orderId='+orderId);
  PayApp.setParam('checkretry','y');
  PayApp.setParam('smsuse','n');
  PayApp.setParam('redirectpay','1');
