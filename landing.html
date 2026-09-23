@@ -107,7 +107,12 @@ footer img{max-width:130px}
 
 <section class="wrap">
 <h2>가격</h2>
-<div class="price-card">
+<div class="price-card" id="alreadyPaidCard" style="display:none;background:#f2fbf5;border-color:#1f9d55">
+<div class="badge" style="background:#dcf5e4;color:#1f9d55">✅ 이미 구매하셨어요</div>
+<p style="font-size:15px;margin:6px 0 0">이 기기에서는 이미 BASIC을 구매하셨어요. 다시 결제하실 필요 없이 바로 메이커로 이동해서 사용하시면 돼요.</p>
+<a class="go" href="index.html" style="display:block;margin-top:18px;text-decoration:none">메이커로 이동하기 →</a>
+</div>
+<div class="price-card" id="payCard">
 <div class="badge">⭐ 오픈 특가</div>
 <div class="amount">9,900<small>원</small></div>
 <p style="color:var(--m);font-size:13px;margin:2px 0 0">1회 결제 · 추가 이용료 없음</p>
@@ -157,6 +162,16 @@ const CONFIG = {
 };
 PayApp.setDefault('userid', CONFIG.PAYAPP_USERID);
 PayApp.setDefault('shopname', 'COLOR.M');
+
+// 이 기기에서 이미 구매한 적이 있으면(index.html과 같은 localStorage 값을 공유) 결제 카드 대신 안내 카드를 보여줘요.
+(function checkAlreadyPaid(){
+ try{
+  if(localStorage.getItem('cmPdmPaid')==='1'){
+   document.getElementById('alreadyPaidCard').style.display='block';
+   document.getElementById('payCard').style.display='none';
+  }
+ }catch(e){}
+})();
 
 function syncPayBtn(){
  document.getElementById("payBtn").disabled=!document.getElementById("agreeRefund").checked;
