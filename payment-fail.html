@@ -1,0 +1,37 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>결제 실패 — COLOR.M</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+:root{--a:#ff2d86;--b:#f5f1e8;--l:#e8e1d3;--t:#171512;--m:#7a7268}
+*{box-sizing:border-box}
+body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
+.wrap{max-width:480px;margin:auto;padding:60px 20px;text-align:center}
+.icon{font-size:44px}
+h1{font-size:22px;margin:16px 0 8px}
+p{color:var(--m);font-size:14px;line-height:1.6}
+.box{text-align:left;background:white;border:1px solid var(--l);border-radius:14px;padding:16px;margin-top:20px;font-size:13px;line-height:1.8}
+.go{display:block;width:100%;padding:16px;background:var(--a);color:white;border:0;border-radius:28px;font-size:16px;font-weight:bold;cursor:pointer;text-align:center;text-decoration:none;margin-top:22px}
+.go:hover{background:#e0247a}
+footer{text-align:center;padding:40px 20px}
+footer img{max-width:120px}
+</style></head><body>
+<div class="wrap">
+<div class="icon">😥</div>
+<h1>결제가 완료되지 않았어요</h1>
+<p id="reason">결제가 취소되었거나 오류가 발생했어요. 결제 금액은 청구되지 않아요.</p>
+<div class="box" id="detail" style="display:none"></div>
+<a class="go" href="landing.html">다시 시도하기</a>
+</div>
+<footer><img src="logo-colorm.png" alt="COLOR.M"></footer>
+<script>
+const q = new URLSearchParams(location.search);
+const code = q.get("code"), message = q.get("message");
+if(code || message){
+  const el = document.getElementById("detail");
+  el.style.display = "block";
+  const esc = s => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  el.innerHTML = (code ? "<div><b>코드</b>: "+esc(code)+"</div>" : "") + (message ? "<div><b>사유</b>: "+esc(message)+"</div>" : "");
+}
+</script>
+</body></html>
