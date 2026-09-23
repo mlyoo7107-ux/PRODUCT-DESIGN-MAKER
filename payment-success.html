@@ -37,6 +37,11 @@ const PLAN_BY_PREFIX = {
 };
 
 function render(html){ document.getElementById("app").innerHTML = html; }
+function copyDeviceLink(){
+  const link = window.__deviceLink || "";
+  if(!link)return;
+  navigator.clipboard.writeText(link).then(()=>alert("복사되었습니다! 다른 기기의 브라우저에 붙여넣어 주세요.")).catch(()=>alert("복사에 실패했어요. 주소를 직접 선택해서 복사해 주세요."));
+}
 function escapeHtml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
 (async function(){
@@ -73,13 +78,22 @@ function escapeHtml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,
       const data = await res.json().catch(()=>({}));
       if(data && data.paid){
         if(plan){ try{ localStorage.setItem(plan.unlockKey, "1"); }catch(e){} }
+        const makerUrl = plan ? plan.makerUrl : 'landing.html';
+        const deviceLink = plan ? (location.origin + location.pathname.replace(/payment-success\.html$/, "") + makerUrl + "?order=" + encodeURIComponent(orderId)) : "";
         render(`
           <div class="icon">🎉</div>
           <h1>결제가 완료됐어요!</h1>
           <p>${escapeHtml(planLabel)} 이용이 바로 시작돼요. 이 기기에서는 지금 바로 이용하실 수 있어요.</p>
-          <a class="go" href="${plan ? plan.makerUrl : 'landing.html'}">메이커로 이동하기 →</a>
-          <p class="notice">다른 기기(폰 등)에서도 쓰고 싶으시면, 결제하신 이메일로 문의해 주세요. 이용 링크를 보내드릴게요.</p>
+          <a class="go" href="${makerUrl}">메이커로 이동하기 →</a>
+          ${deviceLink ? `
+          <div class="box">
+            <div style="font-weight:bold;margin-bottom:8px">📱 다른 기기(폰 등)에서도 쓰고 싶으신가요?</div>
+            <p style="margin:0 0 10px">아래 주소를 복사해서 그 기기의 브라우저 주소창에 붙여넣으면 똑같이 이용하실 수 있어요. 이 링크는 본인만 사용해 주세요.</p>
+            <div id="deviceLinkText" style="word-break:break-all;background:#faf7f0;border:1px solid var(--l);border-radius:8px;padding:10px;font-size:12px">${escapeHtml(deviceLink)}</div>
+            <button class="go go-outline" style="margin-top:10px" onclick="copyDeviceLink()">🔗 링크 복사하기</button>
+          </div>` : `<p class="notice">다른 기기(폰 등)에서도 쓰고 싶으시면, 결제하신 이메일로 문의해 주세요. 이용 링크를 보내드릴게요.</p>`}
         `);
+        window.__deviceLink = deviceLink;
         return;
       }
     }catch(e){ /* 네트워크 오류는 무시하고 재시도 */ }
