@@ -1,0 +1,113 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>COLOR.M MAKER GALLERY</title>
+<meta name="description" content="COLOR.M Product Design Maker로 만든 작품들을 모아보는 갤러리입니다.">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--a:#ff2d86;--b:#f5f1e8;--l:#e8e1d3;--t:#171512;--m:#7a7268}
+*{box-sizing:border-box}
+body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
+header{text-align:center;background:white;padding:32px 15px;border-bottom:1px solid var(--l)}
+header small{color:var(--a);font-weight:bold;letter-spacing:2px}
+header h1{margin:7px 0;font-size:26px;font-weight:900}
+header p{color:var(--m);margin:0;font-size:14px}
+.top-actions{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.btn{padding:10px 18px;border-radius:24px;font-size:13px;font-weight:bold;text-decoration:none;cursor:pointer;border:1px solid var(--l);background:white;color:var(--t)}
+.btn.primary{background:var(--a);color:white;border-color:var(--a)}
+.btn.primary:hover{background:#e0247a}
+.btn.outline{color:var(--a);border-color:var(--a)}
+.btn.outline:hover{background:#ffe6f1}
+main{max-width:1100px;margin:auto;padding:20px 15px 60px}
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 20px}
+.filter-chip{padding:8px 14px;border:1px solid var(--l);border-radius:20px;font-size:13px;cursor:pointer;background:white;transition:background .15s,border-color .15s,color .15s}
+.filter-chip:hover{border-color:var(--a);color:var(--a)}
+.filter-chip.on{background:var(--a);border-color:var(--a);color:white;font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.card{background:white;border:1px solid var(--l);border-radius:16px;overflow:hidden;text-decoration:none;color:var(--t);display:block;box-shadow:0 2px 8px rgba(23,21,18,.05);transition:transform .15s}
+.card:hover{transform:translateY(-3px)}
+.card .thumb{width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--l);display:block}
+.card .body{padding:12px 14px}
+.card .maker-badge{display:inline-block;font-size:10px;font-weight:bold;padding:2px 8px;border-radius:10px;margin-bottom:6px}
+.card .maker-badge.basic{background:#eee;color:var(--m)}
+.card .maker-badge.pro{background:var(--a);color:white}
+.card .title{font-size:15px;font-weight:bold;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .nick{font-size:12px;color:var(--m);margin:0}
+.empty{text-align:center;padding:80px 20px;color:var(--m)}
+.loading{text-align:center;padding:80px 20px;color:var(--m)}
+footer{text-align:center;padding:30px 15px 40px}
+footer img{max-width:120px;opacity:.85}
+</style></head><body>
+<header>
+<small>COLOR.M · GALLERY</small>
+<h1>MAKER GALLERY</h1>
+<p>COLOR.M Product Design Maker로 만든 작품들을 구경해보세요.</p>
+<div class="top-actions">
+<a class="btn primary" href="upload.html">✨ 내 작품 자랑하기</a>
+<a class="btn outline" href="../landing.html">Maker로 가기 →</a>
+</div>
+</header>
+<main>
+<div class="filters" id="filters"></div>
+<div id="content"><div class="loading">불러오는 중...</div></div>
+</main>
+<footer><img src="../logo-colorm.png" alt="COLOR.M"></footer>
+<script>
+const SUPABASE_URL = "https://cdrbxkwouxihsxzhhnbz.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_9BNpTY7OIbFN7iMmCg9TlQ_Glu4_s9G";
+const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const BUCKET = "gallery-images";
+
+const CATEGORIES = ["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"];
+
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function imageUrl(path){ return supa.storage.from(BUCKET).getPublicUrl(path).data.publicUrl; }
+
+let allItems = [];
+let activeCategory = "전체";
+
+function renderFilters(){
+  const el = document.getElementById("filters");
+  const cats = ["전체", ...CATEGORIES];
+  el.innerHTML = cats.map(c => `<div class="filter-chip${c===activeCategory?" on":""}" data-c="${esc(c)}">${esc(c)}</div>`).join("");
+  el.querySelectorAll(".filter-chip").forEach(chip => {
+    chip.onclick = () => { activeCategory = chip.dataset.c; renderFilters(); renderGrid(); };
+  });
+}
+
+function renderGrid(){
+  const content = document.getElementById("content");
+  const items = activeCategory === "전체" ? allItems : allItems.filter(x => x.category === activeCategory);
+  if(items.length === 0){
+    content.innerHTML = `<div class="empty">아직 등록된 작품이 없어요.<br>가장 먼저 작품을 올려보세요!</div>`;
+    return;
+  }
+  content.innerHTML = `<div class="grid">${items.map(item => `
+    <a class="card" href="detail.html?id=${esc(item.id)}">
+      <img class="thumb" src="${esc(imageUrl(item.image_path))}" alt="${esc(item.title)}" loading="lazy">
+      <div class="body">
+        <span class="maker-badge ${item.maker_type==='PRO'?'pro':'basic'}">${esc(item.maker_type)}</span>
+        <p class="title">${esc(item.title)}</p>
+        <p class="nick">by ${esc(item.nickname)}</p>
+      </div>
+    </a>
+  `).join("")}</div>`;
+}
+
+async function load(){
+  const { data, error } = await supa
+    .from("submissions")
+    .select("id,title,nickname,maker_type,category,image_path,created_at")
+    .eq("status", "approved")
+    .order("created_at", { ascending: false });
+  if(error){
+    document.getElementById("content").innerHTML = `<div class="empty">불러오는 중 문제가 발생했어요.</div>`;
+    console.error(error);
+    return;
+  }
+  allItems = data || [];
+  renderFilters();
+  renderGrid();
+}
+load();
+</script>
+</body></html>
