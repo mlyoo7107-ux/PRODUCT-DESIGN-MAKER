@@ -83,7 +83,7 @@ function renderGrid(){
   }
   content.innerHTML = `<div class="grid">${items.map(item => `
     <a class="card" href="detail.html?id=${esc(item.id)}">
-      <img class="thumb" src="${esc(imageUrl(item.image_path))}" alt="${esc(item.title)}" loading="lazy">
+      <img class="thumb" src="${esc(imageUrl(item.image_paths[0]))}" alt="${esc(item.title)}" loading="lazy">
       <div class="body">
         <span class="maker-badge ${item.maker_type==='PRO'?'pro':'basic'}">${esc(item.maker_type)}</span>
         <p class="title">${esc(item.title)}</p>
@@ -96,7 +96,7 @@ function renderGrid(){
 async function load(){
   const { data, error } = await supa
     .from("submissions")
-    .select("id,title,nickname,maker_type,category,image_path,created_at")
+    .select("id,title,nickname,maker_type,category,image_paths,created_at")
     .eq("status", "approved")
     .order("created_at", { ascending: false });
   if(error){
