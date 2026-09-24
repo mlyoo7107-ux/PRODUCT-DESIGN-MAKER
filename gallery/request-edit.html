@@ -1,0 +1,105 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수정 요청 — COLOR.M GALLERY</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--a:#ff2d86;--b:#f5f1e8;--l:#e8e1d3;--t:#171512;--m:#7a7268}
+*{box-sizing:border-box}
+body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
+.wrap{max-width:480px;margin:auto;padding:0 20px}
+header{text-align:center;padding:36px 20px 20px}
+header small{color:var(--a);font-weight:bold;letter-spacing:2px}
+header h1{margin:8px 0;font-size:21px;font-weight:900}
+header p{color:var(--m);margin:0;font-size:14px}
+.card{background:white;border:1px solid var(--l);border-radius:18px;padding:24px;margin:16px 0;box-shadow:0 2px 8px rgba(23,21,18,.05)}
+label{font-size:13px;font-weight:bold;display:block;margin:16px 0 6px}
+label:first-child{margin-top:0}
+input,textarea{width:100%;padding:11px;border:1px solid #e3ddd0;border-radius:9px;font-size:14px;font-family:inherit}
+textarea{min-height:100px;resize:vertical}
+.hint{font-size:12px;color:var(--m);margin:4px 0 0}
+.go{width:100%;padding:16px;background:var(--a);color:white;border:0;border-radius:28px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:18px}
+.go:hover{background:#e0247a}
+.go:disabled{background:#d9d3c7;cursor:not-allowed}
+.back{display:block;text-align:center;margin-top:14px;color:var(--m);font-size:13px;text-decoration:none}
+.msg{font-size:13px;color:#c0392b;margin-top:10px;display:none}
+.success{text-align:center;padding:40px 10px}
+.success .icon{font-size:44px}
+footer{text-align:center;padding:30px 15px 40px}
+footer img{max-width:120px;opacity:.85}
+</style></head><body>
+<div class="wrap">
+<header>
+<small>COLOR.M · GALLERY</small>
+<h1>작품 수정 요청</h1>
+<p id="targetTitle">어떤 부분을 수정하고 싶으신지 알려주세요.</p>
+</header>
+
+<div class="card" id="formCard">
+<form id="reqForm">
+<label>수정 요청 내용 *</label>
+<textarea id="message" placeholder="예: 사진을 새로 바꾸고 싶어요 / 작품명을 다르게 고치고 싶어요" required maxlength="500"></textarea>
+
+<label>연락처 (선택)</label>
+<input type="text" id="contact" placeholder="답변 받으실 이메일, 카카오톡 ID 등">
+<p class="hint">확인 후 반영해드릴게요. 연락처를 남기시면 처리 결과를 알려드릴 수 있어요.</p>
+
+<p class="msg" id="errMsg"></p>
+<button type="submit" class="go" id="submitBtn">요청 보내기</button>
+</form>
+<a class="back" id="backLink" href="index.html">← 갤러리로 돌아가기</a>
+</div>
+
+<div class="card success" id="successCard" style="display:none">
+<div class="icon">✅</div>
+<h2 style="margin:12px 0 8px">요청이 접수됐어요!</h2>
+<p style="color:var(--m);font-size:14px">확인 후 반영해드릴게요.</p>
+<a class="go" href="index.html" style="display:block;text-decoration:none;margin-top:20px">갤러리로 가기 →</a>
+</div>
+</div>
+<footer><img src="../logo-colorm.png" alt="COLOR.M"></footer>
+<script>
+const SUPABASE_URL = "https://cdrbxkwouxihsxzhhnbz.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_9BNpTY7OIbFN7iMmCg9TlQ_Glu4_s9G";
+const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const params = new URLSearchParams(location.search);
+const submissionId = params.get("id");
+const title = params.get("title");
+if(title) document.getElementById("targetTitle").textContent = `"${title}" 작품에 대한 요청이에요.`;
+document.getElementById("backLink").href = submissionId ? `detail.html?id=${submissionId}` : "index.html";
+
+function showError(msg){
+  const el = document.getElementById("errMsg");
+  el.textContent = msg;
+  el.style.display = "block";
+}
+
+document.getElementById("reqForm").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  document.getElementById("errMsg").style.display = "none";
+  if(!submissionId) return showError("어떤 작품인지 확인할 수 없어요. 작품 상세페이지에서 다시 들어와주세요.");
+
+  const message = document.getElementById("message").value.trim();
+  const contact = document.getElementById("contact").value.trim();
+  if(!message) return showError("수정 요청 내용을 입력해주세요.");
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true; btn.textContent = "보내는 중...";
+
+  const { error } = await supa.from("edit_requests").insert({
+    submission_id: submissionId, message, contact
+  });
+
+  if(error){
+    console.error(error);
+    showError("요청 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.");
+    btn.disabled = false; btn.textContent = "요청 보내기";
+    return;
+  }
+
+  document.getElementById("formCard").style.display = "none";
+  document.getElementById("successCard").style.display = "block";
+});
+</script>
+</body></html>
