@@ -11,46 +11,63 @@ h1{font-size:20px;margin:0 0 18px}
 .gate{background:white;border:1px solid var(--l);border-radius:16px;padding:24px;max-width:360px;margin:80px auto}
 .gate input{width:100%;padding:11px;border:1px solid #e3ddd0;border-radius:9px;font-size:14px;margin:10px 0}
 .gate button{width:100%;padding:12px;background:var(--a);color:white;border:0;border-radius:22px;font-weight:bold;cursor:pointer}
-.item{background:white;border:1px solid var(--l);border-radius:16px;padding:16px;margin-bottom:14px;display:flex;gap:14px}
-.item img{width:90px;height:90px;object-fit:cover;border-radius:10px;background:var(--l);flex:none}
+.tabs{display:flex;gap:6px;margin-bottom:16px}
+.tab{padding:9px 14px;border:1px solid var(--l);border-radius:20px;font-size:13px;cursor:pointer;background:white}
+.tab.on{background:var(--a);color:white;border-color:var(--a);font-weight:bold}
+.item{background:white;border:1px solid var(--l);border-radius:16px;padding:16px;margin-bottom:14px}
+.item-row{display:flex;gap:14px}
 .thumbs{display:flex;gap:6px;flex:none}
+.thumbs img{width:70px;height:70px;object-fit:cover;border-radius:10px;background:var(--l)}
 .info{flex:1;min-width:0}
 .info h3{margin:0 0 4px;font-size:15px}
 .info p{margin:2px 0;font-size:12px;color:var(--m)}
-.actions{display:flex;gap:6px;margin-top:10px}
+.actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .actions button{padding:8px 14px;border-radius:16px;border:1px solid var(--l);background:white;font-size:12px;font-weight:bold;cursor:pointer}
 .btn-approve{color:#1a8a4a;border-color:#1a8a4a}
 .btn-reject{color:#b8860b;border-color:#b8860b}
 .btn-delete{color:#c0392b;border-color:#c0392b}
+.btn-edit{color:var(--a);border-color:var(--a)}
 .empty{text-align:center;padding:60px 20px;color:var(--m)}
-.msg{font-size:13px;color:#c0392b;margin-top:8px;display:none}
+.edit-form label{font-size:12px;font-weight:bold;display:block;margin:10px 0 4px}
+.edit-form input,.edit-form textarea,.edit-form select{width:100%;padding:9px;border:1px solid #e3ddd0;border-radius:8px;font-size:13px;font-family:inherit}
+.edit-form textarea{min-height:60px;resize:vertical}
+.edit-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.edit-thumb{position:relative;width:72px;height:72px}
+.edit-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px;background:var(--l)}
+.edit-thumb .x{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#c0392b;color:white;border:0;font-size:12px;cursor:pointer;line-height:20px;text-align:center;padding:0}
+.add-photo{width:72px;height:72px;border:1px dashed var(--l);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--m);cursor:pointer}
+.req-msg{font-size:14px;margin:6px 0;background:#faf7f0;border:1px solid var(--l);border-radius:8px;padding:10px}
 </style></head><body>
 <div class="wrap">
 <div id="gate" class="gate">
   <h1 style="text-align:center">관리자 로그인</h1>
   <input type="password" id="pwInput" placeholder="비밀번호">
   <button id="pwBtn">입장</button>
-  <p class="msg" id="gateMsg"></p>
+  <p class="msg" id="gateMsg" style="font-size:13px;color:#c0392b;margin-top:8px;display:none"></p>
 </div>
 <div id="panel" style="display:none">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-    <h1 style="margin:0">승인 대기중인 작품</h1>
+    <h1 style="margin:0">갤러리 관리</h1>
     <button id="logoutBtn" style="padding:8px 14px;border-radius:16px;border:1px solid var(--l);background:white;font-size:12px;cursor:pointer;color:var(--m)">로그아웃</button>
   </div>
   <a href="index.html" style="display:inline-block;margin-bottom:16px;color:var(--m);font-size:13px;text-decoration:none">← 갤러리로 돌아가기</a>
+  <div class="tabs">
+    <div class="tab on" data-tab="pending">승인 대기</div>
+    <div class="tab" data-tab="approved">승인됨</div>
+    <div class="tab" data-tab="requests">수정 요청</div>
+  </div>
   <div id="list"></div>
 </div>
 </div>
 <script>
 const API = "https://colorm-gallery-admin.milan71.workers.dev";
 const SUPABASE_URL = "https://cdrbxkwouxihsxzhhnbz.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_9BNpTY7OIbFN7iMmCg9TlQ_Glu4_s9G";
+const CATEGORIES = ["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"];
 let pw = sessionStorage.getItem("cmGalleryAdminPw") || "";
+let currentTab = "pending";
 
 function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-function imageUrl(path){
-  return `${SUPABASE_URL}/storage/v1/object/public/gallery-images/${path}`;
-}
+function imageUrl(path){ return `${SUPABASE_URL}/storage/v1/object/public/gallery-images/${path}`; }
 
 async function api(path, opts={}){
   const res = await fetch(API + path, {
@@ -62,53 +79,214 @@ async function api(path, opts={}){
   return data;
 }
 
-function renderItem(item){
+function compressImage(file){
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const maxW = 1600;
+        const scale = Math.min(1, maxW / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.85);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function blobToBase64(blob){
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+}
+
+function renderItemView(item, tab){
   const div = document.createElement("div");
   div.className = "item";
   div.innerHTML = `
-    <div class="thumbs">${(item.image_paths||[]).slice(0,3).map(p=>`<img src="${esc(imageUrl(p))}">`).join("")}</div>
-    <div class="info">
-      <h3>${esc(item.title)}</h3>
-      <p>by ${esc(item.nickname)} · ${esc(item.maker_type)} · ${esc(item.category||"")}</p>
-      <p>${esc(item.concept||"")}</p>
-      <div class="actions">
-        <button class="btn-approve">승인</button>
-        <button class="btn-reject">거절</button>
-        <button class="btn-delete">삭제</button>
+    <div class="item-row">
+      <div class="thumbs">${(item.image_paths||[]).slice(0,3).map(p=>`<img src="${esc(imageUrl(p))}">`).join("")}</div>
+      <div class="info">
+        <h3>${esc(item.title)}</h3>
+        <p>by ${esc(item.nickname)} · ${esc(item.maker_type)} · ${esc(item.category||"")}</p>
+        <p>${esc(item.concept||"")}</p>
+        <div class="actions">
+          ${tab === "pending" ? `<button class="btn-approve">승인</button><button class="btn-reject">거절</button>` : ""}
+          <button class="btn-edit">수정</button>
+          <button class="btn-delete">삭제</button>
+        </div>
       </div>
     </div>
   `;
-  div.querySelector(".btn-approve").onclick = async () => {
-    await api("/approve", { method:"POST", body: JSON.stringify({ id: item.id }) });
-    load();
-  };
-  div.querySelector(".btn-reject").onclick = async () => {
-    await api("/reject", { method:"POST", body: JSON.stringify({ id: item.id }) });
-    load();
-  };
+  const row = div.querySelector(".item-row");
+  if(tab === "pending"){
+    div.querySelector(".btn-approve").onclick = async () => { await api("/approve", { method:"POST", body: JSON.stringify({ id: item.id }) }); load(currentTab); };
+    div.querySelector(".btn-reject").onclick = async () => { await api("/reject", { method:"POST", body: JSON.stringify({ id: item.id }) }); load(currentTab); };
+  }
   div.querySelector(".btn-delete").onclick = async () => {
     if(!confirm("정말 삭제할까요? 이미지도 함께 삭제되고 되돌릴 수 없어요.")) return;
     await api("/delete", { method:"POST", body: JSON.stringify({ id: item.id }) });
-    load();
+    load(currentTab);
+  };
+  div.querySelector(".btn-edit").onclick = () => {
+    div.replaceWith(renderItemEdit(item, tab));
   };
   return div;
 }
 
-async function load(){
+function renderItemEdit(item, tab){
+  const div = document.createElement("div");
+  div.className = "item";
+  const state = {
+    keptPaths: [...(item.image_paths||[])],
+    newBlobs: []
+  };
+  const catOptions = CATEGORIES.map(c => `<option value="${esc(c)}" ${c===item.category?"selected":""}>${esc(c)}</option>`).join("");
+  div.innerHTML = `
+    <div class="edit-form">
+      <label>작품명</label><input id="f_title" value="${esc(item.title)}">
+      <label>닉네임</label><input id="f_nickname" value="${esc(item.nickname)}">
+      <label>한 줄 컨셉</label><textarea id="f_concept">${esc(item.concept||"")}</textarea>
+      <label>카테고리</label><select id="f_category">${catOptions}</select>
+      <label>태그 (쉼표로 구분)</label><input id="f_tags" value="${esc((item.tags||[]).join(", "))}">
+      <label>사진 (최대 3장)</label>
+      <div class="edit-thumbs" id="editThumbs"></div>
+      <input type="file" id="addPhotoInput" accept="image/*" style="display:none">
+      <div class="actions" style="margin-top:14px">
+        <button class="btn-approve" id="saveBtn">저장</button>
+        <button class="btn-delete" id="cancelBtn">취소</button>
+      </div>
+      <p class="msg" style="font-size:12px;color:#c0392b;display:none" id="editMsg"></p>
+    </div>
+  `;
+
+  function renderThumbs(){
+    const box = div.querySelector("#editThumbs");
+    box.innerHTML = "";
+    state.keptPaths.forEach(p => {
+      const t = document.createElement("div");
+      t.className = "edit-thumb";
+      t.innerHTML = `<img src="${esc(imageUrl(p))}"><button class="x" type="button">×</button>`;
+      t.querySelector(".x").onclick = () => { state.keptPaths = state.keptPaths.filter(x => x !== p); renderThumbs(); };
+      box.appendChild(t);
+    });
+    state.newBlobs.forEach((blob, i) => {
+      const t = document.createElement("div");
+      t.className = "edit-thumb";
+      t.innerHTML = `<img src="${URL.createObjectURL(blob)}"><button class="x" type="button">×</button>`;
+      t.querySelector(".x").onclick = () => { state.newBlobs.splice(i,1); renderThumbs(); };
+      box.appendChild(t);
+    });
+    if(state.keptPaths.length + state.newBlobs.length < 3){
+      const add = document.createElement("div");
+      add.className = "add-photo";
+      add.textContent = "+";
+      add.onclick = () => div.querySelector("#addPhotoInput").click();
+      box.appendChild(add);
+    }
+  }
+  renderThumbs();
+
+  div.querySelector("#addPhotoInput").addEventListener("change", async (ev) => {
+    const f = ev.target.files && ev.target.files[0];
+    if(!f) return;
+    const blob = await compressImage(f);
+    state.newBlobs.push(blob);
+    renderThumbs();
+    ev.target.value = "";
+  });
+
+  div.querySelector("#cancelBtn").onclick = () => { div.replaceWith(renderItemView(item, tab)); };
+
+  div.querySelector("#saveBtn").onclick = async () => {
+    const btn = div.querySelector("#saveBtn");
+    btn.disabled = true; btn.textContent = "저장 중...";
+    try {
+      const removed = (item.image_paths||[]).filter(p => !state.keptPaths.includes(p));
+      for(const p of removed){
+        await api("/remove-image", { method:"POST", body: JSON.stringify({ id: item.id, path: p }) });
+      }
+      for(const blob of state.newBlobs){
+        const b64 = await blobToBase64(blob);
+        await api("/add-image", { method:"POST", body: JSON.stringify({ id: item.id, imageBase64: b64 }) });
+      }
+      const tags = div.querySelector("#f_tags").value.split(",").map(t=>t.trim()).filter(Boolean);
+      await api("/update", { method:"POST", body: JSON.stringify({
+        id: item.id,
+        title: div.querySelector("#f_title").value.trim(),
+        nickname: div.querySelector("#f_nickname").value.trim(),
+        concept: div.querySelector("#f_concept").value.trim(),
+        category: div.querySelector("#f_category").value,
+        tags,
+        maker_type: item.maker_type
+      })});
+      load(currentTab);
+    } catch(e){
+      const m = div.querySelector("#editMsg");
+      m.textContent = e.message;
+      m.style.display = "block";
+      btn.disabled = false; btn.textContent = "저장";
+    }
+  };
+
+  return div;
+}
+
+function renderRequest(req){
+  const div = document.createElement("div");
+  div.className = "item";
+  const sub = req.submissions || {};
+  div.innerHTML = `
+    <h3 style="margin:0 0 4px;font-size:15px">${esc(sub.title || "(삭제된 작품)")}</h3>
+    <p style="margin:2px 0;font-size:12px;color:var(--m)">by ${esc(sub.nickname||"")} · 요청일 ${new Date(req.created_at).toLocaleDateString()}</p>
+    <div class="req-msg">${esc(req.message)}</div>
+    ${req.contact ? `<p style="margin:2px 0;font-size:12px;color:var(--m)">연락처: ${esc(req.contact)}</p>` : ""}
+    <div class="actions">
+      <button class="btn-approve">완료 처리</button>
+      <button class="btn-delete">삭제</button>
+    </div>
+  `;
+  div.querySelector(".btn-approve").onclick = async () => { await api("/requests/done", { method:"POST", body: JSON.stringify({ id: req.id }) }); load(currentTab); };
+  div.querySelector(".btn-delete").onclick = async () => {
+    if(!confirm("삭제할까요?")) return;
+    await api("/requests/delete", { method:"POST", body: JSON.stringify({ id: req.id }) });
+    load(currentTab);
+  };
+  return div;
+}
+
+async function load(tab){
+  currentTab = tab;
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
   const list = document.getElementById("list");
   list.innerHTML = `<div class="empty">불러오는 중...</div>`;
   try {
-    const items = await api("/pending");
+    if(tab === "requests"){
+      const items = await api("/requests");
+      if(!items.length){ list.innerHTML = `<div class="empty">수정 요청이 없어요.</div>`; return; }
+      list.innerHTML = "";
+      items.forEach(r => list.appendChild(renderRequest(r)));
+      return;
+    }
+    const items = await api(tab === "pending" ? "/pending" : "/approved");
     if(!items.length){
-      list.innerHTML = `<div class="empty">승인 대기중인 작품이 없어요.</div>`;
+      list.innerHTML = `<div class="empty">${tab === "pending" ? "승인 대기중인 작품이 없어요." : "승인된 작품이 없어요."}</div>`;
       return;
     }
     list.innerHTML = "";
-    items.forEach(item => list.appendChild(renderItem(item)));
+    items.forEach(item => list.appendChild(renderItemView(item, tab)));
   } catch(e){
     list.innerHTML = `<div class="empty">${esc(e.message)}</div>`;
   }
 }
+
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => load(t.dataset.tab));
 
 document.getElementById("pwBtn").onclick = async () => {
   pw = document.getElementById("pwInput").value;
@@ -117,7 +295,7 @@ document.getElementById("pwBtn").onclick = async () => {
     sessionStorage.setItem("cmGalleryAdminPw", pw);
     document.getElementById("gate").style.display = "none";
     document.getElementById("panel").style.display = "block";
-    load();
+    load("pending");
   } catch(e){
     document.getElementById("gateMsg").textContent = "비밀번호가 틀렸어요.";
     document.getElementById("gateMsg").style.display = "block";
@@ -132,7 +310,7 @@ document.getElementById("logoutBtn").onclick = () => {
 if(pw){
   document.getElementById("gate").style.display = "none";
   document.getElementById("panel").style.display = "block";
-  load();
+  load("pending");
 }
 </script>
 </body></html>
