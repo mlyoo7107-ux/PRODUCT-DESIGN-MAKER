@@ -47,7 +47,7 @@ h2{font-size:22px;font-weight:900;margin:0 0 24px}
 .plans{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;align-items:stretch}
 @media(max-width:640px){.plans{grid-template-columns:1fr}}
 .plan{background:white;border:1px solid var(--l);border-radius:20px;padding:28px 22px;text-align:center;display:flex;flex-direction:column;position:relative}
-.plan.pro{border:2px solid var(--a);box-shadow:0 8px 24px rgba(255,45,134,.1)}
+.plan.basic{border:2px solid var(--a);box-shadow:0 8px 24px rgba(255,45,134,.1)}
 .plan .plan-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--a);color:white;font-weight:bold;font-size:12px;padding:6px 16px;border-radius:20px;white-space:nowrap}
 .plan .plan-name{font-size:22px;font-weight:900;margin-top:6px}
 .plan .plan-sub{color:var(--m);font-size:13px;margin:4px 0 18px}
@@ -152,6 +152,7 @@ footer img{max-width:130px}
 
 <div class="plans">
 <div class="plan basic">
+<div class="plan-badge">⭐ 지금 바로 이용 가능</div>
 <div class="plan-name">BASIC</div>
 <div class="plan-sub">프롬프트 메이커</div>
 <p class="plan-desc">좋은 아이디어를 만드는<br>가장 쉬운 방법</p>
@@ -177,7 +178,6 @@ footer img{max-width:130px}
 </div>
 
 <div class="plan pro">
-<div class="plan-badge">⭐ BEST 추천</div>
 <div class="plan-name">PRO</div>
 <div class="plan-sub">AI 디자인 스튜디오</div>
 <p class="plan-desc">아이디어를 넘어,<br>바로 눈에 보이는 디자인까지</p>
