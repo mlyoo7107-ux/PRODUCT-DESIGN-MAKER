@@ -105,6 +105,7 @@ function shareKakao(item, imgUrl){
           <button class="share-btn" onclick="copyLink()">🔗 링크 복사</button>
           <button class="share-btn" id="kakaoBtn">💬 카카오톡 공유</button>
         </div>
+        <a href="request-edit.html?id=${esc(data.id)}&title=${esc(encodeURIComponent(data.title))}" style="display:block;text-align:center;margin-top:14px;color:var(--m);font-size:12px;text-decoration:underline">✏️ 내 작품 내용 수정 요청하기</a>
       </div>
     </div>
   `;
