@@ -1,0 +1,129 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>갤러리 관리자 — COLOR.M GALLERY</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<style>
+:root{--a:#ff2d86;--b:#f5f1e8;--l:#e8e1d3;--t:#171512;--m:#7a7268}
+*{box-sizing:border-box}
+body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
+.wrap{max-width:720px;margin:auto;padding:24px 20px 60px}
+h1{font-size:20px;margin:0 0 18px}
+.gate{background:white;border:1px solid var(--l);border-radius:16px;padding:24px;max-width:360px;margin:80px auto}
+.gate input{width:100%;padding:11px;border:1px solid #e3ddd0;border-radius:9px;font-size:14px;margin:10px 0}
+.gate button{width:100%;padding:12px;background:var(--a);color:white;border:0;border-radius:22px;font-weight:bold;cursor:pointer}
+.item{background:white;border:1px solid var(--l);border-radius:16px;padding:16px;margin-bottom:14px;display:flex;gap:14px}
+.item img{width:90px;height:90px;object-fit:cover;border-radius:10px;background:var(--l);flex:none}
+.thumbs{display:flex;gap:6px;flex:none}
+.info{flex:1;min-width:0}
+.info h3{margin:0 0 4px;font-size:15px}
+.info p{margin:2px 0;font-size:12px;color:var(--m)}
+.actions{display:flex;gap:6px;margin-top:10px}
+.actions button{padding:8px 14px;border-radius:16px;border:1px solid var(--l);background:white;font-size:12px;font-weight:bold;cursor:pointer}
+.btn-approve{color:#1a8a4a;border-color:#1a8a4a}
+.btn-reject{color:#b8860b;border-color:#b8860b}
+.btn-delete{color:#c0392b;border-color:#c0392b}
+.empty{text-align:center;padding:60px 20px;color:var(--m)}
+.msg{font-size:13px;color:#c0392b;margin-top:8px;display:none}
+</style></head><body>
+<div class="wrap">
+<div id="gate" class="gate">
+  <h1 style="text-align:center">관리자 로그인</h1>
+  <input type="password" id="pwInput" placeholder="비밀번호">
+  <button id="pwBtn">입장</button>
+  <p class="msg" id="gateMsg"></p>
+</div>
+<div id="panel" style="display:none">
+  <h1>승인 대기중인 작품</h1>
+  <div id="list"></div>
+</div>
+</div>
+<script>
+const API = "https://colorm-gallery-admin.milan71.workers.dev";
+const SUPABASE_URL = "https://cdrbxkwouxihsxzhhnbz.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_9BNpTY7OIbFN7iMmCg9TlQ_Glu4_s9G";
+let pw = sessionStorage.getItem("cmGalleryAdminPw") || "";
+
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function imageUrl(path){
+  return `${SUPABASE_URL}/storage/v1/object/public/gallery-images/${path}`;
+}
+
+async function api(path, opts={}){
+  const res = await fetch(API + path, {
+    ...opts,
+    headers: { "Content-Type": "application/json", "x-admin-password": pw, ...(opts.headers||{}) }
+  });
+  const data = await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(data.error || "요청 실패");
+  return data;
+}
+
+function renderItem(item){
+  const div = document.createElement("div");
+  div.className = "item";
+  div.innerHTML = `
+    <div class="thumbs">${(item.image_paths||[]).slice(0,3).map(p=>`<img src="${esc(imageUrl(p))}">`).join("")}</div>
+    <div class="info">
+      <h3>${esc(item.title)}</h3>
+      <p>by ${esc(item.nickname)} · ${esc(item.maker_type)} · ${esc(item.category||"")}</p>
+      <p>${esc(item.concept||"")}</p>
+      <div class="actions">
+        <button class="btn-approve">승인</button>
+        <button class="btn-reject">거절</button>
+        <button class="btn-delete">삭제</button>
+      </div>
+    </div>
+  `;
+  div.querySelector(".btn-approve").onclick = async () => {
+    await api("/approve", { method:"POST", body: JSON.stringify({ id: item.id }) });
+    load();
+  };
+  div.querySelector(".btn-reject").onclick = async () => {
+    await api("/reject", { method:"POST", body: JSON.stringify({ id: item.id }) });
+    load();
+  };
+  div.querySelector(".btn-delete").onclick = async () => {
+    if(!confirm("정말 삭제할까요? 이미지도 함께 삭제되고 되돌릴 수 없어요.")) return;
+    await api("/delete", { method:"POST", body: JSON.stringify({ id: item.id }) });
+    load();
+  };
+  return div;
+}
+
+async function load(){
+  const list = document.getElementById("list");
+  list.innerHTML = `<div class="empty">불러오는 중...</div>`;
+  try {
+    const items = await api("/pending");
+    if(!items.length){
+      list.innerHTML = `<div class="empty">승인 대기중인 작품이 없어요.</div>`;
+      return;
+    }
+    list.innerHTML = "";
+    items.forEach(item => list.appendChild(renderItem(item)));
+  } catch(e){
+    list.innerHTML = `<div class="empty">${esc(e.message)}</div>`;
+  }
+}
+
+document.getElementById("pwBtn").onclick = async () => {
+  pw = document.getElementById("pwInput").value;
+  try {
+    await api("/pending");
+    sessionStorage.setItem("cmGalleryAdminPw", pw);
+    document.getElementById("gate").style.display = "none";
+    document.getElementById("panel").style.display = "block";
+    load();
+  } catch(e){
+    document.getElementById("gateMsg").textContent = "비밀번호가 틀렸어요.";
+    document.getElementById("gateMsg").style.display = "block";
+  }
+};
+
+if(pw){
+  document.getElementById("gate").style.display = "none";
+  document.getElementById("panel").style.display = "block";
+  load();
+}
+</script>
+</body></html>
