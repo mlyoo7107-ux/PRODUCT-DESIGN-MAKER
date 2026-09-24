@@ -98,6 +98,9 @@ const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const BUCKET = "gallery-images";
 const CATEGORIES = ["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"];
 
+const prefillTitle = new URLSearchParams(location.search).get("title");
+if(prefillTitle) document.getElementById("title").value = prefillTitle.slice(0, 40);
+
 const catSelect = document.getElementById("category");
 CATEGORIES.forEach(c => {
   const opt = document.createElement("option");
