@@ -1,0 +1,187 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>내 작품 자랑하기 — COLOR.M GALLERY</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--a:#ff2d86;--b:#f5f1e8;--l:#e8e1d3;--t:#171512;--m:#7a7268}
+*{box-sizing:border-box}
+body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
+.wrap{max-width:560px;margin:auto;padding:0 20px}
+header{text-align:center;padding:40px 20px 24px}
+header small{color:var(--a);font-weight:bold;letter-spacing:2px}
+header h1{margin:8px 0;font-size:24px;font-weight:900}
+header p{color:var(--m);margin:0;font-size:14px}
+.card{background:white;border:1px solid var(--l);border-radius:18px;padding:24px;margin:16px 0;box-shadow:0 2px 8px rgba(23,21,18,.05)}
+label{font-size:13px;font-weight:bold;display:block;margin:16px 0 6px}
+label:first-child{margin-top:0}
+input,textarea,select{width:100%;padding:11px;border:1px solid #e3ddd0;border-radius:9px;font-size:14px;font-family:inherit}
+textarea{min-height:70px;resize:vertical}
+.hint{font-size:12px;color:var(--m);margin:4px 0 0}
+.preview{margin-top:10px;max-width:100%;border-radius:10px;display:none;border:1px solid var(--l)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{padding:9px 12px;border:1px solid var(--l);border-radius:20px;font-size:13px;cursor:pointer}
+.tab.on{background:var(--a);color:white;border-color:var(--a);font-weight:bold}
+.agree{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.5;background:#faf7f0;border:1px solid var(--l);border-radius:10px;padding:12px 14px;margin-top:20px;cursor:pointer}
+.agree input{width:18px;height:18px;margin-top:2px;flex:none;accent-color:var(--a)}
+.go{width:100%;padding:16px;background:var(--a);color:white;border:0;border-radius:28px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:18px}
+.go:hover{background:#e0247a}
+.go:disabled{background:#d9d3c7;cursor:not-allowed}
+.back{display:block;text-align:center;margin-top:14px;color:var(--m);font-size:13px;text-decoration:none}
+.msg{font-size:13px;color:#c0392b;margin-top:10px;display:none}
+.success{text-align:center;padding:40px 10px}
+.success .icon{font-size:44px}
+footer{text-align:center;padding:30px 15px 40px}
+footer img{max-width:120px;opacity:.85}
+</style></head><body>
+<div class="wrap">
+<header>
+<small>COLOR.M · GALLERY</small>
+<h1>내 작품 자랑하기</h1>
+<p>Maker로 만든 결과물을 갤러리에 올려보세요. 검토 후 공개돼요.</p>
+</header>
+
+<div class="card" id="formCard">
+<form id="uploadForm">
+<label>작품 이미지 *</label>
+<input type="file" id="imageFile" accept="image/*" required>
+<img id="preview" class="preview">
+<p class="hint">외부 AI 이미지 생성 도구로 만든 결과물을 첨부해주세요. (5MB 이하로 자동 압축돼요)</p>
+
+<label>작품명 *</label>
+<input type="text" id="title" placeholder="예: 캠핑용 모기퇴치 조명" required maxlength="40">
+
+<label>닉네임 *</label>
+<input type="text" id="nickname" placeholder="갤러리에 표시될 이름" required maxlength="20">
+
+<label>사용한 Maker *</label>
+<div class="tabs" id="makerTabs">
+<div class="tab on" data-v="BASIC">BASIC</div>
+<div class="tab" data-v="PRO">PRO</div>
+</div>
+
+<label>한 줄 컨셉</label>
+<textarea id="concept" placeholder="이 작품을 한 줄로 소개해주세요" maxlength="150"></textarea>
+
+<label>카테고리 *</label>
+<select id="category" required>
+<option value="" disabled selected>선택해주세요</option>
+</select>
+
+<label>태그 (쉼표로 구분)</label>
+<input type="text" id="tags" placeholder="예: 캠핑, 조명, 모듈형">
+
+<label class="agree"><input type="checkbox" id="consent"><span>업로드한 이미지와 정보가 <b>COLOR.M MAKER GALLERY에 공개</b>되는 것에 동의합니다. 부적절한 이미지는 승인되지 않을 수 있어요. <span style="color:var(--a)">(필수)</span></span></label>
+
+<p class="msg" id="errMsg"></p>
+<button type="submit" class="go" id="submitBtn">제출하기</button>
+</form>
+<a class="back" href="index.html">← 갤러리로 돌아가기</a>
+</div>
+
+<div class="card success" id="successCard" style="display:none">
+<div class="icon">🎉</div>
+<h2 style="margin:12px 0 8px">제출됐어요!</h2>
+<p style="color:var(--m);font-size:14px">관리자 검토 후 갤러리에 공개돼요. 조금만 기다려주세요.</p>
+<a class="go" href="index.html" style="display:block;text-decoration:none;margin-top:20px">갤러리로 가기 →</a>
+</div>
+</div>
+<footer><img src="../logo-colorm.png" alt="COLOR.M"></footer>
+<script>
+const SUPABASE_URL = "https://cdrbxkwouxihsxzhhnbz.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_9BNpTY7OIbFN7iMmCg9TlQ_Glu4_s9G";
+const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const BUCKET = "gallery-images";
+const CATEGORIES = ["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"];
+
+const catSelect = document.getElementById("category");
+CATEGORIES.forEach(c => {
+  const opt = document.createElement("option");
+  opt.value = c; opt.textContent = c;
+  catSelect.appendChild(opt);
+});
+
+let makerType = "BASIC";
+document.querySelectorAll("#makerTabs .tab").forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll("#makerTabs .tab").forEach(t => t.classList.remove("on"));
+    tab.classList.add("on");
+    makerType = tab.dataset.v;
+  };
+});
+
+let compressedBlob = null;
+document.getElementById("imageFile").addEventListener("change", (ev) => {
+  const f = ev.target.files && ev.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const maxW = 1600;
+      const scale = Math.min(1, maxW / img.width);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => {
+        compressedBlob = blob;
+        const preview = document.getElementById("preview");
+        preview.src = URL.createObjectURL(blob);
+        preview.style.display = "block";
+      }, "image/jpeg", 0.85);
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(f);
+});
+
+function showError(msg){
+  const el = document.getElementById("errMsg");
+  el.textContent = msg;
+  el.style.display = "block";
+}
+
+document.getElementById("uploadForm").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  document.getElementById("errMsg").style.display = "none";
+
+  const title = document.getElementById("title").value.trim();
+  const nickname = document.getElementById("nickname").value.trim();
+  const concept = document.getElementById("concept").value.trim();
+  const category = document.getElementById("category").value;
+  const tagsRaw = document.getElementById("tags").value.trim();
+  const tags = tagsRaw ? tagsRaw.split(",").map(t => t.trim()).filter(Boolean) : [];
+  const consent = document.getElementById("consent").checked;
+
+  if(!compressedBlob) return showError("작품 이미지를 첨부해주세요.");
+  if(!title || !nickname || !category) return showError("필수 항목(*)을 모두 입력해주세요.");
+  if(!consent) return showError("공개 동의(필수)를 체크해주세요.");
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true; btn.textContent = "제출 중...";
+
+  try {
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}.jpg`;
+    const { error: uploadErr } = await supa.storage.from(BUCKET).upload(path, compressedBlob, {
+      contentType: "image/jpeg",
+      upsert: false
+    });
+    if(uploadErr) throw uploadErr;
+
+    const { error: insertErr } = await supa.from("submissions").insert({
+      title, nickname, maker_type: makerType, concept, category, tags,
+      image_path: path, consent: true, status: "pending"
+    });
+    if(insertErr) throw insertErr;
+
+    document.getElementById("formCard").style.display = "none";
+    document.getElementById("successCard").style.display = "block";
+  } catch(e) {
+    console.error(e);
+    showError("제출 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.");
+    btn.disabled = false; btn.textContent = "제출하기";
+  }
+});
+</script>
+</body></html>
