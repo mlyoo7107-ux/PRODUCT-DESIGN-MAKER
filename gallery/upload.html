@@ -187,7 +187,7 @@ document.getElementById("uploadForm").addEventListener("submit", async (ev) => {
 
     const { error: insertErr } = await supa.from("submissions").insert({
       title, nickname, maker_type: makerType, concept, category, tags,
-      image_paths: paths, consent: true, status: "pending"
+      image_paths: paths, consent: true, status: "pending", product: "PRODUCT_DESIGN"
     });
     if(insertErr) throw insertErr;
 
