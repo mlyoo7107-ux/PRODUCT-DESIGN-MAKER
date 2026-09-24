@@ -1,0 +1,114 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>작품 상세 — COLOR.M GALLERY</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
+<style>
+:root{--a:#ff2d86;--b:#f5f1e8;--l:#e8e1d3;--t:#171512;--m:#7a7268}
+*{box-sizing:border-box}
+body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
+.wrap{max-width:640px;margin:auto;padding:24px 20px 60px}
+.back{display:inline-block;margin-bottom:16px;color:var(--m);font-size:13px;text-decoration:none}
+.card{background:white;border:1px solid var(--l);border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(23,21,18,.05)}
+.card img{width:100%;height:auto;display:block;background:var(--l)}
+.body{padding:22px}
+.maker-badge{display:inline-block;font-size:11px;font-weight:bold;padding:3px 10px;border-radius:12px;margin-bottom:10px}
+.maker-badge.basic{background:#eee;color:var(--m)}
+.maker-badge.pro{background:var(--a);color:white}
+h1{font-size:21px;margin:0 0 6px}
+.nick{color:var(--m);font-size:13px;margin:0 0 16px}
+.concept{font-size:15px;line-height:1.6;margin:0 0 16px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.meta span{background:#faf7f0;border:1px solid var(--l);border-radius:14px;padding:5px 12px;font-size:12px;color:var(--m)}
+.go{display:block;width:100%;padding:15px;background:var(--a);color:white;border:0;border-radius:26px;font-size:15px;font-weight:bold;cursor:pointer;text-align:center;text-decoration:none;margin-top:6px}
+.go:hover{background:#e0247a}
+.share-row{display:flex;gap:8px;margin-top:10px}
+.share-btn{flex:1;padding:12px;border:1px solid var(--l);border-radius:20px;background:white;font-size:13px;cursor:pointer;text-align:center}
+.share-btn:hover{border-color:var(--a);color:var(--a)}
+.state{text-align:center;padding:100px 20px;color:var(--m)}
+footer{text-align:center;padding:30px 15px 40px}
+footer img{max-width:120px;opacity:.85}
+</style></head><body>
+<div class="wrap">
+<a class="back" href="index.html">← 갤러리로</a>
+<div id="content"><div class="state">불러오는 중...</div></div>
+</div>
+<footer><img src="../logo-colorm.png" alt="COLOR.M"></footer>
+<script>
+const SUPABASE_URL = "https://cdrbxkwouxihsxzhhnbz.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_9BNpTY7OIbFN7iMmCg9TlQ_Glu4_s9G";
+const KAKAO_JS_KEY = ""; // 카카오 디벨로퍼스에서 발급받은 JavaScript 키. 채워지면 카카오톡 공유가 활성화돼요.
+const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const BUCKET = "gallery-images";
+
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function imageUrl(path){ return supa.storage.from(BUCKET).getPublicUrl(path).data.publicUrl; }
+
+function copyLink(){
+  navigator.clipboard.writeText(location.href)
+    .then(()=>alert("링크가 복사됐어요!"))
+    .catch(()=>alert("복사에 실패했어요. 주소를 직접 선택해서 복사해주세요."));
+}
+function shareKakao(item, imgUrl){
+  if(!KAKAO_JS_KEY){
+    copyLink();
+    return;
+  }
+  if(!window.Kakao.isInitialized()) window.Kakao.init(KAKAO_JS_KEY);
+  window.Kakao.Share.sendDefault({
+    objectType: "feed",
+    content: {
+      title: item.title,
+      description: item.concept || "COLOR.M MAKER GALLERY",
+      imageUrl: imgUrl,
+      link: { mobileWebUrl: location.href, webUrl: location.href }
+    },
+    buttons: [{ title: "작품 보러가기", link: { mobileWebUrl: location.href, webUrl: location.href } }]
+  });
+}
+
+(async function(){
+  const id = new URLSearchParams(location.search).get("id");
+  const content = document.getElementById("content");
+  if(!id){
+    content.innerHTML = `<div class="state">작품을 찾을 수 없어요.</div>`;
+    return;
+  }
+  const { data, error } = await supa
+    .from("submissions")
+    .select("id,title,nickname,maker_type,concept,category,tags,image_path,created_at")
+    .eq("id", id)
+    .eq("status", "approved")
+    .maybeSingle();
+
+  if(error || !data){
+    content.innerHTML = `<div class="state">작품을 찾을 수 없거나 아직 공개되지 않았어요.</div>`;
+    return;
+  }
+
+  const imgUrl = imageUrl(data.image_path);
+  content.innerHTML = `
+    <div class="card">
+      <img src="${esc(imgUrl)}" alt="${esc(data.title)}">
+      <div class="body">
+        <span class="maker-badge ${data.maker_type==='PRO'?'pro':'basic'}">${esc(data.maker_type)}</span>
+        <h1>${esc(data.title)}</h1>
+        <p class="nick">by ${esc(data.nickname)}</p>
+        ${data.concept ? `<p class="concept">${esc(data.concept)}</p>` : ""}
+        <div class="meta">
+          ${data.category ? `<span>${esc(data.category)}</span>` : ""}
+          ${(data.tags||[]).map(t=>`<span>#${esc(t)}</span>`).join("")}
+        </div>
+        <a class="go" href="../landing.html">✨ 나도 이 Maker로 만들어보기 →</a>
+        <div class="share-row">
+          <button class="share-btn" onclick="copyLink()">🔗 링크 복사</button>
+          <button class="share-btn" id="kakaoBtn">💬 카카오톡 공유</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById("kakaoBtn").onclick = () => shareKakao(data, imgUrl);
+  document.title = data.title + " — COLOR.M GALLERY";
+})();
+</script>
+</body></html>
