@@ -33,7 +33,11 @@ h1{font-size:20px;margin:0 0 18px}
   <p class="msg" id="gateMsg"></p>
 </div>
 <div id="panel" style="display:none">
-  <h1>승인 대기중인 작품</h1>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+    <h1 style="margin:0">승인 대기중인 작품</h1>
+    <button id="logoutBtn" style="padding:8px 14px;border-radius:16px;border:1px solid var(--l);background:white;font-size:12px;cursor:pointer;color:var(--m)">로그아웃</button>
+  </div>
+  <a href="index.html" style="display:inline-block;margin-bottom:16px;color:var(--m);font-size:13px;text-decoration:none">← 갤러리로 돌아가기</a>
   <div id="list"></div>
 </div>
 </div>
@@ -118,6 +122,11 @@ document.getElementById("pwBtn").onclick = async () => {
     document.getElementById("gateMsg").textContent = "비밀번호가 틀렸어요.";
     document.getElementById("gateMsg").style.display = "block";
   }
+};
+
+document.getElementById("logoutBtn").onclick = () => {
+  sessionStorage.removeItem("cmGalleryAdminPw");
+  location.reload();
 };
 
 if(pw){
