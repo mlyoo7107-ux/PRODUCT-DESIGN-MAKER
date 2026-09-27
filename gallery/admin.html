@@ -46,11 +46,13 @@ h1{font-size:20px;margin:0 0 18px}
   <p class="msg" id="gateMsg" style="font-size:13px;color:#c0392b;margin-top:8px;display:none"></p>
 </div>
 <div id="panel" style="display:none">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
     <h1 style="margin:0">갤러리 관리</h1>
-    <button id="logoutBtn" style="padding:8px 14px;border-radius:16px;border:1px solid var(--l);background:white;font-size:12px;cursor:pointer;color:var(--m)">로그아웃</button>
+    <div style="display:flex;gap:6px">
+      <a href="index.html" target="_blank" style="padding:8px 14px;border-radius:16px;border:1px solid var(--a);background:white;font-size:12px;cursor:pointer;color:var(--a);text-decoration:none">🖼️ 갤러리 보기</a>
+      <button id="logoutBtn" style="padding:8px 14px;border-radius:16px;border:1px solid var(--l);background:white;font-size:12px;cursor:pointer;color:var(--m)">로그아웃</button>
+    </div>
   </div>
-  <a href="index.html" style="display:inline-block;margin-bottom:16px;color:var(--m);font-size:13px;text-decoration:none">← 갤러리로 돌아가기</a>
   <div class="tabs">
     <div class="tab on" data-tab="pending">승인 대기</div>
     <div class="tab" data-tab="approved">승인됨</div>
