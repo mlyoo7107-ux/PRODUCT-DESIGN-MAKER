@@ -19,6 +19,10 @@
   <div class="step">PROJECT</div>
   <div class="title">새로운 작업을 시작할까요, 기존 작업을 이어갈까요?</div>
   <p class="hint">이전에 저장한 작업파일(.json)이 있다면 불러와 선택항목과 입력내용을 그대로 이어서 수정할 수 있습니다.</p>
+  <div id="draftNotice" style="display:none;margin-top:14px;padding:14px;background:#fff9e6;border:1px solid #ffd97a;border-radius:12px">
+    ✍️ <b>작성 중이던 내용이 자동 저장되어 있어요</b> (마지막 저장: <span id="draftTime"></span>)
+    <button class="go" style="margin-top:10px" onclick="restoreDraft()">↩️ 이어서 작성하기</button>
+  </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
     <button class="go go-outline" onclick="newProject()">＋ 새 작업 시작</button>
     <button class="go" onclick="document.getElementById('topLoadProject').click()">📂 기존 작업 불러오기</button>
@@ -552,19 +556,35 @@ function newProject(){
  titleSeed=0;titleOptions=["","",""];selectedTitleIdx=0;customTitleText="";pendingRestoredTitle=null;
  const titleCards=document.getElementById("titleCards"); if(titleCards)titleCards.innerHTML="";
  const result=document.getElementById("result"); if(result)result.classList.remove("on");
- try{sessionStorage.removeItem("cmPdmAutosave")}catch(e){}
+ try{localStorage.removeItem("cmPdmAutosave")}catch(e){}
+ const dn=document.getElementById("draftNotice"); if(dn)dn.style.display="none";
  updateOutputUI();
  window.scrollTo({top:0,behavior:"smooth"});
 }
-function autosave(){try{sessionStorage.setItem("cmPdmAutosave",JSON.stringify(collectData()))}catch(e){}}
+function autosave(){try{localStorage.setItem("cmPdmAutosave",JSON.stringify(collectData()))}catch(e){}}
+function restoreDraft(){
+ try{
+  const raw=localStorage.getItem("cmPdmAutosave");
+  if(!raw)return;
+  applyFields(JSON.parse(raw));
+  updateOutputUI();
+  const dn=document.getElementById("draftNotice"); if(dn)dn.style.display="none";
+ }catch(e){}
+}
 document.getElementById("titleEditInput").addEventListener("input",e=>{customTitleText=e.target.value;renderTitleCards()});
 document.querySelector("main").addEventListener("input",autosave);
 document.querySelector("main").addEventListener("click",e=>{if(e.target.classList&&e.target.classList.contains("c"))setTimeout(autosave,0)});
 (function(){
  try{
-  const raw=sessionStorage.getItem("cmPdmAutosave");
-  if(raw)applyFields(JSON.parse(raw));
-  updateOutputUI();
+  const raw=localStorage.getItem("cmPdmAutosave");
+  if(!raw)return;
+  const d=JSON.parse(raw);
+  const hasContent=d.product||d.userText||d.problemText||d.summary;
+  if(!hasContent)return;
+  const dn=document.getElementById("draftNotice");
+  const dt=document.getElementById("draftTime");
+  if(dt)dt.textContent=d.savedAt||"";
+  if(dn)dn.style.display="block";
  }catch(e){}
 })();
 
