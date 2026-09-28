@@ -18,8 +18,15 @@ label:first-child{margin-top:0}
 input,textarea,select{width:100%;padding:11px;border:1px solid #e3ddd0;border-radius:9px;font-size:14px;font-family:inherit}
 textarea{min-height:70px;resize:vertical}
 .hint{font-size:12px;color:var(--m);margin:4px 0 0}
-.preview-row{display:flex;gap:8px;margin-top:10px}
-.preview-row img{width:calc(33.33% - 6px);aspect-ratio:1/1;object-fit:cover;border-radius:10px;border:1px solid var(--l)}
+.preview-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.preview-thumb{position:relative;width:calc(33.33% - 6px);aspect-ratio:1/1;cursor:grab}
+.preview-thumb img{width:100%;height:100%;object-fit:cover;border-radius:10px;border:1px solid var(--l);display:block;pointer-events:none}
+.preview-thumb.dragging{opacity:.4}
+.preview-thumb .order{position:absolute;bottom:4px;left:4px;background:rgba(23,21,18,.6);color:white;font-size:11px;padding:2px 7px;border-radius:8px}
+.preview-thumb .x{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:#c0392b;color:white;border:0;font-size:13px;cursor:pointer;line-height:22px;text-align:center;padding:0}
+.preview-thumb .move-row{position:absolute;bottom:4px;right:4px;display:flex;gap:3px}
+.preview-thumb .mv{width:20px;height:20px;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:var(--t);font-size:11px;cursor:pointer;line-height:20px;text-align:center;padding:0}
+.add-photo-tile{width:calc(33.33% - 6px);aspect-ratio:1/1;border:1px dashed var(--l);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--m);cursor:pointer}
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
 .tab{padding:9px 12px;border:1px solid var(--l);border-radius:20px;font-size:13px;cursor:pointer}
 .tab.on{background:var(--a);color:white;border-color:var(--a);font-weight:bold}
@@ -46,8 +53,8 @@ footer a{color:var(--m)}
 
 <div class="card" id="formCard">
 <form id="uploadForm">
-<label>작품 이미지 * (최대 3장)</label>
-<input type="file" id="imageFile" accept="image/*" multiple required>
+<label>작품 이미지 * (최대 3장, 드래그하거나 화살표로 순서 변경)</label>
+<input type="file" id="imageFile" accept="image/*" multiple style="display:none">
 <div class="preview-row" id="previewRow"></div>
 <p class="hint">외부 AI 이미지 생성 도구로 만든 결과물을 첨부해주세요. 최대 3장까지 올릴 수 있어요. (자동으로 용량이 압축돼요)</p>
 
@@ -139,19 +146,65 @@ function compressImage(file){
   });
 }
 
+let dragIndex = null;
+
+function renderPreviews(){
+  const row = document.getElementById("previewRow");
+  row.innerHTML = "";
+  compressedBlobs.forEach((blob, i) => {
+    const tile = document.createElement("div");
+    tile.className = "preview-thumb";
+    tile.draggable = true;
+    tile.innerHTML = `
+      <img src="${URL.createObjectURL(blob)}">
+      <span class="order">${i + 1}</span>
+      <button type="button" class="x">×</button>
+      <div class="move-row">
+        <button type="button" class="mv" data-dir="-1">◀</button>
+        <button type="button" class="mv" data-dir="1">▶</button>
+      </div>
+    `;
+    tile.querySelector(".x").onclick = () => { compressedBlobs.splice(i, 1); renderPreviews(); };
+    tile.querySelectorAll(".mv").forEach(btn => {
+      btn.onclick = () => {
+        const j = i + parseInt(btn.dataset.dir, 10);
+        if(j < 0 || j >= compressedBlobs.length) return;
+        [compressedBlobs[i], compressedBlobs[j]] = [compressedBlobs[j], compressedBlobs[i]];
+        renderPreviews();
+      };
+    });
+    tile.addEventListener("dragstart", () => { dragIndex = i; tile.classList.add("dragging"); });
+    tile.addEventListener("dragend", () => tile.classList.remove("dragging"));
+    tile.addEventListener("dragover", (e) => e.preventDefault());
+    tile.addEventListener("drop", (e) => {
+      e.preventDefault();
+      if(dragIndex === null || dragIndex === i) return;
+      const [moved] = compressedBlobs.splice(dragIndex, 1);
+      compressedBlobs.splice(i, 0, moved);
+      dragIndex = null;
+      renderPreviews();
+    });
+    row.appendChild(tile);
+  });
+  if(compressedBlobs.length < 3){
+    const add = document.createElement("div");
+    add.className = "add-photo-tile";
+    add.textContent = "+";
+    add.onclick = () => document.getElementById("imageFile").click();
+    row.appendChild(add);
+  }
+}
+renderPreviews();
+
 document.getElementById("imageFile").addEventListener("change", async (ev) => {
-  const files = Array.from(ev.target.files || []).slice(0, 3);
-  if(files.length === 0) return;
-  compressedBlobs = [];
-  const previewRow = document.getElementById("previewRow");
-  previewRow.innerHTML = "";
-  for(const f of files){
+  const files = Array.from(ev.target.files || []);
+  const remaining = 3 - compressedBlobs.length;
+  for(const f of files.slice(0, remaining)){
     const blob = await compressImage(f);
     compressedBlobs.push(blob);
-    const img = document.createElement("img");
-    img.src = URL.createObjectURL(blob);
-    previewRow.appendChild(img);
   }
+  renderPreviews();
+  ev.target.value = "";
 });
 
 function showError(msg){
