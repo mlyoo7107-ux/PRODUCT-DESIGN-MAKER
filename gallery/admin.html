@@ -142,7 +142,7 @@ function renderItemView(item, tab){
   return div;
 }
 
-function renderItemEdit(item, tab, onSaved){
+function renderItemEdit(item, tab, onSaved, attachedImagePath){
   const div = document.createElement("div");
   div.className = "item";
   const state = {
@@ -194,6 +194,13 @@ function renderItemEdit(item, tab, onSaved){
     }
   }
   renderThumbs();
+
+  if(attachedImagePath && state.keptPaths.length + state.newBlobs.length < 3){
+    fetch(imageUrl(attachedImagePath))
+      .then(r => r.blob())
+      .then(blob => { state.newBlobs.push(blob); renderThumbs(); })
+      .catch(() => {});
+  }
 
   div.querySelector("#addPhotoInput").addEventListener("change", async (ev) => {
     const f = ev.target.files && ev.target.files[0];
@@ -249,7 +256,8 @@ function renderRequest(req){
     <h3 style="margin:0 0 4px;font-size:15px">${esc(sub.title || "(삭제된 작품)")}</h3>
     <p style="margin:2px 0;font-size:12px;color:var(--m)">by ${esc(sub.nickname||"")} · 요청일 ${new Date(req.created_at).toLocaleDateString()}</p>
     <div class="req-msg">${esc(req.message)}</div>
-    ${req.contact ? `<p style="margin:2px 0;font-size:12px;color:var(--m)">연락처: ${esc(req.contact)}</p>` : ""}
+    ${req.image_path ? `<p style="margin:8px 0 4px;font-size:12px;font-weight:bold">📎 요청자가 첨부한 새 사진</p><img src="${esc(imageUrl(req.image_path))}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;border:1px solid var(--l)">` : ""}
+    ${req.contact ? `<p style="margin:8px 0 0;font-size:12px;color:var(--m)">연락처: ${esc(req.contact)}</p>` : ""}
     <div class="actions">
       ${sub.id ? `<button class="btn-edit">✏️ 이 작품 수정하기</button>` : ""}
       <button class="btn-approve">완료 처리</button>
@@ -258,7 +266,7 @@ function renderRequest(req){
   `;
   if(sub.id){
     div.querySelector(".btn-edit").onclick = () => {
-      div.replaceWith(renderItemEdit(sub, sub.status, () => api("/requests/done", { method:"POST", body: JSON.stringify({ id: req.id }) })));
+      div.replaceWith(renderItemEdit(sub, sub.status, () => api("/requests/done", { method:"POST", body: JSON.stringify({ id: req.id }) }), req.image_path));
     };
   }
   div.querySelector(".btn-approve").onclick = async () => { await api("/requests/done", { method:"POST", body: JSON.stringify({ id: req.id }) }); load(currentTab); };
