@@ -269,7 +269,10 @@ function renderRequest(req){
       div.replaceWith(renderItemEdit(sub, sub.status, () => api("/requests/done", { method:"POST", body: JSON.stringify({ id: req.id }) }), req.image_path));
     };
   }
-  div.querySelector(".btn-approve").onclick = async () => { await api("/requests/done", { method:"POST", body: JSON.stringify({ id: req.id }) }); load(currentTab); };
+  div.querySelector(".btn-approve").onclick = async () => {
+    if(!confirm("정말 완료 처리할까요?\n완료 처리만으로는 작품 내용이 바뀌지 않아요 — 먼저 '이 작품 수정하기'로 실제 내용을 고치셨는지 확인해주세요.")) return;
+    await api("/requests/done", { method:"POST", body: JSON.stringify({ id: req.id }) }); load(currentTab);
+  };
   div.querySelector(".btn-delete").onclick = async () => {
     if(!confirm("삭제할까요?")) return;
     await api("/requests/delete", { method:"POST", body: JSON.stringify({ id: req.id }) });
