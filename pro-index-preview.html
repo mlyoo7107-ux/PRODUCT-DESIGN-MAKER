@@ -60,6 +60,7 @@
 <p class="hint">※ 예시 이미지는 스타일 느낌을 보여주는 참고용입니다. 실제 생성 결과는 사용하는 AI 도구에 따라 달라질 수 있어요.</p>
 <div id="renderStyleTextWrap" style="display:none"><label>직접 입력하세요</label><input id="renderStyleText" placeholder="원하는 표현 스타일을 직접 입력하세요."></div>
 <label>③ 어떤 View로 보여줄까요?</label>
+<div id="multiViewWarning" style="display:none;background:#fff9e6;border:1px solid #ffd97a;border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:8px">⚠️ 여러 안을 비교할 때는 <b>45도 View</b>를 추천해요. 다른 View를 선택하면 콘셉트마다 복잡한 구성이 겹쳐서 결과가 뒤섞이기 쉬워요.</div>
 <div id="view">
 <div class="c view-row" data-v="45도 View" onclick="pickView(this)"><span>45도 View</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('45도 View')">🔍 예시</span></div>
 <div class="c view-row" data-v="삼면도 (정면·측면·탑뷰)" onclick="pickView(this)"><span>삼면도 (정면·측면·탑뷰)</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('삼면도 (정면·측면·탑뷰)')">🔍 예시</span></div>
@@ -370,9 +371,9 @@ function finalTitle(){
 addColorChips();addToneChips();addSchemeChips();
 add("challenge",D.challenge);
 let formMode="p1";document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab,.panel").forEach(x=>x.classList.remove("on"));t.classList.add("on");document.getElementById(t.dataset.p).classList.add("on");formMode=t.dataset.p});
-function pickView(el){document.querySelectorAll("#view .c").forEach(x=>x.classList.remove("on"));el.classList.add("on");updateViewTextVisibility()}
+function pickView(el){document.querySelectorAll("#view .c").forEach(x=>x.classList.remove("on"));el.classList.add("on");updateViewTextVisibility();updateMultiViewWarning()}
 function selView(){return document.querySelector("#view .c.on")?.dataset.v||""}
-function setView(value){document.querySelectorAll("#view .c").forEach(x=>x.classList.toggle("on",x.dataset.v===value));updateViewTextVisibility()}
+function setView(value){document.querySelectorAll("#view .c").forEach(x=>x.classList.toggle("on",x.dataset.v===value));updateViewTextVisibility();updateMultiViewWarning()}
 function updateViewTextVisibility(){const wrap=document.getElementById("viewTextWrap");const isOther=selView()==="기타";if(wrap)wrap.style.display=isOther?"block":"none";if(!isOther){const t=document.getElementById("viewText");if(t)t.value=""}}
 const VIEW_EXAMPLES={"45도 View":"view-45deg.webp","삼면도 (정면·측면·탑뷰)":"view-triview.webp","사용 장면":"view-usage.webp","Exploded View / 분해도":"view-exploded.webp","Detail View / 디테일뷰":"view-detail.webp","결착·구조 확대":"view-attachment.webp"};
 function showViewExample(key){const f=VIEW_EXAMPLES[key];if(!f)return;document.getElementById("viewModalImg").src=f;document.getElementById("viewModal").classList.add("on")}
@@ -383,7 +384,14 @@ function setRenderStyle(value){document.querySelectorAll("#renderStyle .c").forE
 function updateRenderStyleTextVisibility(){const wrap=document.getElementById("renderStyleTextWrap");const isOther=selRenderStyle()==="기타";if(wrap)wrap.style.display=isOther?"block":"none";if(!isOther){const t=document.getElementById("renderStyleText");if(t)t.value=""}}
 const STYLE_EXAMPLES={"아이디어 스케치":"style-sketch.webp","산업디자인 렌더링":"style-industrial.webp","사실적 제품 렌더링":"style-photoreal.webp","컬러링 도안 (아웃라인)":"style-coloring.webp"};
 function showStyleExample(key){const f=STYLE_EXAMPLES[key];if(!f)return;document.getElementById("viewModalImg").src=f;document.getElementById("viewModal").classList.add("on")}
-function updateOutputUI(){const sel1=document.querySelector("#output .c.on");const val=sel1?sel1.textContent:"";const single=val==="하나의 디자인 완성"||val==="기존 스케치 발전";const cw=document.getElementById("countWrap");if(cw)cw.style.display=single?"none":"block"}
+function updateOutputUI(){const sel1=document.querySelector("#output .c.on");const val=sel1?sel1.textContent:"";const single=val==="하나의 디자인 완성"||val==="기존 스케치 발전";const cw=document.getElementById("countWrap");if(cw)cw.style.display=single?"none":"block";updateMultiViewWarning()}
+function updateMultiViewWarning(){
+ const outputVal=document.querySelector("#output .c.on")?.textContent||"";
+ const isMulti=outputVal==="형태 아이디어 여러 안"||outputVal==="구조·결착 아이디어 여러 안";
+ const viewVal=selView();
+ const warn=document.getElementById("multiViewWarning");
+ if(warn)warn.style.display=(isMulti&&viewVal&&viewVal!=="45도 View")?"block":"none";
+}
 document.getElementById("output").addEventListener("click",updateOutputUI);
 updateOutputUI();
 const v=id=>document.getElementById(id).value.trim(), sel=id=>[...document.querySelectorAll("#"+id+" .c.on")].map(x=>x.textContent), txt=(id,extra="")=>[...sel(id),extra].filter(Boolean).join(", ")||"미정";
