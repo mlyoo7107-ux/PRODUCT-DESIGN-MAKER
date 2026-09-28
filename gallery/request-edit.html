@@ -42,6 +42,11 @@ footer img{max-width:120px;opacity:.85}
 <label>수정 요청 내용 *</label>
 <textarea id="message" placeholder="예: 사진을 새로 바꾸고 싶어요 / 작품명을 다르게 고치고 싶어요" required maxlength="500"></textarea>
 
+<label>새 사진으로 바꾸고 싶다면 첨부해주세요 (선택)</label>
+<input type="file" id="newImage" accept="image/*">
+<img id="newImagePreview" style="display:none;max-width:100%;border-radius:10px;margin-top:8px">
+<p class="hint">사진 교체를 요청하시는 경우에만 첨부해주세요.</p>
+
 <label>연락처 (선택)</label>
 <input type="text" id="contact" placeholder="답변 받으실 이메일, 카카오톡 ID 등">
 <p class="hint">확인 후 반영해드릴게요. 연락처를 남기시면 처리 결과를 알려드릴 수 있어요.</p>
@@ -77,6 +82,36 @@ function showError(msg){
   el.style.display = "block";
 }
 
+function compressImage(file){
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const maxW = 1600;
+        const scale = Math.min(1, maxW / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.85);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+let newImageBlob = null;
+document.getElementById("newImage").addEventListener("change", async (ev) => {
+  const f = ev.target.files && ev.target.files[0];
+  if(!f) return;
+  newImageBlob = await compressImage(f);
+  const preview = document.getElementById("newImagePreview");
+  preview.src = URL.createObjectURL(newImageBlob);
+  preview.style.display = "block";
+});
+
 document.getElementById("reqForm").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   document.getElementById("errMsg").style.display = "none";
@@ -89,8 +124,23 @@ document.getElementById("reqForm").addEventListener("submit", async (ev) => {
   const btn = document.getElementById("submitBtn");
   btn.disabled = true; btn.textContent = "보내는 중...";
 
+  let imagePath = null;
+  if(newImageBlob){
+    imagePath = `request-${Date.now()}-${Math.random().toString(36).slice(2, 10)}.jpg`;
+    const { error: uploadErr } = await supa.storage.from("gallery-images").upload(imagePath, newImageBlob, {
+      contentType: "image/jpeg",
+      upsert: false
+    });
+    if(uploadErr){
+      console.error(uploadErr);
+      showError("사진 업로드 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.");
+      btn.disabled = false; btn.textContent = "요청 보내기";
+      return;
+    }
+  }
+
   const { error } = await supa.from("edit_requests").insert({
-    submission_id: submissionId, message, contact
+    submission_id: submissionId, message, contact, image_path: imagePath
   });
 
   if(error){
