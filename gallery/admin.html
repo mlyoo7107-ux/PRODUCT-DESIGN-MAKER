@@ -142,7 +142,7 @@ function renderItemView(item, tab){
   return div;
 }
 
-function renderItemEdit(item, tab){
+function renderItemEdit(item, tab, onSaved){
   const div = document.createElement("div");
   div.className = "item";
   const state = {
@@ -228,6 +228,7 @@ function renderItemEdit(item, tab){
         tags,
         maker_type: item.maker_type
       })});
+      if(onSaved) await onSaved();
       load(currentTab);
     } catch(e){
       const m = div.querySelector("#editMsg");
@@ -250,10 +251,16 @@ function renderRequest(req){
     <div class="req-msg">${esc(req.message)}</div>
     ${req.contact ? `<p style="margin:2px 0;font-size:12px;color:var(--m)">연락처: ${esc(req.contact)}</p>` : ""}
     <div class="actions">
+      ${sub.id ? `<button class="btn-edit">✏️ 이 작품 수정하기</button>` : ""}
       <button class="btn-approve">완료 처리</button>
       <button class="btn-delete">삭제</button>
     </div>
   `;
+  if(sub.id){
+    div.querySelector(".btn-edit").onclick = () => {
+      div.replaceWith(renderItemEdit(sub, sub.status, () => api("/requests/done", { method:"POST", body: JSON.stringify({ id: req.id }) })));
+    };
+  }
   div.querySelector(".btn-approve").onclick = async () => { await api("/requests/done", { method:"POST", body: JSON.stringify({ id: req.id }) }); load(currentTab); };
   div.querySelector(".btn-delete").onclick = async () => {
     if(!confirm("삭제할까요?")) return;
