@@ -74,7 +74,7 @@
 <div id="viewTextWrap" style="display:none"><label>직접 입력하세요</label><input id="viewText" placeholder="예: 조명과 모기퇴치 유닛이 동시에 보이도록"></div>
 <label>④ 어떤 사이즈로 출력할까요?</label><div class="grid" id="aspect"></div>
 <label>자유 비율 / 직접 입력</label><input id="aspectText" placeholder="예: 4:3, 3:4, 1:1">
-<p class="hint">A4 가로: 297×210mm (약 1.414:1) · 16:9: 1920×1080</p></div>
+<p class="hint">A4 가로: 297×210mm (약 1.414:1) · 16:9: 1920×1080 · 인스타 정사각형: 1080×1080 · 인스타 세로: 1080×1350 · 인스타 스토리·릴스: 1080×1920</p></div>
 <div class="modal-overlay" id="viewModal" onclick="if(event.target===this)closeViewExample()"><div class="modal-content"><button class="modal-close" type="button" onclick="closeViewExample()">✕</button><img id="viewModalImg" src="" alt="View 예시 이미지"></div></div>
 <p id="freeStatus" style="text-align:center;font-size:13px;color:var(--m);margin:12px 0 8px"></p>
 <button class="go" onclick="make()">✨ PRODUCT DESIGN PROMPT 만들기</button>
@@ -143,7 +143,7 @@ const CONFIG = {
   TIMEOUT_MS: 60000,
   PAYMENT_STATUS_API_URL: "https://colorm-pdm-payment.milan71.workers.dev/" // 결제 상태 확인용 (개인 링크 잠금해제)
 };
-const D={category:["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"],user:["어린이","청소년","대학생","직장인","1인 가구","가족","시니어","반려인","전문가·작업자","기타"],problem:["사용 편의","휴대","보관","공간 절약","안전","위생","접근성","이동","내구성","친환경","기타"],challenge:["전체 형태","결착·고정","열림·닫힘","수납","조작방법","이동·휴대","접이·변형","높이·각도조절","안전","사용 편의","CMF","기타"],control:["버튼","다이얼","터치","손잡이","레버","센서","자동","한 손 조작","해당 없음"],motion:["회전","접힘","슬라이드","열림·닫힘","높이조절","각도조절","분리·결합","움직임 없음","해당 없음"],mount:["거치","클램프","스트랩","후크","슬라이드 체결","회전 잠금","자석","나사","끼움","해당 없음"],feature:["수납","접이","회전","분리·결합","잠금","높이·각도 조절","센서","디스플레이","터치 UI","조명","무선·충전","기타"],form:["원형","사각형","원통형","슬림","바형","기하학적","유기적","곡선형","모듈형","비대칭"],style:["Minimal","Modern","Soft","Friendly","Futuristic","High-tech","Premium","Natural","Sporty","기타"],output:["하나의 디자인 완성","형태 아이디어 여러 안","구조·결착 아이디어 여러 안","기존 스케치 발전"],renderStyle:["아이디어 스케치","산업디자인 렌더링","사실적 제품 렌더링","컬러링 도안 (아웃라인)","기타"],aspect:["A4 가로 (297×210mm · 1.414:1)","16:9 (1920×1080)","자유 비율"],
+const D={category:["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"],user:["어린이","청소년","대학생","직장인","1인 가구","가족","시니어","반려인","전문가·작업자","기타"],problem:["사용 편의","휴대","보관","공간 절약","안전","위생","접근성","이동","내구성","친환경","기타"],challenge:["전체 형태","결착·고정","열림·닫힘","수납","조작방법","이동·휴대","접이·변형","높이·각도조절","안전","사용 편의","CMF","기타"],control:["버튼","다이얼","터치","손잡이","레버","센서","자동","한 손 조작","해당 없음"],motion:["회전","접힘","슬라이드","열림·닫힘","높이조절","각도조절","분리·결합","움직임 없음","해당 없음"],mount:["거치","클램프","스트랩","후크","슬라이드 체결","회전 잠금","자석","나사","끼움","해당 없음"],feature:["수납","접이","회전","분리·결합","잠금","높이·각도 조절","센서","디스플레이","터치 UI","조명","무선·충전","기타"],form:["원형","사각형","원통형","슬림","바형","기하학적","유기적","곡선형","모듈형","비대칭"],style:["Minimal","Modern","Soft","Friendly","Futuristic","High-tech","Premium","Natural","Sporty","기타"],output:["하나의 디자인 완성","형태 아이디어 여러 안","구조·결착 아이디어 여러 안","기존 스케치 발전"],renderStyle:["아이디어 스케치","산업디자인 렌더링","사실적 제품 렌더링","컬러링 도안 (아웃라인)","기타"],aspect:["A4 가로 (297×210mm · 1.414:1)","16:9 (1920×1080)","인스타 정사각형 (1:1)","인스타 세로 (4:5)","인스타 스토리·릴스 (9:16)","자유 비율"],
 colorChips:["화이트","블랙","그레이","차콜","베이지","브라운","네이비","블루","그린","옐로우","레드","핑크","실버","골드"],
 tone:["Pastel · 파스텔","Light · 라이트","Bright · 브라이트","Vivid · 비비드","Soft · 소프트","Muted · 뮤트","Deep · 딥","Dark · 다크","기타"],
 scheme:["단색 배색","톤온톤","톤인톤","유사색 배색","보색·대비 배색","3색 배색","기타"],
@@ -442,9 +442,16 @@ viewLabel=viewChoice==="기타"?(viewExtra||"기타"):viewChoice,
 viewPrompt=viewChoice==="기타"?(viewExtra||viewChoice):(viewMap[viewChoice]||viewChoice)+(viewExtra?" Additionally, "+viewExtra+".":""),
 viewDetailKo=viewChoice==="기타"?"":(viewMapKo[viewChoice]||"")+(viewExtra?" 추가로: "+viewExtra:""),
 aspectChoice=sel("aspect")[0]||"16:9 (1920×1080)", aspectExtra=v("aspectText"),
-aspectPrompt=aspectChoice.startsWith("A4")?"A4 landscape aspect ratio, 297:210, approximately 1.414:1, landscape composition":aspectChoice.startsWith("16:9")?"16:9 widescreen aspect ratio, 1920x1080 landscape composition":(aspectExtra||"custom aspect ratio"),
+aspectMap={
+ "A4 가로 (297×210mm · 1.414:1)":{en:"A4 landscape aspect ratio, 297:210, approximately 1.414:1, landscape composition",ratio:"297:210"},
+ "16:9 (1920×1080)":{en:"16:9 widescreen aspect ratio, 1920x1080 landscape composition",ratio:"16:9"},
+ "인스타 정사각형 (1:1)":{en:"1:1 square aspect ratio, 1080x1080, Instagram square feed post composition",ratio:"1:1"},
+ "인스타 세로 (4:5)":{en:"4:5 vertical aspect ratio, 1080x1350, Instagram portrait feed post composition",ratio:"4:5"},
+ "인스타 스토리·릴스 (9:16)":{en:"9:16 vertical aspect ratio, 1080x1920, Instagram Story/Reels full-screen vertical composition",ratio:"9:16"}
+},
+aspectPrompt=aspectMap[aspectChoice]?.en||(aspectExtra||"custom aspect ratio"),
 negativePrompt="AVOID: multiple separate images arranged in a grid or collage; several product variations or angles laid out side by side in one composite image; UI icons, buttons, toolbar overlays or screenshots of editing software; added text, logos or watermarks; extra unexplained parts or floating disconnected elements; distorted, asymmetric or inconsistent proportions between concepts; blurry, low-resolution or oversaturated rendering; materials that look physically implausible. Output must be a single unified image, not a grid or collage of multiple shots.",
-mjRatio=aspectChoice.startsWith("A4")?"297:210":aspectChoice.startsWith("16:9")?"16:9":(aspectExtra.match(/\d+\s*:\s*\d+/)?.[0]||""),
+mjRatio=aspectMap[aspectChoice]?.ratio||(aspectExtra.match(/\d+\s*:\s*\d+/)?.[0]||""),
 mjParams=mjRatio?` (참고용 미드저니 파라미터: --ar ${mjRatio.replace(/\s/g,"")} --style raw --v 6)`:"";
 outputClauseKo=isSingleOutput?`${output} 방향으로 하나의 완성도 높은 디자인을 제안한다. 여러 안을 나열하지 않고 이 하나의 콘셉트를 충실히 발전시킨다.`:`${output} 방향으로, 서로 다른 구조 원리·형태 원리·사용 방법을 가진 ${count}개의 콘셉트를 제안한다. 단순한 색상이나 외형 변형이 아니라 근본적으로 다른 안이어야 한다.`,
 outputClauseEn=isSingleOutput?`Focus on ${outputEn}; fully develop this one concept in complete detail rather than proposing alternative variations.`:`Generate ${count} clearly differentiated concepts for ${outputEn}; each concept must explore a genuinely different structural principle, form logic or usage method — not just minor cosmetic or color variations.`;
