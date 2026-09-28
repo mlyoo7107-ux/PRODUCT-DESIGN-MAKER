@@ -102,7 +102,7 @@ function shareKakao(item, imgUrl){
           ${data.category ? `<span>${esc(data.category)}</span>` : ""}
           ${(data.tags||[]).map(t=>`<span>#${esc(t)}</span>`).join("")}
         </div>
-        <a class="go" href="../landing.html">✨ 나도 이 Maker로 만들어보기 →</a>
+        <a class="go" href="../index.html">✨ 나도 이 Maker로 만들어보기 →</a>
         <div class="share-row">
           <button class="share-btn" onclick="copyLink()">🔗 링크 복사</button>
           <button class="share-btn" id="kakaoBtn">💬 카카오톡 공유</button>
