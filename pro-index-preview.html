@@ -58,7 +58,7 @@
 <div class="c view-row" data-v="기타" onclick="pickRenderStyle(this)"><span>기타 / 직접 입력</span></div>
 </div>
 <p class="hint">※ 예시 이미지는 스타일 느낌을 보여주는 참고용입니다. 실제 생성 결과는 사용하는 AI 도구에 따라 달라질 수 있어요.</p>
-<label>"기타"를 선택했다면 직접 입력하세요</label><input id="renderStyleText" placeholder="원하는 표현 스타일을 직접 입력하세요.">
+<div id="renderStyleTextWrap" style="display:none"><label>직접 입력하세요</label><input id="renderStyleText" placeholder="원하는 표현 스타일을 직접 입력하세요."></div>
 <label>③ 어떤 View로 보여줄까요?</label>
 <div id="view">
 <div class="c view-row" data-v="45도 View" onclick="pickView(this)"><span>45도 View</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('45도 View')">🔍 예시</span></div>
@@ -69,7 +69,7 @@
 <div class="c view-row" data-v="결착·구조 확대" onclick="pickView(this)"><span>결착·구조 확대</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('결착·구조 확대')">🔍 예시</span></div>
 <div class="c view-row" data-v="기타" onclick="pickView(this)"><span>기타 / 직접 입력</span></div>
 </div>
-<label>"기타"를 선택했다면 직접 입력하세요</label><input id="viewText" placeholder="예: 조명과 모기퇴치 유닛이 동시에 보이도록">
+<div id="viewTextWrap" style="display:none"><label>직접 입력하세요</label><input id="viewText" placeholder="예: 조명과 모기퇴치 유닛이 동시에 보이도록"></div>
 <label>④ 어떤 사이즈로 출력할까요?</label><div class="grid" id="aspect"></div>
 <label>자유 비율 / 직접 입력</label><input id="aspectText" placeholder="예: 4:3, 3:4, 1:1">
 <p class="hint">A4 가로: 297×210mm (약 1.414:1) · 16:9: 1920×1080</p></div>
@@ -370,15 +370,17 @@ function finalTitle(){
 addColorChips();addToneChips();addSchemeChips();
 add("challenge",D.challenge);
 let formMode="p1";document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab,.panel").forEach(x=>x.classList.remove("on"));t.classList.add("on");document.getElementById(t.dataset.p).classList.add("on");formMode=t.dataset.p});
-function pickView(el){document.querySelectorAll("#view .c").forEach(x=>x.classList.remove("on"));el.classList.add("on")}
+function pickView(el){document.querySelectorAll("#view .c").forEach(x=>x.classList.remove("on"));el.classList.add("on");updateViewTextVisibility()}
 function selView(){return document.querySelector("#view .c.on")?.dataset.v||""}
-function setView(value){document.querySelectorAll("#view .c").forEach(x=>x.classList.toggle("on",x.dataset.v===value))}
+function setView(value){document.querySelectorAll("#view .c").forEach(x=>x.classList.toggle("on",x.dataset.v===value));updateViewTextVisibility()}
+function updateViewTextVisibility(){const wrap=document.getElementById("viewTextWrap");const isOther=selView()==="기타";if(wrap)wrap.style.display=isOther?"block":"none";if(!isOther){const t=document.getElementById("viewText");if(t)t.value=""}}
 const VIEW_EXAMPLES={"45도 View":"view-45deg.webp","삼면도 (정면·측면·탑뷰)":"view-triview.webp","사용 장면":"view-usage.webp","Exploded View / 분해도":"view-exploded.webp","Detail View / 디테일뷰":"view-detail.webp","결착·구조 확대":"view-attachment.webp"};
 function showViewExample(key){const f=VIEW_EXAMPLES[key];if(!f)return;document.getElementById("viewModalImg").src=f;document.getElementById("viewModal").classList.add("on")}
 function closeViewExample(){document.getElementById("viewModal").classList.remove("on")}
-function pickRenderStyle(el){document.querySelectorAll("#renderStyle .c").forEach(x=>x.classList.remove("on"));el.classList.add("on")}
+function pickRenderStyle(el){document.querySelectorAll("#renderStyle .c").forEach(x=>x.classList.remove("on"));el.classList.add("on");updateRenderStyleTextVisibility()}
 function selRenderStyle(){return document.querySelector("#renderStyle .c.on")?.dataset.v||""}
-function setRenderStyle(value){document.querySelectorAll("#renderStyle .c").forEach(x=>x.classList.toggle("on",x.dataset.v===value))}
+function setRenderStyle(value){document.querySelectorAll("#renderStyle .c").forEach(x=>x.classList.toggle("on",x.dataset.v===value));updateRenderStyleTextVisibility()}
+function updateRenderStyleTextVisibility(){const wrap=document.getElementById("renderStyleTextWrap");const isOther=selRenderStyle()==="기타";if(wrap)wrap.style.display=isOther?"block":"none";if(!isOther){const t=document.getElementById("renderStyleText");if(t)t.value=""}}
 const STYLE_EXAMPLES={"아이디어 스케치":"style-sketch.webp","산업디자인 렌더링":"style-industrial.webp","사실적 제품 렌더링":"style-photoreal.webp","컬러링 도안 (아웃라인)":"style-coloring.webp"};
 function showStyleExample(key){const f=STYLE_EXAMPLES[key];if(!f)return;document.getElementById("viewModalImg").src=f;document.getElementById("viewModal").classList.add("on")}
 function updateOutputUI(){const sel1=document.querySelector("#output .c.on");const val=sel1?sel1.textContent:"";const single=val==="하나의 디자인 완성"||val==="기존 스케치 발전";const cw=document.getElementById("countWrap");if(cw)cw.style.display=single?"none":"block"}
