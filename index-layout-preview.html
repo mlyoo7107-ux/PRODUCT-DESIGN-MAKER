@@ -3,15 +3,20 @@
 :root{--a:#ff2d86;--b:#f5f1e8;--l:#e8e1d3;--t:#171512;--m:#7a7268}*{box-sizing:border-box}body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}header{text-align:center;background:white;padding:32px 15px;border-bottom:1px solid var(--l)}header small{color:var(--a);font-weight:bold;letter-spacing:2px}h1{margin:7px 0;font-size:28px;font-weight:900}header p{color:var(--m);margin:0}main{max-width:900px;margin:auto;padding:15px 15px 60px}.card{background:white;border:1px solid var(--l);border-radius:18px;padding:20px;margin:13px 0}.step{font-size:12px;color:var(--a);font-weight:bold}.title{font-size:19px;font-weight:bold;margin:5px 0 13px}.hint{font-size:13px;color:var(--m)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:7px}.c{padding:10px 7px;border:1px solid var(--l);border-radius:12px;text-align:center;cursor:pointer;font-size:13px;transition:background .15s,border-color .15s,color .15s}.c:hover{border-color:var(--a);background:#fff5fa;color:var(--a)}.c.on{border-color:var(--a);background:#ffe6f1;color:var(--a);font-weight:bold}.c.on:hover{background:#ffd6e9}label{font-size:13px;font-weight:bold;display:block;margin:13px 0 6px}input,textarea,select{width:100%;padding:11px;border:1px solid #e3ddd0;border-radius:9px;font-size:14px}textarea{min-height:78px}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{padding:9px;border:1px solid var(--l);border-radius:20px;font-size:12px;cursor:pointer;transition:background .15s,border-color .15s,color .15s}.tab:hover{border-color:var(--a);color:var(--a)}.tab.on{background:var(--a);color:white}.tab.on:hover{background:#e0247a}.panel{display:none;margin-top:12px;background:white;padding:13px;border-radius:10px}.panel.on{display:block}.go{width:100%;padding:16px;background:var(--a);color:white;border:0;border-radius:28px;font-size:16px;font-weight:bold;cursor:pointer;transition:background .15s}.go:hover{background:#e0247a}.go-outline{background:white;color:var(--a);border:1px solid var(--a)}.go-outline:hover{background:#ffe6f1}.result{display:none}.result.on{display:block}.box{white-space:pre-wrap;background:#faf7f0;border:1px solid var(--l);border-radius:10px;padding:14px;line-height:1.55;font-size:13px}.copy{margin-top:7px;padding:8px 10px;border:1px solid var(--a);color:var(--a);background:white;border-radius:8px;cursor:pointer;transition:background .15s}.copy:hover{background:#ffe6f1}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}#view{display:flex;flex-direction:column;gap:7px}.view-row{display:flex!important;align-items:center;justify-content:space-between;gap:10px;text-align:left}.ex-link{font-size:12px;color:var(--a);white-space:nowrap;cursor:pointer;border-bottom:1px solid var(--a);padding-bottom:1px;font-weight:normal}.modal-overlay{display:none;position:fixed;inset:0;background:rgba(23,21,18,.72);z-index:999;align-items:center;justify-content:center;padding:24px}.modal-overlay.on{display:flex}.modal-content{position:relative;background:white;border-radius:16px;padding:14px;max-width:92vw;max-height:88vh;overflow:auto}.modal-content img{display:block;max-width:100%;max-height:78vh;border-radius:8px}.modal-close{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;border:0;background:var(--t);color:white;font-size:16px;cursor:pointer;z-index:1}.color-chip{display:flex;align-items:center;justify-content:center;gap:6px}.color-chip .swatch{display:inline-block;width:16px;height:16px;border-radius:50%;flex-shrink:0}.tone-chip,.scheme-chip{display:flex;align-items:center;justify-content:center;gap:6px}.tone-chip .swatch{display:inline-block;width:16px;height:16px;border-radius:50%;flex-shrink:0;border:1px solid rgba(0,0,0,.08)}.scheme-chip .dots{display:inline-flex;gap:3px;flex-shrink:0}.scheme-chip .dot{width:13px;height:13px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.08)}.title-cards{display:flex;flex-direction:column;gap:8px}.title-card{border:1px solid var(--l);border-radius:12px;padding:12px 14px;cursor:pointer;transition:background .15s,border-color .15s}.title-card:hover{border-color:var(--a)}.title-card b{display:block;font-size:11px;color:var(--m);font-weight:bold;margin-bottom:4px}.title-card p{margin:0;font-weight:bold;font-size:15px;color:var(--t)}.title-card.on{border-color:var(--a);background:#ffe6f1}.title-card.on p{color:var(--a)}.gallery-link{display:inline-block;margin-top:14px;padding:10px 20px;border:2px solid var(--a);color:var(--a);background:#fff;border-radius:22px;font-size:13px;font-weight:bold;text-decoration:none;transition:background .15s}.gallery-link:hover{background:#ffe6f1}@media(max-width:550px){.grid{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.card{border-color:#d9cfb8;box-shadow:0 2px 8px rgba(23,21,18,.07)}.hint,label,.c,.box,.faq-item p{font-size:14px}.step{font-size:13px}.title{font-size:20px}}
 </style>
 <style>
-.step-nav{position:sticky;top:0;z-index:40;display:flex;gap:6px;overflow-x:auto;background:var(--b);padding:10px 15px;border-bottom:1px solid var(--l);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.step-nav{position:sticky;top:0;z-index:40;display:flex;gap:2px;overflow-x:auto;background:white;padding:0 10px;border-bottom:1px solid var(--l);box-shadow:0 1px 4px rgba(23,21,18,.05);-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .step-nav::-webkit-scrollbar{display:none}
-.step-tab{flex:none;padding:8px 14px;border:1px solid var(--l);border-radius:20px;background:white;font-size:12.5px;font-weight:bold;color:var(--m);cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s,color .15s}
-.step-tab:hover{border-color:var(--a);color:var(--a)}
-.step-tab.on{background:var(--a);border-color:var(--a);color:white}
-.step-tab:disabled{opacity:.45;cursor:not-allowed}
+.step-tab{flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 14px 9px;border:0;border-bottom:3px solid transparent;background:none;font-family:inherit;color:var(--m);cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s}
+.step-tab b{font-size:10.5px;font-weight:800;letter-spacing:.4px;color:inherit}
+.step-tab span{font-size:12.5px;font-weight:bold;color:var(--t)}
+.step-tab:hover{color:var(--a);border-bottom-color:#ffd6e9}
+.step-tab.on{color:var(--a);border-bottom-color:var(--a)}
+.step-tab.on span{color:var(--a)}
+.step-tab:disabled{opacity:.4;cursor:not-allowed}
 .step-panel{display:none;scroll-margin-top:58px}
 .step-panel.active-step{display:block}
 #result{scroll-margin-top:58px}
+.c{padding-top:16px!important}
+.c[data-icon]::before{content:attr(data-icon);display:block;font-size:21px;line-height:1;margin-bottom:5px}
 main{padding-bottom:90px}
 footer{margin-bottom:90px}
 .step-nav-bottom{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;gap:10px;justify-content:space-between;align-items:center;background:white;border-top:1px solid var(--l);padding:10px 15px;box-shadow:0 -2px 8px rgba(23,21,18,.08)}
@@ -34,16 +39,16 @@ footer{margin-bottom:90px}
 </head><body>
 <header><small>COLOR.M · AI × DESIGN</small><h1>PRODUCT DESIGN MAKER</h1><p>제품 아이디어와 디자인 문제를 구체화해 AI 이미지 프롬프트로 만들어보세요.</p><a href="gallery/index.html" class="gallery-link">🖼️ 다른 사람들의 작품 구경하기 →</a></header>
 <div class="step-nav" id="stepNav">
-<button class="step-tab" data-step="1" onclick="showStep(1)">01 분야</button>
-<button class="step-tab" data-step="2" onclick="showStep(2)">02 사용자</button>
-<button class="step-tab" data-step="3" onclick="showStep(3)">03 문제</button>
-<button class="step-tab" data-step="4" onclick="showStep(4)">04 챌린지</button>
-<button class="step-tab" data-step="5" onclick="showStep(5)">05 구조</button>
-<button class="step-tab" data-step="6" onclick="showStep(6)">06 기능</button>
-<button class="step-tab" data-step="7" onclick="showStep(7)">07 형태</button>
-<button class="step-tab" data-step="8" onclick="showStep(8)">08 스타일</button>
-<button class="step-tab" data-step="9" onclick="showStep(9)">09 결과설정</button>
-<button class="step-tab" data-step="10" id="resultTab" onclick="if(!this.disabled)showStep(10)" disabled>✓ 결과</button>
+<button class="step-tab" data-step="1" onclick="showStep(1)"><b>01</b><span>분야</span></button>
+<button class="step-tab" data-step="2" onclick="showStep(2)"><b>02</b><span>사용자</span></button>
+<button class="step-tab" data-step="3" onclick="showStep(3)"><b>03</b><span>문제</span></button>
+<button class="step-tab" data-step="4" onclick="showStep(4)"><b>04</b><span>챌린지</span></button>
+<button class="step-tab" data-step="5" onclick="showStep(5)"><b>05</b><span>구조</span></button>
+<button class="step-tab" data-step="6" onclick="showStep(6)"><b>06</b><span>기능</span></button>
+<button class="step-tab" data-step="7" onclick="showStep(7)"><b>07</b><span>형태</span></button>
+<button class="step-tab" data-step="8" onclick="showStep(8)"><b>08</b><span>스타일</span></button>
+<button class="step-tab" data-step="9" onclick="showStep(9)"><b>09</b><span>결과설정</span></button>
+<button class="step-tab" data-step="10" id="resultTab" onclick="if(!this.disabled)showStep(10)" disabled><b>✓</b><span>결과</span></button>
 </div>
 <main>
 <div class="card" style="border:2px solid #ffcfe4;background:#fff5f9">
@@ -83,10 +88,10 @@ footer{margin-bottom:90px}
 <div id="countWrap"><label>아이디어 개수</label><select id="count"><option>3</option><option selected>4</option><option>6</option></select></div>
 <label>② 어떤 스타일로 표현할까요?</label>
 <div id="renderStyle">
-<div class="c view-row" data-v="아이디어 스케치" onclick="pickRenderStyle(this)"><span>아이디어 스케치</span><span class="ex-link" onclick="event.stopPropagation();showStyleExample('아이디어 스케치')">🔍 예시</span></div>
-<div class="c view-row" data-v="산업디자인 렌더링" onclick="pickRenderStyle(this)"><span>산업디자인 렌더링</span><span class="ex-link" onclick="event.stopPropagation();showStyleExample('산업디자인 렌더링')">🔍 예시</span></div>
-<div class="c view-row" data-v="사실적 제품 렌더링" onclick="pickRenderStyle(this)"><span>사실적 제품 렌더링</span><span class="ex-link" onclick="event.stopPropagation();showStyleExample('사실적 제품 렌더링')">🔍 예시</span></div>
-<div class="c view-row" data-v="컬러링 도안 (아웃라인)" onclick="pickRenderStyle(this)"><span>컬러링 도안 (아웃라인)</span><span class="ex-link" onclick="event.stopPropagation();showStyleExample('컬러링 도안 (아웃라인)')">🔍 예시</span></div>
+<div class="c view-row" data-v="아이디어 스케치" onclick="pickRenderStyle(this)"><span>✏️ 아이디어 스케치</span><span class="ex-link" onclick="event.stopPropagation();showStyleExample('아이디어 스케치')">🔍 예시</span></div>
+<div class="c view-row" data-v="산업디자인 렌더링" onclick="pickRenderStyle(this)"><span>🏗️ 산업디자인 렌더링</span><span class="ex-link" onclick="event.stopPropagation();showStyleExample('산업디자인 렌더링')">🔍 예시</span></div>
+<div class="c view-row" data-v="사실적 제품 렌더링" onclick="pickRenderStyle(this)"><span>📷 사실적 제품 렌더링</span><span class="ex-link" onclick="event.stopPropagation();showStyleExample('사실적 제품 렌더링')">🔍 예시</span></div>
+<div class="c view-row" data-v="컬러링 도안 (아웃라인)" onclick="pickRenderStyle(this)"><span>🖍️ 컬러링 도안 (아웃라인)</span><span class="ex-link" onclick="event.stopPropagation();showStyleExample('컬러링 도안 (아웃라인)')">🔍 예시</span></div>
 <div class="c view-row" data-v="기타" onclick="pickRenderStyle(this)"><span>기타 / 직접 입력</span></div>
 </div>
 <p class="hint">※ 예시 이미지는 스타일 느낌을 보여주는 참고용입니다. 실제 생성 결과는 사용하는 AI 도구에 따라 달라질 수 있어요.</p>
@@ -94,12 +99,12 @@ footer{margin-bottom:90px}
 <label>③ 어떤 View로 보여줄까요?</label>
 <div id="multiViewWarning" style="display:none;background:#fff9e6;border:1px solid #ffd97a;border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:8px">⚠️ 여러 안을 비교할 때는 <b>45도 View</b>를 추천해요. 다른 View를 선택하면 콘셉트마다 복잡한 구성이 겹쳐서 결과가 뒤섞이기 쉬워요.</div>
 <div id="view">
-<div class="c view-row" data-v="45도 View" onclick="pickView(this)"><span>45도 View</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('45도 View')">🔍 예시</span></div>
-<div class="c view-row" data-v="삼면도 (정면·측면·탑뷰)" onclick="pickView(this)"><span>삼면도 (정면·측면·탑뷰)</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('삼면도 (정면·측면·탑뷰)')">🔍 예시</span></div>
-<div class="c view-row" data-v="사용 장면" onclick="pickView(this)"><span>사용 장면</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('사용 장면')">🔍 예시</span></div>
-<div class="c view-row" data-v="Exploded View / 분해도" onclick="pickView(this)"><span>Exploded View / 분해도</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('Exploded View / 분해도')">🔍 예시</span></div>
-<div class="c view-row" data-v="Detail View / 디테일뷰" onclick="pickView(this)"><span>Detail View / 디테일뷰</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('Detail View / 디테일뷰')">🔍 예시</span></div>
-<div class="c view-row" data-v="결착·구조 확대" onclick="pickView(this)"><span>결착·구조 확대</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('결착·구조 확대')">🔍 예시</span></div>
+<div class="c view-row" data-v="45도 View" onclick="pickView(this)"><span>📐 45도 View</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('45도 View')">🔍 예시</span></div>
+<div class="c view-row" data-v="삼면도 (정면·측면·탑뷰)" onclick="pickView(this)"><span>📋 삼면도 (정면·측면·탑뷰)</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('삼면도 (정면·측면·탑뷰)')">🔍 예시</span></div>
+<div class="c view-row" data-v="사용 장면" onclick="pickView(this)"><span>🎬 사용 장면</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('사용 장면')">🔍 예시</span></div>
+<div class="c view-row" data-v="Exploded View / 분해도" onclick="pickView(this)"><span>💥 Exploded View / 분해도</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('Exploded View / 분해도')">🔍 예시</span></div>
+<div class="c view-row" data-v="Detail View / 디테일뷰" onclick="pickView(this)"><span>🔍 Detail View / 디테일뷰</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('Detail View / 디테일뷰')">🔍 예시</span></div>
+<div class="c view-row" data-v="결착·구조 확대" onclick="pickView(this)"><span>🔩 결착·구조 확대</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('결착·구조 확대')">🔍 예시</span></div>
 <div class="c view-row" data-v="기타" onclick="pickView(this)"><span>기타 / 직접 입력</span></div>
 </div>
 <div id="viewTextWrap" style="display:none"><label>직접 입력하세요</label><input id="viewText" placeholder="예: 조명과 모기퇴치 유닛이 동시에 보이도록"></div>
@@ -220,7 +225,24 @@ const TONE_ADJ_EN={"Pastel · 파스텔":"pastel","Light · 라이트":"light","
 const TONE_DESC_EN={"Pastel · 파스텔":"soft low-saturation and high-lightness color appearance","Light · 라이트":"light airy high-lightness color appearance","Bright · 브라이트":"bright clean medium-high saturation color appearance","Vivid · 비비드":"vivid highly saturated bold color appearance","Soft · 소프트":"soft gentle low-saturation color appearance","Muted · 뮤트":"muted subdued low-saturation color appearance","Deep · 딥":"deep rich low-lightness saturated color appearance","Dark · 다크":"dark low-lightness moody color appearance"};
 const SCHEME_DOTS={"단색 배색":["hsl(210,60%,50%)"],"톤온톤":["hsl(210,60%,35%)","hsl(210,60%,55%)","hsl(210,60%,75%)"],"톤인톤":["hsl(0,55%,60%)","hsl(120,45%,55%)","hsl(240,55%,60%)"],"유사색 배색":["hsl(180,55%,55%)","hsl(210,55%,55%)","hsl(240,55%,55%)"],"보색·대비 배색":["hsl(210,60%,50%)","hsl(30,60%,50%)"],"3색 배색":["hsl(0,55%,55%)","hsl(120,55%,55%)","hsl(240,55%,55%)"]};
 const SCHEME_EN={"단색 배색":"monochromatic","톤온톤":"tone-on-tone","톤인톤":"tone-in-tone","유사색 배색":"analogous","보색·대비 배색":"complementary/contrasting","3색 배색":"triadic (3-color)"};
-function add(id,a,s=false){let e=document.getElementById(id);a.forEach(x=>{let b=document.createElement("div");b.className="c";b.textContent=x;b.onclick=()=>{if(s)[...e.children].forEach(q=>q.classList.remove("on"));b.classList.toggle("on")};e.appendChild(b)})}
+const ICONS={
+"생활·가전":"🏠","IT·스마트":"📱","가구·공간":"🛋️","헬스·뷰티":"💆","모빌리티":"🛴","키즈·시니어":"👨‍👩‍👧","반려동물":"🐾","스포츠·아웃도어":"⛺","산업·공공":"🏭",
+"어린이":"🧒","청소년":"🎒","대학생":"🎓","직장인":"💼","1인 가구":"🛏️","가족":"👨‍👩‍👧‍👦","시니어":"👴","반려인":"🐶","전문가·작업자":"🛠️",
+"사용 편의":"👍","휴대":"🎒","보관":"📦","공간 절약":"📐","안전":"🛡️","위생":"🧼","접근성":"♿","이동":"🚶","내구성":"💪","친환경":"🌱",
+"전체 형태":"🔷","결착·고정":"🔗","열림·닫힘":"🚪","수납":"🗄️","조작방법":"🎛️","이동·휴대":"🎒","접이·변형":"📂","높이·각도조절":"📏","CMF":"🎨",
+"버튼":"🔘","다이얼":"🎚️","터치":"👆","손잡이":"✋","레버":"🕹️","센서":"📡","자동":"⚙️","한 손 조작":"🤏","해당 없음":"➖",
+"회전":"🔄","접힘":"📂","슬라이드":"↔️","높이조절":"📏","각도조절":"📐","분리·결합":"🧩","움직임 없음":"⏸️",
+"거치":"📌","클램프":"🗜️","스트랩":"🎗️","후크":"🪝","슬라이드 체결":"🔧","회전 잠금":"🔒","자석":"🧲","나사":"🔩","끼움":"🧷",
+"잠금":"🔒","높이·각도 조절":"📏","디스플레이":"🖥️","터치 UI":"👆","조명":"💡","무선·충전":"🔌",
+"원형":"⚪","사각형":"⬜","원통형":"🥫","슬림":"🪶","바형":"🥖","기하학적":"🔺","유기적":"🌿","곡선형":"〰️","모듈형":"🧱","비대칭":"🔀",
+"Minimal":"◻️","Modern":"🏙️","Soft":"☁️","Friendly":"😊","Futuristic":"🚀","High-tech":"🤖","Premium":"💎","Natural":"🍃","Sporty":"🏃",
+"하나의 디자인 완성":"✅","형태 아이디어 여러 안":"🔀","구조·결착 아이디어 여러 안":"🧩","기존 스케치 발전":"✏️",
+"A4 가로 (297×210mm · 1.414:1)":"📄","16:9 (1920×1080)":"🖥️","인스타 정사각형 (1:1)":"⬛","인스타 세로 (4:5)":"📱","인스타 스토리·릴스 (9:16)":"🎥","자유 비율":"✂️",
+"ABS":"🧪","PC":"🔬","PP":"🧴","알루미늄":"🥫","스테인리스":"🍴","목재":"🪵","실리콘":"🫧","고무·TPU":"🎈","유리":"🪟","패브릭":"🧵","가죽":"👜","세라믹":"🏺",
+"무광":"🌑","유광":"✨","소프트터치":"🤲","헤어라인":"〰️","아노다이징":"🌈","펄":"🦪","메탈릭":"🔩","텍스처":"🧱","반투명":"🪟",
+"기타":"➕"
+};
+function add(id,a,s=false){let e=document.getElementById(id);a.forEach(x=>{let b=document.createElement("div");b.className="c";b.textContent=x;if(ICONS[x])b.dataset.icon=ICONS[x];b.onclick=()=>{if(s)[...e.children].forEach(q=>q.classList.remove("on"));b.classList.toggle("on")};e.appendChild(b)})}
 ["user","problem","control","motion","mount","feature","form","style","materialChips","finishChips"].forEach(x=>add(x,D[x]));["category","output","aspect"].forEach(x=>add(x,D[x],true));
 function addColorChips(){
  const e=document.getElementById("colorChips");
