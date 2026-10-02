@@ -718,7 +718,7 @@ function renderBoardPrompts(){
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
    <b style="font-size:13px">${p.icon} ${p.label}</b>
    <span class="ex-link" onclick="showViewExample('${p.exKey}')">🔍 예시</span>
-   <button type="button" class="copy" style="margin:0" onclick="copyBoardPrompt(${i})">복사하기</button>
+   <button type="button" class="copy" style="margin:0 0 0 auto" onclick="copyBoardPrompt(${i})">프롬프트 복사</button>
   </div>
   <div class="box" style="font-size:12.5px">${p[lang].replace(/&/g,"&amp;").replace(/</g,"&lt;")}</div>
  </div>`).join("")+'<p class="hint" style="margin:14px 0 0">※ 이 뷰들로 만들어지는 이미지는 정확한 설계 도면이 아니라, 디자인 아이디어를 이해하기 위한 참고용 이미지입니다.</p>';
