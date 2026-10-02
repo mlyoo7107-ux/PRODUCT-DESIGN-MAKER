@@ -541,6 +541,7 @@ function showStep(n){
   const ts=Number(t.dataset.step);
   t.classList.toggle("on",ts===n);
   t.classList.toggle("done",ts<n);
+  if(ts===n)t.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
  });
  const prevBtn=document.getElementById("prevStepBtn"), nextBtn=document.getElementById("nextStepBtn");
  if(prevBtn)prevBtn.disabled=(n<=1);
