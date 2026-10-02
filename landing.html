@@ -14,14 +14,14 @@
 <meta name="twitter:description" content="질문에 답하면, 막연한 아이디어가 제품디자인 프롬프트로 완성됩니다.">
 <meta name="twitter:image" content="https://mlyoo7107-ux.github.io/PRODUCT-DESIGN-MAKER/kakao-thumb-v3.webp">
 <style>
-:root{--a:#ff2d86;--b:#f5f1e8;--l:#e8e1d3;--t:#171512;--m:#7a7268}
+:root{--a:#ff2d86;--ab:#ffb3d1;--b:#fff5f9;--l:#f6dbe8;--t:#171512;--m:#7a7268}
 *{box-sizing:border-box}
 body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
 .wrap{max-width:720px;margin:auto;padding:0 20px}
-header{text-align:center;padding:32px 0;background:white;border-bottom:1px solid var(--l)}
+header{text-align:center;padding:20px 0;background:white;border-bottom:1px solid var(--l)}
 header .eyebrow{color:var(--a);font-weight:bold;letter-spacing:2px;font-size:13px}
-header h1{font-size:32px;font-weight:900;margin:14px 0;line-height:1.35}
-header p{color:var(--m);font-size:16px;margin:0 0 24px}
+header h1{font-size:28px;font-weight:900;margin:10px 0;line-height:1.35}
+header p{color:var(--m);font-size:15px;margin:0 0 16px}
 .hero-img{max-width:100%;border-radius:16px;border:1px solid var(--l);margin-top:10px}
 section.wrap{padding-top:50px;padding-bottom:50px;border-top:1px solid var(--l)}
 h2{font-size:22px;font-weight:900;margin:0 0 24px}
@@ -34,10 +34,10 @@ h2{font-size:22px;font-weight:900;margin:0 0 24px}
 .price-card .amount small{font-size:16px;font-weight:normal;color:var(--m)}
 .go{display:block;width:100%;padding:18px;background:var(--a);color:white;border:0;border-radius:32px;font-size:17px;font-weight:bold;cursor:pointer;text-align:center;text-decoration:none;transition:background .15s;margin-top:20px}
 .go:hover{background:#e0247a}
-.go:disabled{background:#d9d3c7;cursor:not-allowed}
-.agree{display:flex;gap:10px;align-items:flex-start;text-align:left;font-size:13px;line-height:1.55;color:var(--t);background:#faf7f0;border:1px solid var(--l);border-radius:10px;padding:12px 14px;margin:18px 0 0;cursor:pointer;font-weight:normal}
+.go:disabled{background:#c9cedb;cursor:not-allowed}
+.agree{display:flex;gap:10px;align-items:flex-start;text-align:left;font-size:13px;line-height:1.55;color:var(--t);background:#f5f6fa;border:1px solid #e2e5ee;border-radius:10px;padding:12px 14px;margin:18px 0 0;cursor:pointer;font-weight:normal}
 .agree input{margin-top:3px;width:18px;height:18px;accent-color:var(--a);flex:none;cursor:pointer}
-.go-outline{background:white;color:var(--a);border:1px solid var(--a)}
+.go-outline{background:white;color:var(--a);border:1px solid var(--ab)}
 .go-outline:hover{background:#ffe6f1}
 .gallery-link{display:inline-block;padding:13px 26px;border:2px solid var(--a);color:var(--a);background:#fff;border-radius:26px;font-size:15px;font-weight:bold;text-decoration:none;transition:background .15s}
 .gallery-link:hover{background:#ffe6f1}
@@ -56,6 +56,7 @@ footer img{max-width:130px}
 .biz-info summary:after{content:" ▾"}
 .biz-info[open] summary:after{content:" ▴"}
 .biz-info p{margin:8px auto 0;line-height:1.8;max-width:420px}
+header{position:sticky;top:0;z-index:50}
 </style>
 </head><body>
 <header>
@@ -98,7 +99,7 @@ footer img{max-width:130px}
 <section class="wrap">
 <h2>아이디어를, 원하는 결과물로.</h2>
 <p style="color:var(--m);font-size:14px;margin:-8px 0 16px">45도 View부터 삼면도·사용 장면·분해도·디테일·결착 구조까지, 목적에 맞는 결과물을 선택할 수 있습니다.</p>
-<img src="landing-views-composite.webp" alt="View 종류 예시 — 45도 View, 삼면도, 사용 장면, Exploded View, Detail View, 결착 방식" style="display:block;width:100%;height:auto;border-radius:16px;border:1px solid var(--l)">
+<img src="landing-views-composite-preview.webp" alt="View 종류 예시 — 45도 View, 삼면도, 사용 장면, Exploded View, Detail View, 결착 방식, 다양한 사용·설치 방식" style="display:block;width:100%;height:auto;border-radius:16px;border:1px solid var(--l)">
 </section>
 
 <section class="wrap">
@@ -114,8 +115,8 @@ footer img{max-width:130px}
 
 <section class="wrap">
 <h2>가격</h2>
-<div class="price-card" id="alreadyPaidCard" style="display:none;background:#f2fbf5;border-color:#1f9d55">
-<div class="badge" style="background:#dcf5e4;color:#1f9d55">✅ 이미 구매하셨어요</div>
+<div class="price-card" id="alreadyPaidCard" style="display:none">
+<div class="badge">✅ 이미 구매하셨어요</div>
 <p style="font-size:15px;margin:6px 0 0">이 기기에서는 이미 BASIC을 구매하셨어요. 다시 결제하실 필요 없이 바로 메이커로 이동해서 사용하시면 돼요.</p>
 <a class="go" href="index.html" style="display:block;margin-top:18px;text-decoration:none">메이커로 이동하기 →</a>
 </div>
@@ -127,7 +128,7 @@ footer img{max-width:130px}
 <label class="agree"><input type="checkbox" id="agreeRefund" onchange="syncPayBtn()"><span>디지털 콘텐츠 특성상 <b>이용 시작 후에는 청약철회(환불)가 제한</b>된다는 안내를 확인했으며, 무료 체험 3회로 충분히 확인한 뒤 결제합니다. <span style="color:var(--a)">(필수)</span></span></label>
 <button class="go" id="payBtn" onclick="startPayment()" disabled>9,900원 결제하고 시작하기</button>
 <a class="go go-outline" href="https://mlyoo7107-ux.github.io/PRODUCT-DESIGN-MAKER/" style="margin-top:10px">먼저 무료로 3회 체험하기 →</a>
-<div style="text-align:left;background:#faf7f0;border-radius:10px;padding:12px 14px;margin-top:16px">
+<div style="text-align:left;background:#f5f6fa;border:1px solid #e2e5ee;border-radius:10px;padding:12px 14px;margin-top:16px">
 <p class="notice" style="margin:0">📌 결제 후 전용 이용 링크가 발급되며 바로 사용하실 수 있습니다.<br>구매 전 무료 체험 3회로 충분히 확인해 주세요.<br>디지털 콘텐츠 특성상 이용 시작 후에는 환불이 제한될 수 있습니다.</p>
 </div>
 <p class="notice">🔒 페이앱을 통한 안전한 결제입니다.</p>
