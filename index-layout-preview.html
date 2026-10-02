@@ -698,20 +698,126 @@ function loadJSON(ev){
  r.readAsText(f,"utf-8");
 }
 function savePDF(){
- const title=(v("product")||"제품디자인")+" · COLOR.M PRODUCT DESIGN MAKER";
+ const d=collectData();
+ const esc=x=>(x||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+ const title=d.designTitle||d.product||"제품 디자인";
+ const today=new Date().toLocaleDateString("ko-KR");
+ const pal=(typeof palGet==="function"?palGet():null);
+ const colors=pal?["main","sub","point"].map(k=>({k,...pal[k]})).filter(x=>/^#[0-9A-Fa-f]{6}$/.test(x.hex||"")):[];
+ const roleName={main:"MAIN",sub:"SUB",point:"POINT"};
+ const profRows=[
+  ["분야",d.category.join(", ")],
+  ["제품",d.product],
+  ["사용자",[...d.user,d.userText].filter(Boolean).join(" · ")],
+  ["문제",[...d.problem,d.problemText].filter(Boolean).join(" · ")],
+  ["스타일",[...d.style,d.styleText].filter(Boolean).join(" · ")],
+  ["표현 스타일",(d.renderStyle&&d.renderStyle[0])||d.renderStyleText],
+  ["View",(d.view&&d.view[0])||d.viewText],
+  ["출력 비율",d.aspect.join(", ")]
+ ].filter(r=>r[1]);
+ const heroImg=d.images.sketch||d.images.ref;
+ const logoUrl=new URL("logo-colorm.png",location.href).href;
+ const dos=[
+  colors.length?`지정한 컬러(${colors.map(x=>x.hex.toUpperCase()).join(" · ")})를 그대로 사용`:"처음 정한 컬러·톤을 그대로 유지",
+  (d.renderStyle&&d.renderStyle[0])?`${d.renderStyle[0]} 스타일로 통일`:"처음 선택한 표현 스타일로 통일",
+  "스케치·레퍼런스를 첨부했다면 참고 이미지로 함께 사용",
+  "같은 프롬프트로 여러 번 생성해보고 마음에 드는 결과를 골라 발전시키기"
+ ];
+ const donts=[
+  "여러 장면·각도를 하나의 이미지에 콜라주처럼 합성하기",
+  "실생활 배경·사람이 들어간 라이프스타일 사진처럼 만들기",
+  "지정한 컬러·소재·마감을 다른 것으로 바꾸기",
+  "Exploded View에서 조립된 완성품을 중복해서 넣기",
+  "이미지 안에 의도하지 않은 글자·워터마크 넣기"
+ ];
+ const tags=[
+  (d.renderStyle&&d.renderStyle[0])?`<div><b>표현 스타일</b><span>${esc(d.renderStyle[0])}</span></div>`:"",
+  (d.view&&d.view[0])?`<div><b>View</b><span>${esc(d.view[0])}</span></div>`:"",
+  d.aspect.length?`<div><b>출력 비율</b>${d.aspect.map(x=>`<span>${esc(x)}</span>`).join("")}</div>`:""
+ ].filter(Boolean).join("");
  const w=window.open("","_blank");
  if(!w){alert("팝업이 차단되었습니다. 브라우저에서 팝업을 허용해주세요.");return;}
- const esc=x=>(x||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
- let imgSection="";
- if(images.sketch)imgSection+=`<h2>첨부한 스케치</h2><img src="${images.sketch}" style="max-width:100%;border-radius:8px;border:1px solid #ddd">`;
- if(images.ref)imgSection+=`<h2>첨부한 레퍼런스</h2><img src="${images.ref}" style="max-width:100%;border-radius:8px;border:1px solid #ddd">`;
- w.document.write(`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${esc(title)}</title>
- <style>body{font-family:Arial,"Noto Sans KR",sans-serif;max-width:850px;margin:35px auto;color:#222;line-height:1.55}h1{font-size:24px}h2{font-size:16px;margin-top:24px;border-bottom:1px solid #ddd;padding-bottom:7px}.box{white-space:pre-wrap;background:#f7f7f9;padding:15px;border-radius:8px;font-size:12px}img{break-inside:avoid}@media print{body{margin:12mm}.box{break-inside:avoid}}</style></head><body>
- <h1>${esc(title)}</h1><h2>디자인 기획 제목</h2><div class="box">${esc(finalTitle()||"(제목 미선택)")}</div>
- <h2>디자인 기획 요약</h2><div class="box">${esc(document.getElementById("summary").textContent)}</div>
- ${imgSection}
- <h2>한글 프롬프트</h2><div class="box">${esc(document.getElementById("ko").textContent)}</div>
- <h2>영문 이미지 생성 프롬프트</h2><div class="box">${esc(document.getElementById("en").textContent)}</div>
+ w.document.write(`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${esc(title)} · COLOR.M PRODUCT DESIGN MAKER</title>
+ <style>
+ *{box-sizing:border-box}
+ body{margin:0;font-family:Arial,"Noto Sans KR",sans-serif;color:#171512;background:#f3eef3}
+ .sheet{width:210mm;max-width:100%;min-height:297mm;margin:0 auto 20px;background:#fff;padding:13mm 14mm 10mm;display:flex;flex-direction:column;gap:5mm;box-shadow:0 10px 40px rgba(0,0,0,.18);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .bb-head{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #171512;padding-bottom:3mm}
+ .bb-head img{height:28px}
+ .bb-head div{text-align:right;display:flex;flex-direction:column}
+ .bb-head span{font-weight:800;letter-spacing:.14em;font-size:13px;color:#ff2d86}
+ .bb-head small{color:#7a7268;font-size:11px}
+ .bb-hero{display:flex;gap:7mm;align-items:flex-start}
+ .bb-img{flex:none;width:62mm;aspect-ratio:3/4;border-radius:6mm;overflow:hidden;background:#fff5f9;display:grid;place-items:center;border:1px solid #f6dbe8}
+ .bb-img img{width:100%;height:100%;object-fit:cover}
+ .bb-img span{font-size:34px}
+ .bb-title{flex:1;min-width:0}
+ .bb-title h1{margin:0;font-size:28px;line-height:1.2;letter-spacing:-.01em}
+ .bb-id{margin:4mm 0;padding:3.5mm 4mm;background:#fff5f9;border-left:4px solid #ff2d86;border-radius:0 3mm 3mm 0;font-size:14px;font-weight:600;line-height:1.5}
+ .bb-prof{width:100%;border-collapse:collapse;font-size:12.5px}
+ .bb-prof th{text-align:left;color:#7a7268;font-weight:600;width:24mm;padding:1.4mm 0;vertical-align:top;white-space:nowrap}
+ .bb-prof td{padding:1.4mm 0;border-bottom:1px solid #eee}
+ .bb-colors{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm}
+ .bb-sw{display:flex;align-items:center;gap:3mm;border:1px solid #f6dbe8;border-radius:3mm;padding:2.5mm}
+ .bb-sw i{width:14mm;height:14mm;border-radius:2.5mm;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);display:block}
+ .bb-sw span{display:flex;flex-direction:column;font-family:ui-monospace,Consolas,monospace;font-size:13px;font-weight:700}
+ .bb-sw b{font-family:inherit;font-size:10px;letter-spacing:.12em;color:#7a7268;font-weight:600}
+ .bb-sw small{font-weight:500;font-size:11px;color:#5a5570}
+ .bb-box{border-radius:3mm;padding:3.5mm 4mm;border:1px solid #f6dbe8}
+ .bb-box h2{margin:0 0 2mm;font-size:13px}
+ .bb-box.summary{background:#fdf0f6;border-color:#f6dbe8;white-space:pre-wrap;font-size:12.5px;line-height:1.7}
+ .bb-grid{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+ .bb-box ul{margin:0;padding-left:4.5mm;display:flex;flex-direction:column;gap:1.3mm;font-size:12px}
+ .bb-box.do{background:#F1FAF4;border-color:#CDEBD8}
+ .bb-box.dont{background:#FFF4F2;border-color:#F6D3CC}
+ .bb-tags{display:flex;flex-direction:column;gap:2mm;font-size:12px}
+ .bb-tags div{display:flex;flex-wrap:wrap;align-items:center;gap:1.5mm}
+ .bb-tags b{min-width:20mm;color:#7a7268;font-weight:600}
+ .bb-tags span{background:#faf7f0;border-radius:999px;padding:.8mm 3mm}
+ .bb-foot{margin-top:auto;padding-top:3mm;border-top:1px solid #f6dbe8;text-align:center;font-size:10px;letter-spacing:.12em;color:#7a7268}
+ .bb-prompt h2{margin:0 0 2mm;font-size:12px;letter-spacing:.08em;color:#ff2d86}
+ .bb-prompt pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-family:ui-monospace,Consolas,monospace;font-size:9.5px;line-height:1.5;background:#faf7f0;border-radius:3mm;padding:3mm 3.5mm}
+ @media print{
+  body{background:none}
+  .sheet{box-shadow:none;break-after:page;page-break-after:always;margin:0}
+  .sheet:last-child{break-after:auto;page-break-after:auto}
+  .bb-box,.bb-prompt,.bb-colors,.bb-hero{break-inside:avoid}
+ }
+ </style></head><body>
+
+ <section class="sheet">
+  <header class="bb-head"><img src="${logoUrl}" alt="COLOR.M"><div><span>PRODUCT DESIGN BRIEF</span><small>${esc(today)}</small></div></header>
+  <div class="bb-hero">
+   <div class="bb-img">${heroImg?`<img src="${heroImg}" alt="">`:"<span>🎨</span>"}</div>
+   <div class="bb-title">
+    <h1>${esc(title)}</h1>
+    ${d.productNote?`<p class="bb-id">“${esc(d.productNote)}”</p>`:""}
+    <table class="bb-prof">${profRows.map(([k,vv])=>`<tr><th>${esc(k)}</th><td>${esc(vv)}</td></tr>`).join("")}</table>
+   </div>
+  </div>
+  ${colors.length?`<div class="bb-colors">${colors.map(x=>`<div class="bb-sw"><i style="background:${x.hex}"></i><span><b>${roleName[x.k]}</b>${esc(x.hex.toUpperCase())}${x.name?`<small>${esc(x.name)}</small>`:""}</span></div>`).join("")}</div>`:""}
+  <footer class="bb-foot">COLOR.M AI PRODUCT DESIGN MAKER · colorm.net</footer>
+ </section>
+
+ <section class="sheet">
+  <header class="bb-head"><img src="${logoUrl}" alt="COLOR.M"><div><span>DESIGN BRIEF — ${esc(title)}</span><small>디자인 의도 · 사용 가이드</small></div></header>
+  <div class="bb-box summary"><h2>💡 디자인 기획 요약</h2>${esc(d.summary)}</div>
+  <div class="bb-grid">
+   <div class="bb-box do"><h2>✅ Do</h2><ul>${dos.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+   <div class="bb-box dont"><h2>⛔ Don't</h2><ul>${donts.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  </div>
+  ${tags?`<div class="bb-tags">${tags}</div>`:""}
+  <footer class="bb-foot">COLOR.M AI PRODUCT DESIGN MAKER · colorm.net</footer>
+ </section>
+
+ <section class="sheet">
+  <header class="bb-head"><img src="${logoUrl}" alt="COLOR.M"><div><span>PROMPTS — ${esc(title)}</span><small>한글 · 영문</small></div></header>
+  <div class="bb-prompt"><h2>한글 프롬프트</h2><pre>${esc(d.koreanPrompt)}</pre></div>
+  <div class="bb-prompt"><h2>영문 이미지 생성 프롬프트</h2><pre>${esc(d.englishPrompt)}</pre></div>
+  <p style="font-size:11.5px;color:#5a5570;background:#fdf0f6;border-radius:3mm;padding:3mm 4mm;margin:0">이 문서는 프롬프트 기획안입니다. 실제 이미지는 각자 사용하는 AI 이미지 생성 도구에 프롬프트를 붙여넣어 생성해 주세요.</p>
+  <footer class="bb-foot">COLOR.M AI PRODUCT DESIGN MAKER · colorm.net</footer>
+ </section>
+
  <script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>`);
  w.document.close();
 }
