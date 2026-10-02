@@ -4,7 +4,7 @@
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--a:#ff2d86;--b:#f5f1e8;--l:#e8e1d3;--t:#171512;--m:#7a7268}
+:root{--a:#ff2d86;--ab:#ffb3d1;--b:#f5f6fa;--l:#e2e5ee;--t:#171512;--m:#7a7268}
 *{box-sizing:border-box}
 body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
 .wrap{max-width:480px;margin:auto;padding:0 20px}
@@ -20,7 +20,8 @@ textarea{min-height:100px;resize:vertical}
 .hint{font-size:12px;color:var(--m);margin:4px 0 0}
 .go{width:100%;padding:16px;background:var(--a);color:white;border:0;border-radius:28px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:18px}
 .go:hover{background:#e0247a}
-.go:disabled{background:#d9d3c7;cursor:not-allowed}
+.go:disabled{background:var(--ab);cursor:not-allowed}
+.go:disabled:hover{background:var(--a)}
 .back{display:block;text-align:center;margin-top:14px;color:var(--m);font-size:13px;text-decoration:none}
 .msg{font-size:13px;color:#c0392b;margin-top:10px;display:none}
 .success{text-align:center;padding:40px 10px}
