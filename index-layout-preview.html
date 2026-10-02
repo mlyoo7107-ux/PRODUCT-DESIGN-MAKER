@@ -211,7 +211,18 @@
 </div>
 </div>
 <div style="margin-top:18px;border-top:1px solid var(--l);padding-top:16px">
-<label>프로젝트 저장 · 불러오기</label>
+<label style="margin-top:0">📷 완성된 이미지 등록</label>
+<p class="hint">AI 도구로 이미지를 만드셨다면, 가장 마음에 드는 1장을 등록해주세요. 아래 "디자인 기획서 PDF"에 이 이미지가 자동으로 함께 들어가요.</p>
+<div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-top:10px">
+<div style="flex:1;min-width:160px">
+<input type="file" accept="image/*" id="generatedFile" onchange="handleImageUpload(event,'generated')">
+<button type="button" class="copy" id="generatedRemoveBtn" style="display:none;margin-top:8px" onclick="removeImage('generated')">🗑 삭제</button>
+</div>
+<img id="generatedPreview" style="display:none;max-width:140px;border-radius:10px;border:1px solid var(--l)">
+</div>
+</div>
+<div style="margin-top:18px;border-top:1px solid var(--l);padding-top:16px">
+<label style="margin-top:0">프로젝트 저장 · 불러오기</label>
 <p class="hint">작업파일을 저장하면 다음 수업에서 다시 불러와 선택항목과 입력내용을 이어서 수정할 수 있습니다.</p>
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
 <button class="copy pdf-primary" style="border-radius:22px" onclick="savePDF()">📄 디자인 기획서 PDF 저장</button>
@@ -495,7 +506,7 @@ function showStep(n){
 }
 const v=id=>document.getElementById(id).value.trim(), sel=id=>[...document.querySelectorAll("#"+id+" .c.on")].map(x=>x.textContent), txt=(id,extra="")=>[...sel(id),extra].filter(Boolean).join(", ")||"미정";
 const selEn=id=>sel(id).map(x=>(EN[id]&&EN[id][x])||x), txtEn=(id,extra="")=>[...selEn(id),extra].filter(Boolean).join(", ")||"unspecified";
-let images={sketch:null,ref:null};
+let images={sketch:null,ref:null,generated:null};
 function showImagePreview(key,dataUrl){
  const prev=document.getElementById(key+"Preview"), btn=document.getElementById(key+"RemoveBtn");
  if(dataUrl){prev.src=dataUrl;prev.style.display="block";btn.style.display="inline-block";}
@@ -638,7 +649,7 @@ function collectData(){
   koreanPrompt:document.getElementById("ko").textContent,
   englishPrompt:document.getElementById("en").textContent,
   designTitle:finalTitle(),
-  images:{sketch:images.sketch,ref:images.ref}
+  images:{sketch:images.sketch,ref:images.ref,generated:images.generated}
  };
 }
 function downloadFile(name,content,type){
@@ -691,6 +702,7 @@ function applyFields(d){
  setView((d.view&&d.view[0])||""); setVal("viewText",d.viewText); setSingle("aspect",d.aspect); setVal("aspectText",d.aspectText);
  images.sketch=(d.images&&d.images.sketch)||null; showImagePreview("sketch",images.sketch);
  images.ref=(d.images&&d.images.ref)||null; showImagePreview("ref",images.ref);
+ images.generated=(d.images&&d.images.generated)||null; showImagePreview("generated",images.generated);
 }
 function loadJSON(ev){
  const f=ev.target.files&&ev.target.files[0]; if(!f)return;
@@ -725,7 +737,7 @@ function savePDF(){
   ["View",(d.view&&d.view[0])||d.viewText],
   ["출력 비율",d.aspect.join(", ")]
  ].filter(r=>r[1]);
- const heroImg=d.images.sketch||d.images.ref;
+ const heroImg=d.images.generated||d.images.sketch||d.images.ref;
  const logoUrl=new URL("logo-colorm.png",location.href).href;
  const dos=[
   colors.length?`지정한 컬러(${colors.map(x=>x.hex.toUpperCase()).join(" · ")})를 그대로 사용`:"처음 정한 컬러·톤을 그대로 유지",
@@ -839,7 +851,7 @@ function newProject(){
  if(typeof palSet==="function")palSet(null);
  const count=document.getElementById("count"); if(count)count.value="4";
  setFormMode("p1");
- ["sketch","ref"].forEach(key=>{images[key]=null;showImagePreview(key,null);const f=document.getElementById(key+"File");if(f)f.value="";});
+ ["sketch","ref","generated"].forEach(key=>{images[key]=null;showImagePreview(key,null);const f=document.getElementById(key+"File");if(f)f.value="";});
  ["summary","ko","en","promptBox"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=""});
  currentPromptTab="ko"; document.querySelectorAll("#promptTabs .tab").forEach(t=>t.classList.toggle("on",t.dataset.pt==="ko"));
  const resultImages=document.getElementById("resultImages"); if(resultImages){resultImages.innerHTML="";resultImages.style.display="none";}
