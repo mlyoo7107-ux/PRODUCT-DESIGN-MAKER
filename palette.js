@@ -208,7 +208,8 @@
   .pal-adv-list{display:flex;flex-wrap:wrap;gap:6px}
   .pal-adv,.pal-preset,.pal-hcard{font:inherit;cursor:pointer;background:white;border:1px solid var(--l);border-radius:20px;transition:border-color .15s,background .15s}
   .pal-adv{display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 6px;font-size:12.5px}
-  .pal-adv i,.pal-preset i{width:18px;height:18px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.08)}
+  .pal-adv i{width:18px;height:18px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.08)}
+  .pal-preset i{width:24px;height:24px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.08)}
   .pal-adv:hover,.pal-preset:hover,.pal-hcard:hover{border-color:var(--a);background:#fff5fa}
   .pal-rows{display:flex;flex-direction:column;gap:7px}
   .pal-row{display:grid;grid-template-columns:52px 44px 96px minmax(0,1fr) 28px;gap:7px;align-items:center}
@@ -223,10 +224,10 @@
   .pal-hcard b{font-size:13px}.pal-hcard small{font-size:11.5px;color:var(--m)}
   .pal-bar{display:flex;width:100%;height:22px;border-radius:7px;overflow:hidden;border:1px solid rgba(0,0,0,.06)}
   .pal-bar i{flex:1}.pal-bar i:first-child{flex:1.6}
-  .pal-presets{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:11px}
-  .pal-preset{display:inline-flex;align-items:center;padding:5px 11px 5px 6px;font-size:12px}
-  .pal-preset i{margin-right:-5px;border:2px solid white}
-  .pal-preset span{margin-left:9px}
+  .pal-presets{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:12px;width:100%}
+  .pal-preset{display:inline-flex;align-items:center;padding:8px 16px 8px 8px;font-size:13.5px;flex:1 1 auto;justify-content:center}
+  .pal-preset i{margin-right:-6px;border:2px solid white}
+  .pal-preset span{margin-left:11px;white-space:nowrap}
   @media(max-width:600px){.pal-row{grid-template-columns:44px 40px 1fr 24px}.pal-row input[data-pal=name]{grid-column:2/-1;grid-row:2}}`;
   const st = document.createElement('style');
   st.textContent = css;
