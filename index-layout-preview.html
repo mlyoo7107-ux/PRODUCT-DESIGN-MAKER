@@ -156,20 +156,9 @@
 </div>
 <p class="hint">※ 예시 이미지는 스타일 느낌을 보여주는 참고용입니다. 실제 생성 결과는 사용하는 AI 도구에 따라 달라질 수 있어요.</p>
 <div id="renderStyleTextWrap" style="display:none"><label>직접 입력하세요</label><input id="renderStyleText" placeholder="원하는 표현 스타일을 직접 입력하세요."></div>
-<label>③ 어떤 View로 보여줄까요?</label>
-<div id="multiViewWarning" style="display:none;background:#fff9e6;border:1px solid #ffd97a;border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:8px">⚠️ 여러 안을 비교할 때는 <b>45도 View</b>를 추천해요. 다른 View를 선택하면 콘셉트마다 복잡한 구성이 겹쳐서 결과가 뒤섞이기 쉬워요.</div>
-<div id="view">
-<div class="c view-row" data-v="45도 View" onclick="pickView(this)"><span>📐 45도 View</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('45도 View')">🔍 예시</span></div>
-<div class="c view-row" data-v="삼면도 (정면·측면·탑뷰)" onclick="pickView(this)"><span>📋 삼면도 (정면·측면·탑뷰)</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('삼면도 (정면·측면·탑뷰)')">🔍 예시</span></div>
-<div class="c view-row" data-v="사용 장면" onclick="pickView(this)"><span>🎬 사용 장면</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('사용 장면')">🔍 예시</span></div>
-<div class="c view-row" data-v="Exploded View / 분해도" onclick="pickView(this)"><span>💥 Exploded View / 분해도</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('Exploded View / 분해도')">🔍 예시</span></div>
-<div class="c view-row" data-v="Detail View / 디테일뷰" onclick="pickView(this)"><span>🔍 Detail View / 디테일뷰</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('Detail View / 디테일뷰')">🔍 예시</span></div>
-<div class="c view-row" data-v="결착·구조 확대" onclick="pickView(this)"><span>🔩 결착·구조 확대</span><span class="ex-link" onclick="event.stopPropagation();showViewExample('결착·구조 확대')">🔍 예시</span></div>
-<div class="c view-row" data-v="기타" onclick="pickView(this)"><span>기타 / 직접 입력</span></div>
-</div>
-<div id="viewTextWrap" style="display:none"><label>직접 입력하세요</label><input id="viewText" placeholder="예: 조명과 모기퇴치 유닛이 동시에 보이도록"></div>
-<div style="margin-top:10px;background:#fff5fa;border:1px solid #ffcfe4;border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.6">※ 이 View(삼면도, 분해도, 결착·구조 확대 등)로 만들어지는 이미지는 정확한 설계 도면이 아니라, 디자인 아이디어를 이해하기 위한 참고용 이미지입니다. 실제 치수·구조·조립 방식은 별도로 검토해주세요.</div>
-<label>④ 어떤 사이즈로 출력할까요?</label><div class="grid" id="aspect"></div>
+<div id="viewTextWrap" style="display:none"><input id="viewText"></div>
+<p class="hint" style="margin-top:0">💡 다양한 각도·장면(삼면도, 사용 장면, 분해도 등)의 프롬프트는 결과 화면에서 한 번에 모두 확인할 수 있어요.</p>
+<label>③ 어떤 사이즈로 출력할까요?</label><div class="grid" id="aspect"></div>
 <label>자유 비율 / 직접 입력</label><input id="aspectText" placeholder="예: 4:3, 3:4, 1:1">
 <p class="hint">A4 가로: 297×210mm (약 1.414:1) · 16:9: 1920×1080 · 인스타 정사각형: 1080×1080 · 인스타 세로: 1080×1350 · 인스타 스토리·릴스: 1080×1920</p></div>
 <div class="modal-overlay" id="viewModal" onclick="if(event.target===this)closeViewExample()"><div class="modal-content"><button class="modal-close" type="button" onclick="closeViewExample()">✕</button><img id="viewModalImg" src="" alt="View 예시 이미지"></div></div>
@@ -266,8 +255,8 @@
 </div>
 </div>
 <div class="card" id="boardPromptsCard" style="margin-top:18px;border-color:#f0b9d4!important">
-<h2 style="margin:0 0 4px;font-size:15px;color:var(--a)">🧩 보드용 추가 뷰 프롬프트</h2>
-<p class="hint" style="margin:0 0 14px">위에서 등록한 이미지를 기준으로, 삼면도·사용 장면 등 다른 뷰의 프롬프트를 한 번에 만들어드려요. 뷰마다 따로 생성한 다음, 캔바 등에서 보드로 직접 조합해보세요.</p>
+<h2 style="margin:0 0 4px;font-size:15px;color:var(--a)">📐 다양한 뷰로 보기</h2>
+<p class="hint" style="margin:0 0 14px">45도 View·삼면도·사용 장면 등 다양한 각도·장면의 프롬프트를 한 번에 보여드려요. 하나씩 복사해서 따로 생성한 다음, 보드나 포트폴리오로 조합해보세요.</p>
 <div id="boardPromptsList"></div>
 </div>
 <div style="margin-top:18px;border-top:1px solid var(--l);padding-top:16px">
@@ -688,11 +677,12 @@ function copyPromptTab(){
  navigator.clipboard.writeText(box.textContent).then(()=>alert("복사되었습니다."));
 }
 const BOARD_VIEWS=[
- {label:"삼면도 (정면·측면·탑뷰)",ko:"흰 배경 위에 제품디자인 사양서(스펙시트)처럼 보이도록 그린다. 임의로 배치하지 않고 정투상법에 맞춰 정면도·측면도·탑뷰를 배치한다. 탑뷰는 정면도의 정확한 위쪽에, 측면도는 정면도의 옆쪽에 위치하며, 각 투상도의 중심선과 폭·높이가 서로 정확히 대응해야 한다. 원근 왜곡 없이 하나의 일관된 축척으로 그린다. 각 도면 위에는 '정면도 / 측면도 / 탑면도'라는 이름을 반드시 표시하고, 각 도면 옆에는 폭과 높이를 나타내는 가는 치수선과 숫자(mm 단위)를 실제 제품 설계 도면처럼 함께 표기한다.",en:"true orthographic three-view technical drawing of a single product on a plain white background, in the style of a product design blueprint — front view, side view and top view — not arranged arbitrarily: the top view positioned directly above the front view sharing the exact same vertical centerline and width; the side view positioned beside the front view sharing the exact same horizontal centerline and height; all three views drawn at one consistent scale with correct orthographic projection and no perspective distortion. Each view must be clearly labeled with its name (Front View / Side View / Top View), and thin dimension lines with numeric width and height measurements (in mm) must be shown next to each view, exactly like a real engineering/product design spec sheet."},
- {label:"사용 장면",ko:"완성된 제품 하나가 실제 사용 환경에 놓여 있는 사실적인 장면으로, 사용자가 제품과 상호작용하는 모습이 잘 드러나야 한다.",en:"realistic single-scene photograph showing one completed product actually placed and used in a real-world context, clearly conveying how the user interacts with it"},
- {label:"Exploded View (분해도)",ko:"제품 하나의 분해도로, 모든 구성 부품을 조립 축을 따라 분리해서 보여주고 내부 구조·결합부·조립 관계가 명확히 드러나야 한다. 이미지 안에는 이 분해도 하나만 있어야 하며, 조립된 완제품 사본이나 다른 각도의 추가 이미지를 따로 그려 넣지 않는다. 실제로 설명된 부품과 구조만 표현하고, 명시되지 않은 부품이나 장치를 상상해서 추가하지 않는다.",en:"exploded view of a single product, all components separated along their logical assembly axis, clearly revealing internal structure, joints, fasteners and the assembly/transformation relationship. Show only ONE exploded arrangement of this single product in the frame — do not add extra assembled copies, duplicate hero shots, or additional views of the product elsewhere in the image."},
- {label:"디테일 뷰",ko:"제품 하나의 가장 중요한 기능 부위, 인터페이스, 결합부, 재질과 마감을 클로즈업으로 보여준다.",en:"close-up detail view of the single product's most important functional components, interfaces, joints, materials and finishes"},
- {label:"결착·구조 확대",ko:"제품 하나의 결착 또는 구조 메커니즘을 확대해서, 부품이 연결·잠금·해제·회전·슬라이드되는 원리가 시각적으로 이해되도록 보여준다.",en:"magnified close-up of the single product's attachment or structural mechanism, clearly showing how the parts connect, lock, release, rotate, slide or detach so the connection principle is visually understandable"}
+ {label:"45도 View",exKey:"45도 View",icon:"📐",complex:false,ko:"제품 하나를 45도 각도에서 보여주며, 전면과 측면이 함께 보이도록 하고 전체 실루엣과 비례, 주요 디테일이 분명하게 드러나야 한다.",en:"45-degree perspective view of a single completed product, clearly showing the front and side surfaces together, overall silhouette, proportions and key functional details"},
+ {label:"삼면도 (정면·측면·탑뷰)",exKey:"삼면도 (정면·측면·탑뷰)",icon:"📋",complex:true,ko:"흰 배경 위에 제품디자인 사양서(스펙시트)처럼 보이도록 그린다. 임의로 배치하지 않고 정투상법에 맞춰 정면도·측면도·탑뷰를 배치한다. 탑뷰는 정면도의 정확한 위쪽에, 측면도는 정면도의 옆쪽에 위치하며, 각 투상도의 중심선과 폭·높이가 서로 정확히 대응해야 한다. 원근 왜곡 없이 하나의 일관된 축척으로 그린다. 각 도면 위에는 '정면도 / 측면도 / 탑면도'라는 이름을 반드시 표시하고, 각 도면 옆에는 폭과 높이를 나타내는 가는 치수선과 숫자(mm 단위)를 실제 제품 설계 도면처럼 함께 표기한다.",en:"true orthographic three-view technical drawing of a single product on a plain white background, in the style of a product design blueprint — front view, side view and top view — not arranged arbitrarily: the top view positioned directly above the front view sharing the exact same vertical centerline and width; the side view positioned beside the front view sharing the exact same horizontal centerline and height; all three views drawn at one consistent scale with correct orthographic projection and no perspective distortion. Each view must be clearly labeled with its name (Front View / Side View / Top View), and thin dimension lines with numeric width and height measurements (in mm) must be shown next to each view, exactly like a real engineering/product design spec sheet."},
+ {label:"사용 장면",exKey:"사용 장면",icon:"🎬",complex:false,ko:"완성된 제품 하나가 실제 사용 환경에 놓여 있는 사실적인 장면으로, 사용자가 제품과 상호작용하는 모습이 잘 드러나야 한다.",en:"realistic single-scene photograph showing one completed product actually placed and used in a real-world context, clearly conveying how the user interacts with it"},
+ {label:"Exploded View (분해도)",exKey:"Exploded View / 분해도",icon:"💥",complex:true,ko:"제품 하나의 분해도로, 모든 구성 부품을 조립 축을 따라 분리해서 보여주고 내부 구조·결합부·조립 관계가 명확히 드러나야 한다. 이미지 안에는 이 분해도 하나만 있어야 하며, 조립된 완제품 사본이나 다른 각도의 추가 이미지를 따로 그려 넣지 않는다. 실제로 설명된 부품과 구조만 표현하고, 명시되지 않은 부품이나 장치를 상상해서 추가하지 않는다.",en:"exploded view of a single product, all components separated along their logical assembly axis, clearly revealing internal structure, joints, fasteners and the assembly/transformation relationship. Show only ONE exploded arrangement of this single product in the frame — do not add extra assembled copies, duplicate hero shots, or additional views of the product elsewhere in the image."},
+ {label:"디테일 뷰",exKey:"Detail View / 디테일뷰",icon:"🔍",complex:false,ko:"제품 하나의 가장 중요한 기능 부위, 인터페이스, 결합부, 재질과 마감을 클로즈업으로 보여준다.",en:"close-up detail view of the single product's most important functional components, interfaces, joints, materials and finishes"},
+ {label:"결착·구조 확대",exKey:"결착·구조 확대",icon:"🔩",complex:true,ko:"제품 하나의 결착 또는 구조 메커니즘을 확대해서, 부품이 연결·잠금·해제·회전·슬라이드되는 원리가 시각적으로 이해되도록 보여준다.",en:"magnified close-up of the single product's attachment or structural mechanism, clearly showing how the parts connect, lock, release, rotate, slide or detach so the connection principle is visually understandable"}
 ];
 let boardPromptsData=[];
 function buildBoardPrompts(){
@@ -703,32 +693,35 @@ function buildBoardPrompts(){
  const materialValEn=txtEn("materialChips",v("material")), finishValEn=txtEn("finishChips",v("finish"));
  const cmf=`Color: ${buildColorClauseKo()}. Material: ${materialVal==="미정"?"적합하게 제안":materialVal}. Finish: ${finishVal==="미정"?"적합하게 제안":finishVal}`;
  const cmfEn=`Color: ${buildColorClauseEn()}. Material: ${materialValEn==="unspecified"?"to be proposed appropriately":materialValEn}. Finish: ${finishValEn==="unspecified"?"to be proposed appropriately":finishValEn}`;
- const refKo="첨부한 참고 이미지와 완전히 동일한 제품(형태·컬러·소재·디테일 모두 유지)으로, 다음 장면만 새로 그린다. 제품 디자인을 바꾸거나 다시 해석하지 않는다.";
- const refEn="Using the exact SAME product shown in the attached reference image (identical form, color, material and details) — do not redesign, reinterpret or change the product in any way — render only the following new scene.";
+ const hasRef=!!images.generated;
+ const refKo=hasRef?"첨부한 참고 이미지와 완전히 동일한 제품(형태·컬러·소재·디테일 모두 유지)으로, 다음 장면만 새로 그린다. 제품 디자인을 바꾸거나 다시 해석하지 않는다.":"아래 제품 설명과 동일한 하나의 제품으로, 다음 장면을 그린다.";
+ const refEn=hasRef?"Using the exact SAME product shown in the attached reference image (identical form, color, material and details) — do not redesign, reinterpret or change the product in any way — render only the following new scene.":"Render the following scene for the single product described below.";
  const avoidKo="같은 이미지 안에 제품을 여러 번 중복해서 넣거나, 불필요한 텍스트·로고·워터마크를 넣지 않는다.";
  const avoidEn="AVOID: duplicating the product multiple times in the same image, adding text, logos or watermarks, blurry or low-resolution rendering.";
+ const outputVal=sel("output")[0]||"";
+ const isMulti=outputVal==="형태 아이디어 여러 안"||outputVal==="구조·결착 아이디어 여러 안";
+ const cautionKo="\n\n※ 여러 콘셉트를 비교하는 중이라면, 콘셉트 하나를 먼저 고른 뒤에 이 프롬프트를 사용하는 걸 추천해요 — 안끼리 섞이면 결과가 복잡해질 수 있어요.";
+ const cautionEn="\n\nNOTE: if you're comparing multiple concepts, pick one concept first before using this prompt — mixing concepts here tends to produce a cluttered result.";
  boardPromptsData=BOARD_VIEWS.map(bv=>({
-  label:bv.label,
-  ko:`${refKo}\n\n[제품] ${category?category+" · ":""}${product}\n[스타일/CMF] ${style}. ${cmf}.\n\n[장면] ${bv.ko}\n\n${avoidKo}`,
-  en:`${refEn}\n\nPRODUCT: ${categoryEn?categoryEn+" — ":""}${productEn}\nDESIGN LANGUAGE: ${styleEn}; ${cmfEn}.\n\nSCENE: ${bv.en}\n\n${avoidEn}`
+  label:bv.label,icon:bv.icon,exKey:bv.exKey,
+  ko:`${refKo}\n\n[제품] ${category?category+" · ":""}${product}\n[스타일/CMF] ${style}. ${cmf}.\n\n[장면] ${bv.ko}\n\n${avoidKo}${isMulti&&bv.complex?cautionKo:""}`,
+  en:`${refEn}\n\nPRODUCT: ${categoryEn?categoryEn+" — ":""}${productEn}\nDESIGN LANGUAGE: ${styleEn}; ${cmfEn}.\n\nSCENE: ${bv.en}\n\n${avoidEn}${isMulti&&bv.complex?cautionEn:""}`
  }));
  return boardPromptsData;
 }
 function renderBoardPrompts(){
  const list=document.getElementById("boardPromptsList"); if(!list)return;
- if(!images.generated){
-  list.innerHTML='<p style="color:var(--m);font-size:13px;margin:0">↑ 위에서 완성된 이미지를 등록하면, 이 이미지를 기준으로 삼면도·사용 장면 등 추가 뷰 프롬프트가 자동으로 만들어져요.</p>';
-  return;
- }
  buildBoardPrompts();
  const lang=currentPromptTab==="ko"?"ko":"en";
- list.innerHTML=boardPromptsData.map((p,i)=>`<div style="margin-top:${i===0?"0":"14px"}">
+ const tip=images.generated?"":'<p class="hint" style="margin:0 0 12px">💡 위에서 완성된 이미지를 등록하면, 이 프롬프트들이 그 이미지를 기준으로 더 정확하게 맞춰져요.</p>';
+ list.innerHTML=tip+boardPromptsData.map((p,i)=>`<div style="margin-top:${i===0?"0":"14px"}">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
-   <b style="font-size:13px">${p.label}</b>
+   <b style="font-size:13px">${p.icon} ${p.label}</b>
+   <span class="ex-link" onclick="showViewExample('${p.exKey}')">🔍 예시</span>
    <button type="button" class="copy" style="margin:0" onclick="copyBoardPrompt(${i})">복사하기</button>
   </div>
   <div class="box" style="font-size:12.5px">${p[lang].replace(/&/g,"&amp;").replace(/</g,"&lt;")}</div>
- </div>`).join("");
+ </div>`).join("")+'<p class="hint" style="margin:14px 0 0">※ 이 뷰들로 만들어지는 이미지는 정확한 설계 도면이 아니라, 디자인 아이디어를 이해하기 위한 참고용 이미지입니다.</p>';
 }
 function copyBoardPrompt(i){
  const p=boardPromptsData[i]; if(!p)return;
