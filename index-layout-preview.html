@@ -85,7 +85,7 @@
 <button class="step-tab" data-step="6" onclick="showStep(6)"><b>06</b><span>기능</span></button>
 <button class="step-tab" data-step="7" onclick="showStep(7)"><b>07</b><span>형태</span></button>
 <button class="step-tab" data-step="8" onclick="showStep(8)"><b>08</b><span>스타일</span></button>
-<button class="step-tab" data-step="9" onclick="showStep(9)"><b>09</b><span>결과설정</span></button>
+<button class="step-tab" data-step="9" onclick="showStep(9)"><b>09</b><span>스케치</span></button>
 <button class="step-tab" data-step="10" id="resultTab" onclick="if(!this.disabled)showStep(10)" disabled><b>✓</b><span>결과</span></button>
 </div>
 <main>
@@ -149,23 +149,15 @@
 <label>COLOR SCHEME | 배색 방식</label><div class="grid" id="scheme"></div><label>"기타"를 선택했다면 직접 입력하세요</label><input id="schemeText" placeholder="직접 입력"><div id="paletteBox"></div>
 <label>MATERIAL</label><div class="grid multi" id="materialChips"></div><input id="material" placeholder="직접 입력 (예: ABS + 실리콘 손잡이)">
 <label>FINISH</label><div class="grid multi" id="finishChips"></div><input id="finish" placeholder="직접 입력 (예: 무광, 고무 그립감)"></div>
-<div class="card step-panel" data-step="9"><div class="step">STEP 09 · 결과설정</div><div class="title">어떤 결과를 보고 싶나요?</div>
-<label>① 어떤 방향으로 디자인할까요?</label><div class="grid" id="output"></div>
+<div class="card step-panel" data-step="9"><div class="step">STEP 09 · 스케치</div><div class="title">어떤 방향으로 스케치할까요?</div>
+<p class="hint" style="margin-top:0">먼저 아이디어 스케치로 방향을 잡고, 마음에 드는 스케치를 고른 뒤 결과 화면에서 렌더링 스타일을 선택할 수 있어요.</p>
+<label>① 어떤 방향으로 스케치할까요?</label><div class="grid" id="output"></div>
 <div id="sketchDevNotice" style="display:none;margin-top:10px;border-radius:10px;padding:10px 12px;font-size:13px"></div>
 <div id="countWrap"><label>아이디어 개수</label><select id="count"><option>3</option><option selected>4</option><option>6</option></select></div>
-<label>② 어떤 스타일로 표현할까요?</label>
-<div id="renderStyle">
-<div class="c view-row" data-v="아이디어 스케치" onclick="pickRenderStyle(this)"><span>✏️ 아이디어 스케치</span><span class="ex-link" onclick="event.stopPropagation();showStyleExample('아이디어 스케치')">🔍 예시</span></div>
-<div class="c view-row" data-v="산업디자인 렌더링" onclick="pickRenderStyle(this)"><span>🏗️ 산업디자인 렌더링</span><span class="ex-link" onclick="event.stopPropagation();showStyleExample('산업디자인 렌더링')">🔍 예시</span></div>
-<div class="c view-row" data-v="사실적 제품 렌더링" onclick="pickRenderStyle(this)"><span>📷 사실적 제품 렌더링</span><span class="ex-link" onclick="event.stopPropagation();showStyleExample('사실적 제품 렌더링')">🔍 예시</span></div>
-<div class="c view-row" data-v="컬러링 도안 (아웃라인)" onclick="pickRenderStyle(this)"><span>🖍️ 컬러링 도안 (아웃라인)</span><span class="ex-link" onclick="event.stopPropagation();showStyleExample('컬러링 도안 (아웃라인)')">🔍 예시</span></div>
-<div class="c view-row" data-v="기타" onclick="pickRenderStyle(this)"><span>기타 / 직접 입력</span></div>
-</div>
-<p class="hint">※ 예시 이미지는 스타일 느낌을 보여주는 참고용입니다. 실제 생성 결과는 사용하는 AI 도구에 따라 달라질 수 있어요.</p>
-<div id="renderStyleTextWrap" style="display:none"><label>직접 입력하세요</label><input id="renderStyleText" placeholder="원하는 표현 스타일을 직접 입력하세요."></div>
+<div id="renderStyleTextWrap" style="display:none"><input id="renderStyleText"></div>
 <div id="viewTextWrap" style="display:none"><input id="viewText"></div>
-<p class="hint" style="margin-top:0">💡 다양한 각도·장면(삼면도, 사용 장면, 분해도 등)의 프롬프트는 결과 화면에서 한 번에 모두 확인할 수 있어요.</p>
-<label>③ 어떤 사이즈로 출력할까요?</label><div class="grid" id="aspect"></div>
+<p class="hint" style="margin-top:0">💡 다양한 각도·장면(삼면도, 사용 장면, 분해도 등)과 렌더링 스타일(산업디자인/사실적/컬러링)은 결과 화면에서 한 번에 모두 확인할 수 있어요.</p>
+<label>② 어떤 사이즈로 출력할까요?</label><div class="grid" id="aspect"></div>
 <label>자유 비율 / 직접 입력</label><input id="aspectText" placeholder="예: 4:3, 3:4, 1:1">
 <p class="hint">A4 가로: 297×210mm (약 1.414:1) · 16:9: 1920×1080 · 인스타 정사각형: 1080×1080 · 인스타 세로: 1080×1350 · 인스타 스토리·릴스: 1080×1920</p></div>
 <div class="modal-overlay" id="viewModal" onclick="if(event.target===this)closeViewExample()"><div class="modal-content"><button class="modal-close" type="button" onclick="closeViewExample()">✕</button><img id="viewModalImg" src="" alt="View 예시 이미지"><a id="viewModalDownload" href="" download class="copy" style="display:block;text-align:center;margin-top:10px">⬇️ 예시 이미지 다운로드</a></div></div>
@@ -272,6 +264,11 @@
 <h2 style="margin:0 0 4px;font-size:15px;color:var(--a)">📐 다양한 뷰로 보기</h2>
 <p class="hint" style="margin:0 0 14px">45도 View·삼면도·사용 장면 등 다양한 각도·장면의 프롬프트를 한 번에 보여드려요. 하나씩 복사해서 따로 생성한 다음, 보드나 포트폴리오로 조합해보세요.</p>
 <div id="boardPromptsList"></div>
+</div>
+<div class="card" id="renderStylePromptsCard" style="margin-top:18px;border-color:#f0b9d4!important">
+<h2 style="margin:0 0 4px;font-size:15px;color:var(--a)">🎨 렌더링 스타일로 보기</h2>
+<p class="hint" style="margin:0 0 14px">같은 스케치를 산업디자인 렌더링·사실적 렌더링·컬러링 도안으로 각각 표현하는 프롬프트를 한 번에 보여드려요. 마음에 드는 스타일 하나를 골라 생성해보세요.</p>
+<div id="renderStylePromptsList"></div>
 </div>
 <div style="margin-top:18px;border-top:1px solid var(--l);padding-top:16px">
 <label style="margin-top:0">프로젝트 저장 · 불러오기</label>
@@ -605,7 +602,7 @@ function showImagePreview(key,dataUrl){
  if(drop)drop.style.display=dataUrl?"none":"flex";
  if(btns)btns.style.display=dataUrl?"flex":"none";
  updateSketchDevNotice();
- if(key==="generated")renderBoardPrompts();
+ if(key==="generated"){renderBoardPrompts();renderRenderStylePrompts();}
 }
 function updateSketchDevNotice(){
  const outputVal=document.querySelector("#output .c.on")?.textContent||"";
@@ -667,7 +664,7 @@ conEn=v("constraints")||"usability, safety and manufacturability",
 colorValEn=txtEn("colorChips",v("color")),materialValEn=txtEn("materialChips",v("material")),finishValEn=txtEn("finishChips",v("finish")),
 cmfEn=`Color: ${buildColorClauseEn()}. Material: ${materialValEn==="unspecified"?"to be proposed appropriately":materialValEn}. Finish: ${finishValEn==="unspecified"?"to be proposed appropriately":finishValEn}`,
 count=isSingleOutput?"1":v("count"),
-renderChoice=selRenderStyle()||"산업디자인 렌더링",renderExtra=v("renderStyleText").trim(),
+renderChoice="아이디어 스케치",renderExtra=v("renderStyleText").trim(),
 renderMap={"아이디어 스케치":"hand-drawn industrial design concept sketch made by a real product designer, expressive pencil/pen linework, visible construction and exploratory perspective guide lines, marker-style shading, sketch character clearly emphasized","산업디자인 렌더링":"professional industrial-design CAD/3D visualization rendered in software such as KeyShot, Rhino or SolidWorks — this must NOT be a photorealistic photograph and must NOT be indistinguishable from real product photography. It should have the distinct look of a 3D-rendered industrial design portfolio image: clean, slightly idealized studio-render lighting with smooth gradients and crisp, stylized specular highlights rather than photographic realism, while still clearly showing form, CMF, structure, proportions and parting lines. Avoid photographic traits such as camera grain, depth-of-field blur, lens distortion, or true-to-life material imperfections — the surfaces should read as a clean CAD rendering, not a photo. Show ONLY the product itself on a plain neutral studio backdrop — no lifestyle context, no real-world scenery or location, no other objects, props, bags, hands or people, and no blurred background photography.","사실적 제품 렌더링":"photorealistic product photography look, realistic materials, surfaces, natural or studio lighting, accurate reflections and shadows, by default a single completed product as the clear subject, professional commercial product-photography quality","컬러링 도안 (아웃라인)":"single product only on a plain white background, black outlines only, fully closed contour lines, uniform line weight, no color, no shading, no gradients, printable coloring-page line drawing suitable for hand-coloring"},
 renderMapKo={"아이디어 스케치":"실제 산업디자이너가 손으로 그린 것 같은 제품 아이디어 스케치. 연필·펜 선, 탐색선, 마커 음영 등 스케치 특성이 분명하게 표현되어야 한다.","산업디자인 렌더링":"KeyShot, Rhino, SolidWorks 같은 3D 렌더링 소프트웨어로 만든 전문 산업디자인 CAD 렌더링이어야 한다 — 사실적인 사진이 아니며, 실제 제품 사진과 구별되지 않을 정도로 리얼해서는 절대 안 된다. 산업디자인 포트폴리오에서 보이는 전형적인 3D 렌더링 느낌(매끄럽고 다소 이상화된 스튜디오 조명, 부드러운 그라데이션, 또렷하지만 양식화된 하이라이트)을 가져야 하며, 형태·CMF·구조·비례·분할선이 명확하게 드러나야 한다. 카메라 그레인, 피사계심도 블러, 렌즈 왜곡, 사실적인 재질의 미세한 결함 같은 '사진'의 특징은 피하고, 깔끔한 CAD 렌더링처럼 보여야 한다. 제품만 단독으로 깨끗한 스튜디오 배경 위에 보여야 하며, 실제 생활 속 장면·배경 풍경·다른 소품·가방·손·사람 등은 절대 포함하지 않는다.","사실적 제품 렌더링":"실제 촬영한 제품 사진처럼 표현한다. 현실적인 소재, 표면, 조명, 반사와 그림자를 갖추며 기본적으로 완성 제품 하나가 중심이 되는 제품 사진 형태여야 한다.","컬러링 도안 (아웃라인)":"흰 배경에 제품 하나만 표현한다. 검은색 선, 닫힌 외곽선, 일정한 선 굵기로 그리고 컬러·음영·그라데이션 없이 출력해서 직접 색칠할 수 있는 도안이어야 한다."},
 renderLabel=renderChoice==="기타"?(renderExtra||"기타"):renderChoice,
@@ -704,7 +701,7 @@ if(images.ref)imgHtml+=`<div><label>첨부한 레퍼런스</label><img src="${im
 const resultImages=document.getElementById("resultImages");
 resultImages.innerHTML=imgHtml; resultImages.style.display=imgHtml?"grid":"none";
 document.getElementById("result").classList.add("on");document.getElementById("result").scrollIntoView({behavior:"smooth"});
-useFreeTry();aiOnNewPrompt();renderBoardPrompts();}
+useFreeTry();aiOnNewPrompt();renderBoardPrompts();renderRenderStylePrompts();}
 function cp(id){navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>alert("복사되었습니다."))}
 let currentPromptTab="ko";
 function enWithoutMj(){return (document.getElementById("en").textContent||"").replace(/\s*\(참고용 미드저니 파라미터:[^)]*\)\s*$/,"")}
@@ -716,6 +713,7 @@ function renderPromptTab(key){
  else if(key==="mj")box.textContent=document.getElementById("en").textContent;
  document.querySelectorAll("#promptTabs .tab").forEach(t=>t.classList.toggle("on",t.dataset.pt===key));
  renderBoardPrompts();
+ renderRenderStylePrompts();
 }
 function copyPromptTab(){
  const box=document.getElementById("promptBox"); if(!box)return;
@@ -770,6 +768,51 @@ function renderBoardPrompts(){
 }
 function copyBoardPrompt(i){
  const p=boardPromptsData[i]; if(!p)return;
+ const lang=currentPromptTab==="ko"?"ko":"en";
+ navigator.clipboard.writeText(p[lang]).then(()=>alert("복사되었습니다."));
+}
+const RENDER_STYLE_VIEWS=[
+ {label:"산업디자인 렌더링",exKey:"산업디자인 렌더링",icon:"🏗️",ko:"KeyShot, Rhino, SolidWorks 같은 3D 렌더링 소프트웨어로 만든 전문 산업디자인 CAD 렌더링이어야 한다 — 사실적인 사진이 아니며, 실제 제품 사진과 구별되지 않을 정도로 리얼해서는 절대 안 된다. 산업디자인 포트폴리오에서 보이는 전형적인 3D 렌더링 느낌(매끄럽고 다소 이상화된 스튜디오 조명, 부드러운 그라데이션, 또렷하지만 양식화된 하이라이트)을 가져야 하며, 형태·CMF·구조·비례·분할선이 명확하게 드러나야 한다. 카메라 그레인, 피사계심도 블러, 렌즈 왜곡, 사실적인 재질의 미세한 결함 같은 '사진'의 특징은 피하고, 깔끔한 CAD 렌더링처럼 보여야 한다. 제품만 단독으로 깨끗한 스튜디오 배경 위에 보여야 하며, 실제 생활 속 장면·배경 풍경·다른 소품·가방·손·사람 등은 절대 포함하지 않는다.",en:"professional industrial-design CAD/3D visualization rendered in software such as KeyShot, Rhino or SolidWorks — this must NOT be a photorealistic photograph and must NOT be indistinguishable from real product photography. It should have the distinct look of a 3D-rendered industrial design portfolio image: clean, slightly idealized studio-render lighting with smooth gradients and crisp, stylized specular highlights rather than photographic realism, while still clearly showing form, CMF, structure, proportions and parting lines. Avoid photographic traits such as camera grain, depth-of-field blur, lens distortion, or true-to-life material imperfections — the surfaces should read as a clean CAD rendering, not a photo. Show ONLY the product itself on a plain neutral studio backdrop — no lifestyle context, no real-world scenery or location, no other objects, props, bags, hands or people, and no blurred background photography."},
+ {label:"사실적 제품 렌더링",exKey:"사실적 제품 렌더링",icon:"📷",ko:"실제 촬영한 제품 사진처럼 표현한다. 현실적인 소재, 표면, 조명, 반사와 그림자를 갖추며 기본적으로 완성 제품 하나가 중심이 되는 제품 사진 형태여야 한다.",en:"photorealistic product photography look, realistic materials, surfaces, natural or studio lighting, accurate reflections and shadows, by default a single completed product as the clear subject, professional commercial product-photography quality"},
+ {label:"컬러링 도안 (아웃라인)",exKey:"컬러링 도안 (아웃라인)",icon:"🖍️",ko:"흰 배경에 제품 하나만 표현한다. 검은색 선, 닫힌 외곽선, 일정한 선 굵기로 그리고 컬러·음영·그라데이션 없이 출력해서 직접 색칠할 수 있는 도안이어야 한다.",en:"single product only on a plain white background, black outlines only, fully closed contour lines, uniform line weight, no color, no shading, no gradients, printable coloring-page line drawing suitable for hand-coloring"}
+];
+let renderStylePromptsData=[];
+function buildRenderStylePrompts(){
+ const category=sel("category")[0]||"", categoryEn=category?(EN.category[category]||category):"";
+ const product=v("product")||"새로운 제품", productEn=v("product")||"new product";
+ const style=txt("style",v("styleText")), styleEn=txtEn("style",v("styleText"));
+ const materialVal=txt("materialChips",v("material")), finishVal=txt("finishChips",v("finish"));
+ const materialValEn=txtEn("materialChips",v("material")), finishValEn=txtEn("finishChips",v("finish"));
+ const cmf=`Color: ${buildColorClauseKo()}. Material: ${materialVal==="미정"?"적합하게 제안":materialVal}. Finish: ${finishVal==="미정"?"적합하게 제안":finishVal}`;
+ const cmfEn=`Color: ${buildColorClauseEn()}. Material: ${materialValEn==="unspecified"?"to be proposed appropriately":materialValEn}. Finish: ${finishValEn==="unspecified"?"to be proposed appropriately":finishValEn}`;
+ const hasRef=!!images.generated;
+ const refKo=hasRef?"첨부한 스케치 이미지와 완전히 동일한 제품(형태·구조·디테일 모두 유지)으로, 다음 표현 스타일로만 새로 렌더링한다. 제품 디자인을 바꾸거나 다시 해석하지 않는다.":"아래 제품 설명과 동일한 하나의 제품을, 다음 표현 스타일로 렌더링한다.";
+ const refEn=hasRef?"Using the exact SAME product shown in the attached sketch image (identical form, structure and details) — do not redesign or reinterpret the product — render it ONLY in the following visual style.":"Render the single product described below in the following visual style.";
+ const avoidKo="같은 이미지 안에 제품을 여러 번 중복해서 넣거나, 불필요한 텍스트·로고·워터마크를 넣지 않는다.";
+ const avoidEn="AVOID: duplicating the product multiple times in the same image, adding text, logos or watermarks.";
+ renderStylePromptsData=RENDER_STYLE_VIEWS.map(rv=>({
+  label:rv.label,icon:rv.icon,exKey:rv.exKey,
+  ko:`${refKo}\n\n[제품] ${category?category+" · ":""}${product}\n[스타일/CMF] ${style}. ${cmf}.\n\n[표현 스타일] ${rv.ko}\n\n${avoidKo}`,
+  en:`${refEn}\n\nPRODUCT: ${categoryEn?categoryEn+" — ":""}${productEn}\nDESIGN LANGUAGE: ${styleEn}; ${cmfEn}.\n\nRENDERING STYLE: ${rv.en}\n\n${avoidEn}`
+ }));
+ return renderStylePromptsData;
+}
+function renderRenderStylePrompts(){
+ const list=document.getElementById("renderStylePromptsList"); if(!list)return;
+ buildRenderStylePrompts();
+ const lang=currentPromptTab==="ko"?"ko":"en";
+ const tip=images.generated?"":'<p class="hint" style="margin:0 0 12px">💡 위에서 완성된 스케치 이미지를 등록하면, 이 프롬프트들이 그 스케치를 기준으로 더 정확하게 맞춰져요.</p>';
+ list.innerHTML=tip+renderStylePromptsData.map((p,i)=>`<div style="margin-top:${i===0?"0":"14px"}">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+   <b style="font-size:13px">${p.icon} ${p.label}</b>
+   <span class="ex-link" onclick="showStyleExample('${p.exKey}')">🔍 예시</span>
+   <button type="button" class="copy" style="margin:0 0 0 auto" onclick="copyRenderStylePrompt(${i})">프롬프트 복사</button>
+  </div>
+  <div class="box" style="font-size:12.5px">${p[lang].replace(/&/g,"&amp;").replace(/</g,"&lt;")}</div>
+ </div>`).join("");
+}
+function copyRenderStylePrompt(i){
+ const p=renderStylePromptsData[i]; if(!p)return;
  const lang=currentPromptTab==="ko"?"ko":"en";
  navigator.clipboard.writeText(p[lang]).then(()=>alert("복사되었습니다."));
 }
