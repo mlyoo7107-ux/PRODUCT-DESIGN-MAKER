@@ -201,6 +201,11 @@
 <div class="box" id="promptBox" style="margin-top:8px"></div>
 <button class="copy" onclick="copyPromptTab()">프롬프트 복사</button>
 <span class="hint" style="margin-left:8px">→ 복사해서 사용 중인 AI 이미지 생성 도구에 붙여넣으세요</span>
+<div class="card" id="sketchStagePromptsCard" style="margin-top:18px;border-color:#f0b9d4!important">
+<h2 style="margin:0 0 4px;font-size:15px;color:var(--a)">✏️ 스케치 단계별로 보기</h2>
+<p class="hint" style="margin:0 0 14px">썸네일·러프·디테일 스케치를 한 번에 보여드려요. 빠르게 여러 형태를 탐색하고 싶다면 썸네일부터, 바로 발전시킬 콘셉트가 있다면 디테일 스케치를 써보세요.</p>
+<div id="sketchStagePromptsList"></div>
+</div>
 <!-- AI 이미지 생성 (준비 중) -->
 <style>
 #aiImageSection{margin-top:18px;border-top:1px solid var(--l);padding-top:16px}
@@ -701,7 +706,7 @@ if(images.ref)imgHtml+=`<div><label>첨부한 레퍼런스</label><img src="${im
 const resultImages=document.getElementById("resultImages");
 resultImages.innerHTML=imgHtml; resultImages.style.display=imgHtml?"grid":"none";
 document.getElementById("result").classList.add("on");document.getElementById("result").scrollIntoView({behavior:"smooth"});
-useFreeTry();aiOnNewPrompt();renderBoardPrompts();renderRenderStylePrompts();}
+useFreeTry();aiOnNewPrompt();renderBoardPrompts();renderRenderStylePrompts();renderSketchStagePrompts();}
 function cp(id){navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>alert("복사되었습니다."))}
 let currentPromptTab="ko";
 function enWithoutMj(){return (document.getElementById("en").textContent||"").replace(/\s*\(참고용 미드저니 파라미터:[^)]*\)\s*$/,"")}
@@ -714,6 +719,7 @@ function renderPromptTab(key){
  document.querySelectorAll("#promptTabs .tab").forEach(t=>t.classList.toggle("on",t.dataset.pt===key));
  renderBoardPrompts();
  renderRenderStylePrompts();
+ renderSketchStagePrompts();
 }
 function copyPromptTab(){
  const box=document.getElementById("promptBox"); if(!box)return;
@@ -813,6 +819,45 @@ function renderRenderStylePrompts(){
 }
 function copyRenderStylePrompt(i){
  const p=renderStylePromptsData[i]; if(!p)return;
+ const lang=currentPromptTab==="ko"?"ko":"en";
+ navigator.clipboard.writeText(p[lang]).then(()=>alert("복사되었습니다."));
+}
+const SKETCH_STAGES=[
+ {label:"썸네일 스케치",icon:"🔳",ko:"여러 개의 아주 작고 빠른 섬네일 스케치를 한 장에 모아서 보여준다. 각 섬네일은 작게, 전체적인 실루엣과 비례만 빠르게 포착한 거친 선으로 그린다. 디테일이나 질감 표현 없이, 여러 형태 방향을 탐색하는 초기 발상 단계의 러프한 느낌이어야 한다.",en:"a sheet of many tiny, extremely quick thumbnail sketches arranged together, each one small and loose, capturing only the overall silhouette and proportions with fast gestural linework. No detail or texture rendering — this should feel like the earliest rapid ideation stage, exploring many different form directions at a glance."},
+ {label:"러프 스케치",icon:"✏️",ko:"하나의 디자인 방향을 좀 더 크고 명확하게 그린 러프 스케치. 전체 형태와 비례, 주요 구조는 알아볼 수 있게 그리되, 선은 여전히 느슨하고 탐색적이며 세부 디테일이나 재질 표현은 생략한다. 완성된 느낌이 아니라 발전 중인 콘셉트 스케치여야 한다.",en:"a single rough concept sketch at a larger scale, exploring one specific form direction. Overall shape, proportions and key structure should be legible, but the linework stays loose and exploratory, without resolved details or material rendering — this should read as a concept still being developed, not a finished drawing."},
+ {label:"디테일 스케치",icon:"🖊️",ko:"형태와 구조가 명확하게 정리된 디테일 스케치. 깔끔하게 정리된 선, 비례, 주요 기능 부위와 결합부, 간단한 음영이나 재질 힌트까지 표현해서 렌더링 직전 단계의 완성도 있는 콘셉트 스케치로 보여야 한다.",en:"a resolved detail concept sketch with clean, confident linework. Form, proportions, key functional features and joints should be clearly defined, with simple shading or material hints — this should read as a finished concept sketch, ready to move into rendering."}
+];
+let sketchStagePromptsData=[];
+function buildSketchStagePrompts(){
+ const category=sel("category")[0]||"", categoryEn=category?(EN.category[category]||category):"";
+ const product=v("product")||"새로운 제품", productEn=v("product")||"new product";
+ const style=txt("style",v("styleText")), styleEn=txtEn("style",v("styleText"));
+ const challenge=sel("challenge").join(", ")||"전체 디자인", challengeEn=selEn("challenge").join(", ")||"overall design";
+ const baseKo=`${category?category+" 분야의 ":""}'${product}' 제품디자인 아이디어 스케치. 집중 디자인 과제: ${challenge}.`;
+ const baseEn=`Idea sketch for a ${categoryEn?categoryEn+" category ":""}${productEn} product design. Primary design challenge: ${challengeEn}.`;
+ const avoidKo="같은 이미지 안에 서로 다른 제품을 섞어 그리거나, 불필요한 텍스트·로고·워터마크를 넣지 않는다.";
+ const avoidEn="AVOID: mixing unrelated products in the same sheet, adding text, logos or watermarks.";
+ sketchStagePromptsData=SKETCH_STAGES.map(s=>({
+  label:s.label,icon:s.icon,
+  ko:`${baseKo}\n[스타일] ${style}.\n\n[스케치 단계] ${s.ko}\n\n${avoidKo}`,
+  en:`${baseEn}\nSTYLE: ${styleEn}.\n\nSKETCH STAGE: ${s.en}\n\n${avoidEn}`
+ }));
+ return sketchStagePromptsData;
+}
+function renderSketchStagePrompts(){
+ const list=document.getElementById("sketchStagePromptsList"); if(!list)return;
+ buildSketchStagePrompts();
+ const lang=currentPromptTab==="ko"?"ko":"en";
+ list.innerHTML=sketchStagePromptsData.map((p,i)=>`<div style="margin-top:${i===0?"0":"14px"}">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+   <b style="font-size:13px">${p.icon} ${p.label}</b>
+   <button type="button" class="copy" style="margin:0 0 0 auto" onclick="copySketchStagePrompt(${i})">프롬프트 복사</button>
+  </div>
+  <div class="box" style="font-size:12.5px">${p[lang].replace(/&/g,"&amp;").replace(/</g,"&lt;")}</div>
+ </div>`).join("");
+}
+function copySketchStagePrompt(i){
+ const p=sketchStagePromptsData[i]; if(!p)return;
  const lang=currentPromptTab==="ko"?"ko":"en";
  navigator.clipboard.writeText(p[lang]).then(()=>alert("복사되었습니다."));
 }
