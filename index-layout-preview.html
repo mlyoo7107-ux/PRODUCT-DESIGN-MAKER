@@ -33,9 +33,9 @@
 .title{font-size:21px;font-weight:900;margin:10px 0 14px!important}
 #promptTabs{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
 #promptTabs .tab-group-label{display:block;margin-bottom:4px;font-size:12px;font-weight:bold;color:var(--m)}
-#promptTabs .tab-group{display:inline-flex;flex-wrap:wrap;gap:0;background:var(--b);border-radius:999px;padding:4px}
-#promptTabs .tab{border:0;background:transparent;padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--m)}
-#promptTabs .tab.on{background:#fff;color:var(--a);box-shadow:0 1px 2px rgba(23,21,18,.1)}
+#promptTabs .tab-group{display:flex;flex-wrap:wrap;gap:8px}
+#promptTabs .tab{border:1px solid var(--l);background:#fff;padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--m)}
+#promptTabs .tab.on{border-color:var(--ab);background:#ffe6f1;color:var(--a)}
 .danger-hover:hover{border-color:#D9534F!important;color:#D9534F!important;background:#fff!important}
 .pdf-primary{background:var(--a)!important;color:#fff!important;border-color:var(--a)!important}
 .pdf-primary:hover{background:#e0247a!important}
@@ -512,7 +512,7 @@ function finalTitle(){
 }
 addColorChips();addToneChips();addSchemeChips();
 add("challenge",D.challenge);
-let formMode="p1";document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab,.panel").forEach(x=>x.classList.remove("on"));t.classList.add("on");document.getElementById(t.dataset.p).classList.add("on");formMode=t.dataset.p});
+let formMode="p1";document.querySelectorAll(".tab[data-p]").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab[data-p],.panel").forEach(x=>x.classList.remove("on"));t.classList.add("on");document.getElementById(t.dataset.p).classList.add("on");formMode=t.dataset.p});
 function pickView(el){document.querySelectorAll("#view .c").forEach(x=>x.classList.remove("on"));el.classList.add("on");updateViewTextVisibility();updateMultiViewWarning()}
 function selView(){return document.querySelector("#view .c.on")?.dataset.v||""}
 function updateViewTextVisibility(){const wrap=document.getElementById("viewTextWrap");const isOther=selView()==="기타";if(wrap)wrap.style.display=isOther?"block":"none";if(!isOther){const t=document.getElementById("viewText");if(t)t.value=""}}
