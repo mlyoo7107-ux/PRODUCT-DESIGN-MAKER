@@ -121,7 +121,17 @@ footer{margin-bottom:90px}
 <button type="button" class="copy" onclick="toggleTitleEdit()">✏️ 직접 수정</button>
 </div>
 <input id="titleEditInput" style="display:none;margin-top:8px" placeholder="제목을 직접 입력하세요">
-<label>디자인 기획 요약</label><div class="box" id="summary"></div><div id="resultImages" style="display:none;gap:10px;margin-top:10px"></div><label>한글 프롬프트</label><div class="box" id="ko"></div><button class="copy" onclick="cp('ko')">복사하기</button><label>영문 이미지 생성 프롬프트</label><div class="box" id="en"></div><button class="copy" onclick="cp('en')">복사하기</button>
+<label>디자인 기획 요약</label><div class="box" id="summary"></div><div id="resultImages" style="display:none;gap:10px;margin-top:10px"></div>
+<div id="ko" style="display:none"></div><div id="en" style="display:none"></div>
+<label>프롬프트 · 사용할 AI 도구를 선택하세요</label>
+<div class="tabs" id="promptTabs">
+<span class="tab on" data-pt="ko" onclick="renderPromptTab('ko')">한글</span>
+<span class="tab" data-pt="en" onclick="renderPromptTab('en')">영문 (ChatGPT·DALL·E 등)</span>
+<span class="tab" data-pt="mj" onclick="renderPromptTab('mj')">Midjourney용</span>
+</div>
+<p class="hint" style="margin-top:6px">※ 미드저니는 영문 전용이며, 비율 파라미터(--ar 등)가 자동으로 붙어요. 챗GPT·DALL·E는 한글이 섞여 있어도 대체로 잘 이해해요.</p>
+<div class="box" id="promptBox" style="margin-top:8px"></div>
+<button class="copy" onclick="copyPromptTab()">복사하기</button>
 <div style="margin-top:18px;background:#fff5fa;border:1px solid #ffcfe4;border-radius:14px;padding:16px;text-align:center">
 <p style="margin:0 0 10px;font-size:14px">🖼️ 이 프롬프트로 완성한 이미지가 있나요?</p>
 <a href="gallery/upload.html" onclick="this.href='gallery/upload.html?title='+encodeURIComponent(finalTitle())" style="display:inline-block;padding:11px 22px;background:var(--a);color:white;border-radius:22px;font-size:14px;font-weight:bold;text-decoration:none">✨ 갤러리에 자랑하기 →</a>
@@ -517,7 +527,7 @@ outputClauseEn=isSingleOutput?`Focus on ${outputEn}; fully develop this one conc
 let sum=`분야: ${category||"미지정"}\n제품: ${product}${productNoteVal?" ("+productNoteVal+")":""}\n사용자: ${user}\n문제: ${problem}\n집중 과제: ${challenge}\n구체적 고민: ${ch}\n필수 조건: ${con}\n사용·구조: ${structure}\n기능: ${feature}\n형태: ${form}\n스타일/CMF: ${style} / ${cmf}\n결과: ${output} ${count}안\n표현 스타일: ${renderLabel}\nView: ${viewLabel}\n출력물 사이즈: ${aspectChoice}${aspectChoice==="자유 비율"&&aspectExtra ? " / "+aspectExtra : ""}`;
 let ko=`${category?category+" 분야의 ":""}${user}을(를) 위한 '${product}' 제품디자인을 전문적으로 시각화한다. 이 제품은 다음의 실제 사용자 문제를 우아하게 해결해야 한다: ${problem}.${productNoteVal?"\n\n[제품 설명]\n"+productNoteVal:""}\n\n[집중 디자인 과제]\n${challenge}: ${ch}\n→ 모든 디자인 결정은 겉모습을 꾸미는 것이 아니라, 이 과제를 실제로 해결하는 데 기여해야 한다.\n\n[필수 조건]\n${con}\n\n[사용·구조 조건]\n${structure}\n\n[핵심 기능]\n${feature}\n\n[형태 방향]\n${form}\n\n[디자인 스타일 및 CMF]\n${style}. ${cmf}. 색상, 소재, 마감이 서로 따로 노는 부품들의 조합이 아니라, 하나의 완성도 높은 제품처럼 통일감 있게 느껴져야 한다.\n\n외형 장식보다 '${challenge}' 문제를 해결하는 기능적·구조적 원리가 명확하게 드러나야 한다. 이것은 실제로 제작 가능한 진짜 제품이어야 하며, 단순한 스타일링 일러스트가 아니다. 사용성, 인체공학, 안전성, 구조적 안정성, 조립·결착 방식, 비례, 사용자와의 상호작용, 실제 제작 가능성까지 세심하게 고려한다. ${outputClauseKo}\n\n이미지 표현 스타일은 '${renderLabel}'로 표현한다. ${renderDetailKo}\nView는 '${viewLabel}'를 사용한다. ${viewDetailKo}\n핵심 구조와 작동·결착 원리, 전체 실루엣과 기능적 논리가 한눈에 명확하게 이해되어야 한다. 최종 이미지는 ${aspectChoice}${aspectChoice==="자유 비율"&&aspectExtra ? " ("+aspectExtra+")" : ""} 비율로 구성한다.\n\n[피해야 할 표현]\n여러 장의 이미지를 격자·콜라주 형태로 배열한 구성, 같은 제품을 여러 각도·버전으로 나열해 하나의 이미지 안에 조합한 구성, 사진 편집 도구의 아이콘·버튼·인터페이스 요소, 불필요한 텍스트·로고·워터마크, 설명되지 않은 부속물이나 붕 떠 있는 요소, 비대칭이거나 일관되지 않은 비례, 저해상도·블러 처리, 비현실적인 재질 표현은 피한다. 결과물은 여러 장을 이어붙인 콜라주가 아니라 하나로 통일된 단일 이미지여야 한다.`;
 let en=`A professional product design visualization of a ${categoryEn?categoryEn+" category ":""}${productEn}, carefully designed for ${userEn}. The product elegantly solves the following real user problems: ${problemEn}.${productNoteVal?" Additional context: "+productNoteVal+".":""}\n\nPRIMARY DESIGN CHALLENGE — ${challengeEn}: ${chEn}. Every design decision should visibly serve this challenge, not just decorate the surface.\n\nMANDATORY CONSTRAINTS: ${conEn}.\nUSE, CONTROL, MOTION & MOUNTING: ${structureEn}.\nCORE FUNCTIONS clearly expressed in the form: ${featureEn}.\nOVERALL FORM DIRECTION: ${formEn}.\nDESIGN LANGUAGE & CMF (color, material, finish): ${styleEn}; ${cmfEn}. The color palette, material choices and surface finish should feel like one cohesively designed product, not an assortment of unrelated parts.\n\nThis is a real, manufacturable product — not a stylized illustration. Prioritize functional and structural problem-solving over decorative styling. Pay close attention to ergonomics, safety, structural stability, assembly and attachment logic, proportions, human interaction and realistic manufacturability. ${outputClauseEn}\n\nRENDERING STYLE: ${renderPrompt}.\nVIEW / COMPOSITION: ${viewPrompt}.\nThe key mechanism, attachment/connection details, overall silhouette and functional logic must all be clearly legible at a glance.\nOUTPUT FORMAT: ${aspectPrompt}.\n\n${negativePrompt}${mjParams}`;
-document.getElementById("summary").textContent=sum;document.getElementById("ko").textContent=ko;document.getElementById("en").textContent=en;
+document.getElementById("summary").textContent=sum;document.getElementById("ko").textContent=ko;document.getElementById("en").textContent=en;renderPromptTab(currentPromptTab);
 refreshTitlesOnMake();
 let imgHtml="";
 if(images.sketch)imgHtml+=`<div><label>첨부한 스케치</label><img src="${images.sketch}" style="max-width:100%;border-radius:10px;border:1px solid var(--l)"></div>`;
@@ -527,6 +537,20 @@ resultImages.innerHTML=imgHtml; resultImages.style.display=imgHtml?"grid":"none"
 document.getElementById("result").classList.add("on");document.getElementById("result").scrollIntoView({behavior:"smooth"});
 useFreeTry();aiOnNewPrompt();}
 function cp(id){navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>alert("복사되었습니다."))}
+let currentPromptTab="ko";
+function enWithoutMj(){return (document.getElementById("en").textContent||"").replace(/\s*\(참고용 미드저니 파라미터:[^)]*\)\s*$/,"")}
+function renderPromptTab(key){
+ currentPromptTab=key;
+ const box=document.getElementById("promptBox"); if(!box)return;
+ if(key==="ko")box.textContent=document.getElementById("ko").textContent;
+ else if(key==="en")box.textContent=enWithoutMj();
+ else if(key==="mj")box.textContent=document.getElementById("en").textContent;
+ document.querySelectorAll("#promptTabs .tab").forEach(t=>t.classList.toggle("on",t.dataset.pt===key));
+}
+function copyPromptTab(){
+ const box=document.getElementById("promptBox"); if(!box)return;
+ navigator.clipboard.writeText(box.textContent).then(()=>alert("복사되었습니다."));
+}
 
 function collectData(){
  return {
@@ -646,7 +670,8 @@ function newProject(){
  const count=document.getElementById("count"); if(count)count.value="4";
  setFormMode("p1");
  ["sketch","ref"].forEach(key=>{images[key]=null;showImagePreview(key,null);const f=document.getElementById(key+"File");if(f)f.value="";});
- ["summary","ko","en"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=""});
+ ["summary","ko","en","promptBox"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=""});
+ currentPromptTab="ko"; document.querySelectorAll("#promptTabs .tab").forEach(t=>t.classList.toggle("on",t.dataset.pt==="ko"));
  const resultImages=document.getElementById("resultImages"); if(resultImages){resultImages.innerHTML="";resultImages.style.display="none";}
  titleSeed=0;titleOptions=["","",""];selectedTitleIdx=0;customTitleText="";pendingRestoredTitle=null;
  const titleCards=document.getElementById("titleCards"); if(titleCards)titleCards.innerHTML="";
