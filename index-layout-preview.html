@@ -37,8 +37,9 @@
 @media(min-width:641px){#promptTabs{flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:24px}}
 #promptTabs .tab-group-label{display:block;margin-bottom:4px;font-size:12px;font-weight:bold;color:var(--m)}
 #promptTabs .tab-group{display:flex;flex-wrap:wrap;gap:8px}
-#promptTabs .tab{border:1px solid var(--l);background:#fff;padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--m)}
+#promptTabs .tab{border:1px solid var(--l);background:#fff;padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--m);cursor:pointer;transition:background .15s,border-color .15s,color .15s}
 #promptTabs .tab.on{border-color:var(--ab);background:#ffe6f1;color:var(--a)}
+#promptTabs .tab:hover{border-color:var(--ab);background:#fff5fa;color:var(--a)}
 .danger-hover:hover{border-color:#D9534F!important;color:#D9534F!important;background:#fff!important}
 .pdf-primary{background:var(--a)!important;color:#fff!important;border-color:var(--a)!important}
 .pdf-primary:hover{background:#e0247a!important}
