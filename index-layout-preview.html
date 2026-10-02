@@ -25,8 +25,6 @@
 .step-tab.done{border-bottom-color:#f0b9d4}
 .step-tab.on{border-bottom-color:var(--a);background:#fff}
 .step-tab.on b,.step-tab.on span{color:var(--a)}
-.step-tab.filled b{position:relative}
-.step-tab.filled b::after{content:"";position:absolute;top:-3px;right:-7px;width:6px;height:6px;border-radius:50%;background:var(--a)}
 .step-tab:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:640px){.top-bar{padding:10px 16px}.top-logo{height:32px}.app-name{display:none}.step-nav{padding:10px 16px}}
 .step-panel{display:none;scroll-margin-top:58px}
@@ -558,7 +556,6 @@ function showStep(n){
  document.querySelectorAll(".step-tab").forEach(t=>{
   const ts=Number(t.dataset.step);
   t.classList.toggle("on",ts===n);
-  t.classList.toggle("done",ts<n);
   if(ts===n)t.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
  });
  const prevBtn=document.getElementById("prevStepBtn"), nextBtn=document.getElementById("nextStepBtn");
@@ -593,7 +590,7 @@ function isStepFilled(n){
 function updateFilledTabs(){
  document.querySelectorAll(".step-tab[data-step]").forEach(t=>{
   const ts=Number(t.dataset.step);
-  if(ts>=1&&ts<=9)t.classList.toggle("filled",isStepFilled(ts));
+  if(ts>=1&&ts<=9&&!t.classList.contains("on"))t.classList.toggle("done",isStepFilled(ts));
  });
 }
 document.addEventListener("click",e=>{if(e.target.closest(".c")){updateFilledTabs();renderSketchStagePrompts();}});
