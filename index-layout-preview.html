@@ -12,8 +12,9 @@
 .top-bar-links a:hover{color:var(--a)}
 .top-bar-links button{font:inherit;font-size:12.5px;font-weight:bold;color:var(--m);background:none;border:0;cursor:pointer;padding:0}
 .top-bar-links button:hover{color:var(--a)}
-.step-nav{display:flex;gap:4px;overflow-x:auto;padding:14px 24px;max-width:1240px;margin:0 auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.step-nav{position:sticky;top:65px;z-index:40;display:flex;gap:4px;overflow-x:auto;padding:14px 24px;max-width:1240px;margin:0 auto;background:var(--b);border-bottom:1px solid var(--l);-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .step-nav::-webkit-scrollbar{display:none}
+@media(max-width:640px){.step-nav{top:57px}}
 .step-tab{flex:1 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:8px 12px 10px;border:0;border-bottom:3px solid var(--l);border-radius:10px;background:transparent;font-family:inherit;color:var(--m);cursor:pointer;white-space:nowrap;text-align:left;min-width:96px;position:relative;transition:color .15s,border-color .15s,background .15s}
 .step-tab b{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--m)}
 .step-tab span{font-size:13px;font-weight:600;color:var(--m)}
