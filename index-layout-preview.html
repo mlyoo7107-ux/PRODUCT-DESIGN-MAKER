@@ -156,8 +156,11 @@
 <div id="countWrap"><label>아이디어 개수</label><select id="count"><option>3</option><option selected>4</option><option>6</option></select></div>
 <div id="renderStyleTextWrap" style="display:none"><input id="renderStyleText"></div>
 <div id="viewTextWrap" style="display:none"><input id="viewText"></div>
-<p class="hint" style="margin-top:0">💡 다양한 각도·장면(삼면도, 사용 장면, 분해도 등)과 렌더링 스타일(산업디자인/사실적/컬러링)은 결과 화면에서 한 번에 모두 확인할 수 있어요.</p>
-<label>② 어떤 사이즈로 출력할까요?</label><div class="grid" id="aspect"></div>
+<label>② 스케치 스타일은 어떻게 할까요?</label>
+<p class="hint" style="margin-top:0">썸네일·러프·디테일 스케치를 한 번에 보여드려요. 빠르게 여러 형태를 탐색하고 싶다면 썸네일부터, 바로 발전시킬 콘셉트가 있다면 디테일 스케치를 써보세요.</p>
+<div id="sketchStagePromptsList"></div>
+<p class="hint" style="margin-top:14px">💡 다양한 각도·장면(삼면도, 사용 장면, 분해도 등)과 렌더링 스타일(산업디자인/사실적/컬러링)은 결과 화면에서 한 번에 모두 확인할 수 있어요.</p>
+<label>③ 어떤 사이즈로 출력할까요?</label><div class="grid" id="aspect"></div>
 <label>자유 비율 / 직접 입력</label><input id="aspectText" placeholder="예: 4:3, 3:4, 1:1">
 <p class="hint">A4 가로: 297×210mm (약 1.414:1) · 16:9: 1920×1080 · 인스타 정사각형: 1080×1080 · 인스타 세로: 1080×1350 · 인스타 스토리·릴스: 1080×1920</p></div>
 <div class="modal-overlay" id="viewModal" onclick="if(event.target===this)closeViewExample()"><div class="modal-content"><button class="modal-close" type="button" onclick="closeViewExample()">✕</button><img id="viewModalImg" src="" alt="View 예시 이미지"><a id="viewModalDownload" href="" download class="copy" style="display:block;text-align:center;margin-top:10px">⬇️ 예시 이미지 다운로드</a></div></div>
@@ -201,11 +204,6 @@
 <div class="box" id="promptBox" style="margin-top:8px"></div>
 <button class="copy" onclick="copyPromptTab()">프롬프트 복사</button>
 <span class="hint" style="margin-left:8px">→ 복사해서 사용 중인 AI 이미지 생성 도구에 붙여넣으세요</span>
-<div class="card" id="sketchStagePromptsCard" style="margin-top:18px;border-color:#f0b9d4!important">
-<h2 style="margin:0 0 4px;font-size:15px;color:var(--a)">✏️ 스케치 단계별로 보기</h2>
-<p class="hint" style="margin:0 0 14px">썸네일·러프·디테일 스케치를 한 번에 보여드려요. 빠르게 여러 형태를 탐색하고 싶다면 썸네일부터, 바로 발전시킬 콘셉트가 있다면 디테일 스케치를 써보세요.</p>
-<div id="sketchStagePromptsList"></div>
-</div>
 <!-- AI 이미지 생성 (준비 중) -->
 <style>
 #aiImageSection{margin-top:18px;border-top:1px solid var(--l);padding-top:16px}
@@ -564,6 +562,7 @@ function showStep(n){
  const target=n===10?document.getElementById("result"):document.querySelector('.step-panel[data-step="'+n+'"]');
  if(target)target.scrollIntoView({behavior:"smooth",block:"start"});
  updateFilledTabs();
+ if(n===9)renderSketchStagePrompts();
 }
 const v=id=>document.getElementById(id).value.trim(), sel=id=>[...document.querySelectorAll("#"+id+" .c.on")].map(x=>x.textContent), txt=(id,extra="")=>[...sel(id),extra].filter(Boolean).join(", ")||"미정";
 const selEn=id=>sel(id).map(x=>(EN[id]&&EN[id][x])||x), txtEn=(id,extra="")=>[...selEn(id),extra].filter(Boolean).join(", ")||"unspecified";
@@ -591,8 +590,8 @@ function updateFilledTabs(){
   if(ts>=1&&ts<=9)t.classList.toggle("filled",isStepFilled(ts));
  });
 }
-document.addEventListener("click",e=>{if(e.target.closest(".c"))updateFilledTabs();});
-document.addEventListener("input",e=>{if(e.target.matches("input,textarea"))updateFilledTabs();});
+document.addEventListener("click",e=>{if(e.target.closest(".c")){updateFilledTabs();renderSketchStagePrompts();}});
+document.addEventListener("input",e=>{if(e.target.matches("input,textarea")){updateFilledTabs();renderSketchStagePrompts();}});
 let images={sketch:null,ref:null,generated:null};
 function showImagePreview(key,dataUrl){
  const prev=document.getElementById(key+"Preview"), btn=document.getElementById(key+"RemoveBtn");
