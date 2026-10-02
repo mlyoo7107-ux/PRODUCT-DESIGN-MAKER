@@ -210,15 +210,33 @@
 <button type="button" class="copy" onclick="downloadAIImage()">⬇️ 이미지 저장</button>
 </div>
 </div>
-<div style="margin-top:18px;border-top:1px solid var(--l);padding-top:16px">
-<label style="margin-top:0">📷 완성된 이미지 등록</label>
-<p class="hint">AI 도구로 이미지를 만드셨다면, 가장 마음에 드는 1장을 등록해주세요. 아래 "디자인 기획서 PDF"에 이 이미지가 자동으로 함께 들어가요.</p>
-<div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-top:10px">
-<div style="flex:1;min-width:160px">
-<input type="file" accept="image/*" id="generatedFile" onchange="handleImageUpload(event,'generated')">
-<button type="button" class="copy" id="generatedRemoveBtn" style="display:none;margin-top:8px" onclick="removeImage('generated')">🗑 삭제</button>
+<div class="card" style="margin-top:18px;border-color:#f0b9d4!important">
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+<h2 style="margin:0;font-size:15px;color:var(--a)">📷 완성된 이미지 등록</h2>
+<p style="margin:0;color:var(--m);font-size:13px;flex:1">등록하면 아래 "디자인 기획서 PDF" 표지에 이 이미지가 자동으로 들어가요</p>
 </div>
-<img id="generatedPreview" style="display:none;max-width:140px;border-radius:10px;border:1px solid var(--l)">
+<div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">
+<div style="flex:none;width:160px">
+<div id="generatedDrop" style="width:100%;aspect-ratio:3/4;border:2px dashed #f0b9d4;background:#fff5f9;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--m);cursor:pointer;text-align:center;padding:10px" onclick="document.getElementById('generatedFile').click()">
+<b style="font-size:30px;color:var(--a)">＋</b>
+<span style="font-weight:bold;color:var(--t)">완성 이미지 올리기</span>
+<small style="color:var(--m)">AI 도구로 만든 결과 중<br>가장 마음에 드는 1장</small>
+</div>
+<img id="generatedPreview" style="display:none;width:100%;border-radius:14px;border:1px solid var(--l)">
+<div id="generatedBtns" style="display:none;gap:6px;margin-top:8px">
+<button type="button" class="copy" style="flex:1;margin-top:0" onclick="document.getElementById('generatedFile').click()">바꾸기</button>
+<button type="button" class="copy" style="flex:1;margin-top:0" id="generatedRemoveBtn" onclick="removeImage('generated')">삭제</button>
+</div>
+<input type="file" accept="image/*" id="generatedFile" style="display:none" onchange="handleImageUpload(event,'generated')">
+</div>
+<div style="flex:1;min-width:200px;font-size:14px;display:flex;flex-direction:column;gap:8px">
+<b>✨ 사용 방법</b>
+<ol style="margin:0;padding-left:20px;color:var(--m);display:flex;flex-direction:column;gap:6px">
+<li>사용 중인 AI 이미지 생성 도구(미드저니, 챗GPT, DALL·E 등)에 프롬프트를 붙여넣어 이미지를 만드세요.</li>
+<li>여러 장 만들었다면 가장 마음에 드는 1장을 고르세요.</li>
+<li>왼쪽에 등록하면, 디자인 기획서(PDF) 표지에 자동으로 들어가요.</li>
+</ol>
+</div>
 </div>
 </div>
 <div style="margin-top:18px;border-top:1px solid var(--l);padding-top:16px">
@@ -511,6 +529,11 @@ function showImagePreview(key,dataUrl){
  const prev=document.getElementById(key+"Preview"), btn=document.getElementById(key+"RemoveBtn");
  if(dataUrl){prev.src=dataUrl;prev.style.display="block";btn.style.display="inline-block";}
  else{prev.src="";prev.style.display="none";btn.style.display="none";}
+ if(key==="generated"){
+  const drop=document.getElementById("generatedDrop"), btns=document.getElementById("generatedBtns");
+  if(drop)drop.style.display=dataUrl?"none":"flex";
+  if(btns)btns.style.display=dataUrl?"flex":"none";
+ }
  updateSketchDevNotice();
 }
 function updateSketchDevNotice(){
