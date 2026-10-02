@@ -162,14 +162,13 @@
 <div class="c view-row" data-v="기타" onclick="pickRenderStyle(this)"><span>기타 / 직접 입력</span></div>
 </div>
 <p class="hint">※ 예시 이미지는 스타일 느낌을 보여주는 참고용입니다. 실제 생성 결과는 사용하는 AI 도구에 따라 달라질 수 있어요.</p>
-<p class="hint">💡 "산업디자인 렌더링"처럼 스타일이 중요한 경우, 🔍 예시 이미지를 다운로드해서 프롬프트와 함께 AI 도구에 첨부하면 원하는 느낌이 훨씬 안정적으로 나와요.</p>
 <div id="renderStyleTextWrap" style="display:none"><label>직접 입력하세요</label><input id="renderStyleText" placeholder="원하는 표현 스타일을 직접 입력하세요."></div>
 <div id="viewTextWrap" style="display:none"><input id="viewText"></div>
 <p class="hint" style="margin-top:0">💡 다양한 각도·장면(삼면도, 사용 장면, 분해도 등)의 프롬프트는 결과 화면에서 한 번에 모두 확인할 수 있어요.</p>
 <label>③ 어떤 사이즈로 출력할까요?</label><div class="grid" id="aspect"></div>
 <label>자유 비율 / 직접 입력</label><input id="aspectText" placeholder="예: 4:3, 3:4, 1:1">
 <p class="hint">A4 가로: 297×210mm (약 1.414:1) · 16:9: 1920×1080 · 인스타 정사각형: 1080×1080 · 인스타 세로: 1080×1350 · 인스타 스토리·릴스: 1080×1920</p></div>
-<div class="modal-overlay" id="viewModal" onclick="if(event.target===this)closeViewExample()"><div class="modal-content"><button class="modal-close" type="button" onclick="closeViewExample()">✕</button><img id="viewModalImg" src="" alt="View 예시 이미지"><a id="viewModalDownload" href="" download class="copy" style="display:block;text-align:center;margin-top:10px">⬇️ 이 예시 이미지 다운로드 (프롬프트와 함께 첨부하면 더 정확해요)</a></div></div>
+<div class="modal-overlay" id="viewModal" onclick="if(event.target===this)closeViewExample()"><div class="modal-content"><button class="modal-close" type="button" onclick="closeViewExample()">✕</button><img id="viewModalImg" src="" alt="View 예시 이미지"><a id="viewModalDownload" href="" download class="copy" style="display:block;text-align:center;margin-top:10px">⬇️ 예시 이미지 다운로드</a></div></div>
 <div class="step-panel" data-step="9">
 <p id="freeStatus" style="text-align:center;font-size:13px;color:var(--m);margin:12px 0 8px"></p>
 <button class="go" onclick="make();if(document.getElementById('result').classList.contains('on'))showStep(10)">✨ PRODUCT DESIGN PROMPT 만들기</button>
