@@ -21,6 +21,8 @@
 .step-tab.done{border-bottom-color:#f0b9d4}
 .step-tab.on{border-bottom-color:var(--a);background:#fff}
 .step-tab.on b,.step-tab.on span{color:var(--a)}
+.step-tab.filled b{position:relative}
+.step-tab.filled b::after{content:"";position:absolute;top:-3px;right:-7px;width:6px;height:6px;border-radius:50%;background:var(--a)}
 .step-tab:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:640px){.top-bar{padding:10px 16px}.top-logo{height:32px}.app-name{display:none}.step-nav{padding:10px 16px}}
 .step-panel{display:none;scroll-margin-top:58px}
@@ -548,9 +550,36 @@ function showStep(n){
  const cnt=document.getElementById("stepCount"); if(cnt)cnt.textContent=(n<=9?n+" / 9":"결과");
  const target=n===10?document.getElementById("result"):document.querySelector('.step-panel[data-step="'+n+'"]');
  if(target)target.scrollIntoView({behavior:"smooth",block:"start"});
+ updateFilledTabs();
 }
 const v=id=>document.getElementById(id).value.trim(), sel=id=>[...document.querySelectorAll("#"+id+" .c.on")].map(x=>x.textContent), txt=(id,extra="")=>[...sel(id),extra].filter(Boolean).join(", ")||"미정";
 const selEn=id=>sel(id).map(x=>(EN[id]&&EN[id][x])||x), txtEn=(id,extra="")=>[...selEn(id),extra].filter(Boolean).join(", ")||"unspecified";
+function isStepFilled(n){
+ switch(n){
+  case 1: return sel("category").length>0||!!v("product")||!!v("productNote");
+  case 2: return sel("user").length>0||!!v("userText");
+  case 3: return sel("problem").length>0||!!v("problemText");
+  case 4: return sel("challenge").length>0||!!v("challengeText")||!!v("constraints");
+  case 5: return sel("control").length>0||sel("motion").length>0||sel("mount").length>0||!!v("structureText");
+  case 6: return sel("feature").length>0||!!v("featureText");
+  case 7: return formMode==="p5"||sel("form").length>0||!!v("formOther")||!!v("formText");
+  case 8: {
+   const pal=typeof palGet==="function"?palGet():null;
+   const palFilled=!!(pal&&(pal.main.hex||pal.sub.hex||pal.point.hex));
+   return sel("style").length>0||!!v("styleText")||sel("colorChips").length>0||!!v("color")||sel("materialChips").length>0||!!v("material")||sel("finishChips").length>0||!!v("finish")||sel("tone").length>0||sel("scheme").length>0||palFilled;
+  }
+  case 9: return sel("output").length>0||!!selRenderStyle()||sel("aspect").length>0;
+  default: return false;
+ }
+}
+function updateFilledTabs(){
+ document.querySelectorAll(".step-tab[data-step]").forEach(t=>{
+  const ts=Number(t.dataset.step);
+  if(ts>=1&&ts<=9)t.classList.toggle("filled",isStepFilled(ts));
+ });
+}
+document.addEventListener("click",e=>{if(e.target.closest(".c"))updateFilledTabs();});
+document.addEventListener("input",e=>{if(e.target.matches("input,textarea"))updateFilledTabs();});
 let images={sketch:null,ref:null,generated:null};
 function showImagePreview(key,dataUrl){
  const prev=document.getElementById(key+"Preview"), btn=document.getElementById(key+"RemoveBtn");
@@ -805,6 +834,7 @@ function applyFields(d){
  images.sketch=(d.images&&d.images.sketch)||null; showImagePreview("sketch",images.sketch);
  images.ref=(d.images&&d.images.ref)||null; showImagePreview("ref",images.ref);
  images.generated=(d.images&&d.images.generated)||null; showImagePreview("generated",images.generated);
+ updateFilledTabs();
 }
 function loadJSON(ev){
  const f=ev.target.files&&ev.target.files[0]; if(!f)return;
