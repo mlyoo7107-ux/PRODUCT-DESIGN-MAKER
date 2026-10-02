@@ -27,9 +27,9 @@
 .step-tab.on b,.step-tab.on span{color:var(--a)}
 .step-tab:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:640px){.top-bar{padding:10px 16px}.top-logo{height:32px}.app-name{display:none}.step-nav{padding:10px 16px}}
-.step-panel{display:none;scroll-margin-top:58px}
+.step-panel{display:none;scroll-margin-top:var(--sticky-h,118px)}
 .step-panel.active-step{display:block}
-#result{scroll-margin-top:58px}
+#result,#sketchUploadSection,#paywall{scroll-margin-top:var(--sticky-h,118px)}
 .card{box-shadow:0 2px 10px rgba(23,21,18,.06);border-color:#f0c9de!important}
 .step{display:inline-block;background:#fff0f7;border:1px solid #f6c7e0;color:var(--a);font-size:11px;font-weight:800;letter-spacing:.4px;padding:4px 12px;border-radius:20px;text-transform:uppercase}
 .title{font-size:21px;font-weight:900;margin:10px 0 14px!important}
@@ -96,7 +96,7 @@
   <p class="hint">이전에 저장한 작업파일(.json)이 있다면 불러와 선택항목과 입력내용을 그대로 이어서 수정할 수 있습니다.</p>
   <div id="draftNotice" style="display:none;margin-top:14px;padding:14px;background:#fffcf0;border:1px solid #f5e9bd;border-radius:12px">
     ✍️ <b>작성 중이던 내용이 자동 저장되어 있어요</b> (마지막 저장: <span id="draftTime"></span>)
-    <button class="go go-soft" style="margin:10px -14px -14px;width:calc(100% + 28px);border-radius:0 0 11px 11px" onclick="restoreDraft()">↩️ 이어서 작성하기</button>
+    <button class="go go-soft" style="margin-top:12px" onclick="restoreDraft()">↩️ 이어서 작성하기</button>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
     <button class="go go-outline" onclick="newProject()">＋ 새 작업 시작</button>
@@ -540,10 +540,15 @@ document.getElementById("output").addEventListener("click",updateOutputUI);
 updateOutputUI();
 function syncTopbarHeight(){
  const tb=document.querySelector(".top-bar");
- if(tb)document.documentElement.style.setProperty("--topbar-h",tb.offsetHeight+"px");
+ const sn=document.querySelector(".step-nav");
+ const tbH=tb?tb.offsetHeight:65;
+ const snH=sn?sn.offsetHeight:50;
+ document.documentElement.style.setProperty("--topbar-h",tbH+"px");
+ document.documentElement.style.setProperty("--sticky-h",(tbH+snH+10)+"px");
 }
 window.addEventListener("resize",syncTopbarHeight);
 syncTopbarHeight();
+setTimeout(syncTopbarHeight,300);
 let currentStep=1;
 function showStep(n){
  if(n<1)n=1; if(n>10)n=10;
