@@ -196,15 +196,15 @@
 <div style="margin-top:18px;border-top:1px solid var(--l);padding-top:16px">
 <label>프로젝트 저장 · 불러오기</label>
 <p class="hint">작업파일을 저장하면 다음 수업에서 다시 불러와 선택항목과 입력내용을 이어서 수정할 수 있습니다.</p>
-<button class="go" onclick="savePDF()" style="margin-top:10px">📄 디자인 기획서 PDF 저장</button>
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-<button class="copy" onclick="document.getElementById('loadProject').click()">📂 작업파일 불러오기</button>
+<button class="copy" style="border-radius:22px;background:var(--a);color:white" onclick="savePDF()">📄 디자인 기획서 PDF 저장</button>
+<button class="copy" style="border-radius:22px" onclick="saveTxt()">📝 TXT 저장</button>
+<button class="copy" style="border-radius:22px" onclick="saveJSON()">💾 작업파일 저장</button>
+<button class="copy" style="border-radius:22px" onclick="document.getElementById('loadProject').click()">📂 작업파일 불러오기</button>
 <input id="loadProject" type="file" accept=".json,application/json" style="display:none" onchange="loadJSON(event)">
-<button class="copy" onclick="saveJSON()">💾 작업파일 저장</button>
-<button class="copy" onclick="saveTxt()">📝 TXT 저장</button>
+<button class="copy" style="border-radius:22px" onclick="newProject()">🔄 처음부터 다시 만들기</button>
 </div>
-<p class="hint">※ PDF는 제출·출력용입니다. 다시 수정하려면 ‘작업파일(.json)’을 저장해 주세요.</p>
-<button class="go go-outline" onclick="newProject()" style="margin-top:14px">🔄 처음부터 다시 만들기</button>
+<p class="hint" style="margin-top:10px">※ PDF는 제출·출력용입니다. 다시 수정하려면 ‘작업파일(.json)’을 저장해 주세요.</p>
 </div></div>
 <div class="step-nav-bottom">
 <button id="prevStepBtn" onclick="showStep(currentStep-1)">← 이전</button>
