@@ -87,6 +87,15 @@ function escapeHtml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,
     try{
       const res = await fetch(STATUS_API_URL + "?orderId=" + encodeURIComponent(orderId) + "&device=" + encodeURIComponent(cmDeviceId()));
       const data = await res.json().catch(()=>({}));
+      if(data && data.refunded){
+        render(`
+          <div class="icon">↩️</div>
+          <h1>환불 처리된 결제예요</h1>
+          <p>이 주문은 결제가 취소되어 이용할 수 없어요. 궁금한 점은 아래 주문번호와 함께 문의해 주세요.</p>
+          <div class="box"><div><b>상품</b>: ${escapeHtml(planLabel)}</div><div><b>주문번호</b>: ${escapeHtml(orderId)}</div></div>
+        `);
+        return;
+      }
       if(data && data.limit){
         render(`
           <div class="icon">🔒</div>
@@ -97,7 +106,11 @@ function escapeHtml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,
         return;
       }
       if(data && data.paid){
-        if(plan){ try{ localStorage.setItem(plan.unlockKey, "1"); }catch(e){} }
+        if(plan){ try{
+          localStorage.setItem(plan.unlockKey, "1");
+          // 하루 한 번 환불 여부를 다시 확인할 때 쓰는 주문번호 (index.html의 recheckPaidOrder)
+          if(prefix === "basic") localStorage.setItem("cmPdmOrder", orderId);
+        }catch(e){} }
         const makerUrl = plan ? plan.makerUrl : 'landing.html';
         const deviceLink = plan ? (location.origin + location.pathname.replace(/payment-success\.html$/, "") + makerUrl + "?order=" + encodeURIComponent(orderId)) : "";
         render(`

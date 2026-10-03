@@ -1119,7 +1119,10 @@ function cmDeviceId(){
    .then(r=>r.json()).then(data=>{
     if(data&&data.paid&&data.plan==="basic"){
      localStorage.setItem("cmPdmPaid","1");
+     localStorage.setItem("cmPdmOrder",orderId);
      updateFreeStatus();
+    }else if(data&&data.refunded){
+     alert("환불 처리된 결제예요. 이 링크로는 더 이상 이용할 수 없어요.");
     }else if(data&&data.limit){
      alert(`이 결제 링크는 이미 기기 ${data.max}대에서 사용 중이에요.\n다른 기기에서 쓰시려면 결제하신 정보(주문번호)와 함께 문의해 주세요.`);
     }
@@ -1127,6 +1130,25 @@ function cmDeviceId(){
     const url=new URL(location.href); url.searchParams.delete("order");
     history.replaceState(null,"",url.toString());
    });
+ }catch(e){}
+})();
+// 결제로 잠금을 푼 브라우저는 하루 한 번 서버에 다시 물어봐요. 환불된 주문이면 잠금을 다시 걸어요.
+// (네트워크 오류 등 확인이 안 될 때는 아무것도 바꾸지 않아요)
+(function recheckPaidOrder(){
+ try{
+  const orderId=localStorage.getItem("cmPdmOrder");
+  if(!orderId||!CONFIG.PAYMENT_STATUS_API_URL||new URLSearchParams(location.search).get("order"))return;
+  const last=parseInt(localStorage.getItem("cmPdmOrderChecked")||"0",10)||0;
+  if(Date.now()-last<24*60*60*1000)return;
+  fetch(CONFIG.PAYMENT_STATUS_API_URL+"?orderId="+encodeURIComponent(orderId)+"&device="+encodeURIComponent(cmDeviceId()))
+   .then(r=>r.json()).then(data=>{
+    localStorage.setItem("cmPdmOrderChecked",String(Date.now()));
+    if(data&&data.refunded){
+     localStorage.removeItem("cmPdmPaid");
+     localStorage.removeItem("cmPdmOrder");
+     updateFreeStatus();
+    }
+   }).catch(()=>{});
  }catch(e){}
 })();
 // 이용 코드(수업용 무료 기간 · 결제 고객 수동 안내)는 페이지에 적지 않고 결제 서버(Workers)에서 확인해요.
