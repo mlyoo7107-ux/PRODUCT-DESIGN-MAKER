@@ -82,9 +82,13 @@ const PRODUCTS = {
   CHARACTER_MAKER: {
     label: "🧸 캐릭터디자인", makerUrl: null,
     categories: ["그림책","브랜드·마스코트","굿즈·상품","이모티콘","교육 콘텐츠","SNS 콘텐츠","영상·애니메이션","게임·콘텐츠","기타"]
+  },
+  PICTURE_BOOK_MAKER: {
+    label: "📖 AI 그림책", makerUrl: null,
+    categories: ["기타"]
   }
 };
-const PRODUCT_ORDER = ["PRODUCT_DESIGN","CHARACTER_MAKER"];
+const PRODUCT_ORDER = ["PRODUCT_DESIGN","CHARACTER_MAKER","PICTURE_BOOK_MAKER"];
 
 function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 function imageUrl(path){ return supa.storage.from(BUCKET).getPublicUrl(path).data.publicUrl; }
