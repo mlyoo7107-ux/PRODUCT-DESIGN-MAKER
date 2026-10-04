@@ -57,10 +57,10 @@ footer a{color:var(--m)}
 <label>작품 종류 *</label>
 <div class="tabs" id="productTabs"></div>
 
-<label>작품 이미지 * (최대 3장, 드래그하거나 화살표로 순서 변경)</label>
+<label id="imageLabel">작품 이미지 * (드래그하거나 화살표로 순서 변경)</label>
 <input type="file" id="imageFile" accept="image/*" multiple style="display:none">
 <div class="preview-row" id="previewRow"></div>
-<p class="hint">외부 AI 이미지 생성 도구로 만든 결과물을 첨부해주세요. 최대 3장까지 올릴 수 있어요. (자동으로 용량이 압축돼요)</p>
+<p class="hint" id="imageHint"></p>
 
 <label>작품명 *</label>
 <input type="text" id="title" placeholder="예: 캠핑용 모기퇴치 조명" required maxlength="40">
@@ -108,9 +108,9 @@ const SUPABASE_ANON_KEY = "sb_publishable_9BNpTY7OIbFN7iMmCg9TlQ_Glu4_s9G";
 const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const BUCKET = "gallery-images";
 const PRODUCTS = {
-  PRODUCT_DESIGN: { label: "🎨 제품디자인", categories: ["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"] },
-  CHARACTER_MAKER: { label: "🧸 캐릭터디자인", categories: ["그림책","브랜드·마스코트","굿즈·상품","이모티콘","교육 콘텐츠","SNS 콘텐츠","영상·애니메이션","게임·콘텐츠","기타"] },
-  PICTURE_BOOK_MAKER: { label: "📖 AI 그림책", categories: ["기타"] }
+  PRODUCT_DESIGN: { label: "🎨 제품디자인", maxImages: 5, titlePh: "예: 캠핑용 모기퇴치 조명", tagsPh: "예: 캠핑, 조명, 모듈형", categories: ["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"] },
+  CHARACTER_MAKER: { label: "🧸 캐릭터디자인", maxImages: 5, titlePh: "예: 수줍은 토끼 캐릭터 '모모'", tagsPh: "예: 토끼, 파스텔톤, 귀여운", categories: ["그림책","브랜드·마스코트","굿즈·상품","이모티콘","교육 콘텐츠","SNS 콘텐츠","영상·애니메이션","게임·콘텐츠","기타"] },
+  PICTURE_BOOK_MAKER: { label: "📖 AI 그림책", maxImages: 5, titlePh: "예: 숲속 친구들의 하루", tagsPh: "예: 동화, 자연, 어린이", categories: ["기타"] }
 };
 const PRODUCT_ORDER = ["PRODUCT_DESIGN","CHARACTER_MAKER","PICTURE_BOOK_MAKER"];
 let activeProduct = "PRODUCT_DESIGN";
@@ -135,6 +135,8 @@ function renderProductTabs(){
       activeProduct = tab.dataset.v;
       renderProductTabs();
       renderCategories();
+      updateImageLabels();
+      renderPreviews();
     };
   });
 }
@@ -212,7 +214,7 @@ function renderPreviews(){
     });
     row.appendChild(tile);
   });
-  if(compressedBlobs.length < 3){
+  if(compressedBlobs.length < PRODUCTS[activeProduct].maxImages){
     const add = document.createElement("div");
     add.className = "add-photo-tile";
     add.textContent = "+";
@@ -220,11 +222,19 @@ function renderPreviews(){
     row.appendChild(add);
   }
 }
+function updateImageLabels(){
+  const p = PRODUCTS[activeProduct];
+  document.getElementById("imageLabel").textContent = `작품 이미지 * (최대 ${p.maxImages}장, 드래그하거나 화살표로 순서 변경)`;
+  document.getElementById("imageHint").textContent = `외부 AI 이미지 생성 도구로 만든 결과물을 첨부해주세요. 최대 ${p.maxImages}장까지 올릴 수 있어요. (자동으로 용량이 압축돼요)`;
+  document.getElementById("title").placeholder = p.titlePh;
+  document.getElementById("tags").placeholder = p.tagsPh;
+}
+updateImageLabels();
 renderPreviews();
 
 document.getElementById("imageFile").addEventListener("change", async (ev) => {
   const files = Array.from(ev.target.files || []);
-  const remaining = 3 - compressedBlobs.length;
+  const remaining = PRODUCTS[activeProduct].maxImages - compressedBlobs.length;
   for(const f of files.slice(0, remaining)){
     const blob = await compressImage(f);
     compressedBlobs.push(blob);
