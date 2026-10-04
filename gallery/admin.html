@@ -20,6 +20,7 @@ h1{font-size:20px;margin:0 0 18px}
 .thumbs img{width:70px;height:70px;object-fit:cover;border-radius:10px;background:var(--l)}
 .info{flex:1;min-width:0}
 .info h3{margin:0 0 4px;font-size:15px}
+.product-badge{display:inline-block;font-size:10px;font-weight:bold;color:white;padding:2px 8px;border-radius:10px;margin-bottom:4px}
 .info p{margin:2px 0;font-size:12px;color:var(--m)}
 .actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .actions button{padding:8px 14px;border-radius:16px;border:1px solid var(--l);background:white;font-size:12px;font-weight:bold;cursor:pointer}
@@ -57,18 +58,35 @@ h1{font-size:20px;margin:0 0 18px}
       <button id="logoutBtn" style="padding:8px 14px;border-radius:16px;border:1px solid var(--l);background:white;font-size:12px;cursor:pointer;color:var(--m)">로그아웃</button>
     </div>
   </div>
-  <div class="tabs">
+  <div class="tabs" id="statusTabs">
     <div class="tab on" data-tab="pending">승인 대기</div>
     <div class="tab" data-tab="approved">승인됨</div>
     <div class="tab" data-tab="requests">수정 요청</div>
   </div>
+  <div class="tabs" id="productFilterTabs" style="margin-top:-6px"></div>
   <div id="list"></div>
 </div>
 </div>
 <script>
 const API = "https://colorm-gallery-admin.milan71.workers.dev";
 const SUPABASE_URL = "https://cdrbxkwouxihsxzhhnbz.supabase.co";
-const CATEGORIES = ["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"];
+const PRODUCTS = {
+  PRODUCT_DESIGN: { label: "🎨 제품디자인", color: "#ff2d86", categories: ["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"] },
+  CHARACTER_MAKER: { label: "🧸 캐릭터디자인", color: "#8b5cf6", categories: ["그림책","브랜드·마스코트","굿즈·상품","이모티콘","교육 콘텐츠","SNS 콘텐츠","영상·애니메이션","게임·콘텐츠","기타"] },
+  PICTURE_BOOK_MAKER: { label: "📖 AI 그림책", color: "#f97316", categories: ["기타"] }
+};
+const PRODUCT_ORDER = ["ALL","PRODUCT_DESIGN","CHARACTER_MAKER","PICTURE_BOOK_MAKER"];
+let activeProductFilter = "ALL";
+function categoriesFor(product){ return (PRODUCTS[product] || PRODUCTS.PRODUCT_DESIGN).categories; }
+function productLabel(key){ return (PRODUCTS[key] || {}).label || key || "알 수 없음"; }
+function productColor(key){ return (PRODUCTS[key] || {}).color || "#999"; }
+function renderProductFilterTabs(){
+  const el = document.getElementById("productFilterTabs");
+  el.innerHTML = PRODUCT_ORDER.map(key => `<div class="tab${key===activeProductFilter?" on":""}" data-pf="${key}" style="font-size:12px;padding:7px 12px">${key==="ALL"?"전체":productLabel(key)}</div>`).join("");
+  el.querySelectorAll(".tab").forEach(tab => {
+    tab.onclick = () => { activeProductFilter = tab.dataset.pf; load(currentTab); };
+  });
+}
 let pw = sessionStorage.getItem("cmGalleryAdminPw") || "";
 let currentTab = "pending";
 
@@ -119,6 +137,7 @@ function renderItemView(item, tab){
     <div class="item-row">
       <div class="thumbs">${(item.image_paths||[]).slice(0,3).map(p=>`<img src="${esc(imageUrl(p))}">`).join("")}</div>
       <div class="info">
+        <span class="product-badge" style="background:${productColor(item.product)}">${esc(productLabel(item.product))}</span>
         <h3>${esc(item.title)}</h3>
         <p>by ${esc(item.nickname)} · ${esc(item.maker_type)} · ${esc(item.category||"")}</p>
         <p>${esc(item.concept||"")}</p>
@@ -152,7 +171,7 @@ function renderItemEdit(item, tab, onSaved, attachedImagePath){
   const state = {
     order: [...(item.image_paths||[])].map(p=>({type:"kept",path:p}))
   };
-  const catOptions = CATEGORIES.map(c => `<option value="${esc(c)}" ${c===item.category?"selected":""}>${esc(c)}</option>`).join("");
+  const catOptions = categoriesFor(item.product).map(c => `<option value="${esc(c)}" ${c===item.category?"selected":""}>${esc(c)}</option>`).join("");
   div.innerHTML = `
     <div class="edit-form">
       <label>작품명</label><input id="f_title" value="${esc(item.title)}">
@@ -325,18 +344,21 @@ function renderRequest(req){
 
 async function load(tab){
   currentTab = tab;
-  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
+  document.querySelectorAll("#statusTabs .tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
+  renderProductFilterTabs();
   const list = document.getElementById("list");
   list.innerHTML = `<div class="empty">불러오는 중...</div>`;
   try {
     if(tab === "requests"){
-      const items = await api("/requests");
+      let items = await api("/requests");
+      if(activeProductFilter !== "ALL") items = items.filter(r => (r.submissions||{}).product === activeProductFilter);
       if(!items.length){ list.innerHTML = `<div class="empty">수정 요청이 없어요.</div>`; return; }
       list.innerHTML = "";
       items.forEach(r => list.appendChild(renderRequest(r)));
       return;
     }
-    const items = await api(tab === "pending" ? "/pending" : "/approved");
+    let items = await api(tab === "pending" ? "/pending" : "/approved");
+    if(activeProductFilter !== "ALL") items = items.filter(item => item.product === activeProductFilter);
     if(!items.length){
       list.innerHTML = `<div class="empty">${tab === "pending" ? "승인 대기중인 작품이 없어요." : "승인된 작품이 없어요."}</div>`;
       return;
