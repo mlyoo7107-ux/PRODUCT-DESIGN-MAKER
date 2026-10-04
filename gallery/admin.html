@@ -32,10 +32,14 @@ h1{font-size:20px;margin:0 0 18px}
 .edit-form input,.edit-form textarea,.edit-form select{width:100%;padding:9px;border:1px solid #e3ddd0;border-radius:8px;font-size:13px;font-family:inherit}
 .edit-form textarea{min-height:60px;resize:vertical}
 .edit-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.edit-thumb{position:relative;width:72px;height:72px}
-.edit-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px;background:var(--l)}
+.edit-thumb{position:relative;width:84px;height:84px;cursor:grab}
+.edit-thumb.dragging{opacity:.4}
+.edit-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px;background:var(--l);pointer-events:none}
 .edit-thumb .x{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#c0392b;color:white;border:0;font-size:12px;cursor:pointer;line-height:20px;text-align:center;padding:0}
-.add-photo{width:72px;height:72px;border:1px dashed var(--l);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--m);cursor:pointer}
+.edit-thumb .order{position:absolute;bottom:3px;left:3px;background:rgba(23,21,18,.6);color:white;font-size:10px;padding:1px 5px;border-radius:7px}
+.edit-thumb .move-row{position:absolute;bottom:3px;right:3px;display:flex;gap:2px}
+.edit-thumb .mv{width:18px;height:18px;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:var(--t);font-size:10px;cursor:pointer;line-height:18px;text-align:center;padding:0}
+.add-photo{width:84px;height:84px;border:1px dashed var(--l);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--m);cursor:pointer}
 .req-msg{font-size:14px;margin:6px 0;background:#f5f6fa;border:1px solid var(--l);border-radius:8px;padding:10px}
 </style></head><body>
 <div class="wrap">
@@ -146,8 +150,7 @@ function renderItemEdit(item, tab, onSaved, attachedImagePath){
   const div = document.createElement("div");
   div.className = "item";
   const state = {
-    keptPaths: [...(item.image_paths||[])],
-    newBlobs: []
+    order: [...(item.image_paths||[])].map(p=>({type:"kept",path:p}))
   };
   const catOptions = CATEGORIES.map(c => `<option value="${esc(c)}" ${c===item.category?"selected":""}>${esc(c)}</option>`).join("");
   div.innerHTML = `
@@ -157,7 +160,7 @@ function renderItemEdit(item, tab, onSaved, attachedImagePath){
       <label>한 줄 컨셉</label><textarea id="f_concept">${esc(item.concept||"")}</textarea>
       <label>카테고리</label><select id="f_category">${catOptions}</select>
       <label>태그 (쉼표로 구분)</label><input id="f_tags" value="${esc((item.tags||[]).join(", "))}">
-      <label>사진 (최대 3장)</label>
+      <label>사진 (최대 3장, 드래그하거나 화살표로 순서 변경)</label>
       <div class="edit-thumbs" id="editThumbs"></div>
       <input type="file" id="addPhotoInput" accept="image/*" style="display:none">
       <div class="actions" style="margin-top:14px">
@@ -168,24 +171,47 @@ function renderItemEdit(item, tab, onSaved, attachedImagePath){
     </div>
   `;
 
+  let dragIndex = null;
   function renderThumbs(){
     const box = div.querySelector("#editThumbs");
     box.innerHTML = "";
-    state.keptPaths.forEach(p => {
+    state.order.forEach((entry, i) => {
       const t = document.createElement("div");
       t.className = "edit-thumb";
-      t.innerHTML = `<img src="${esc(imageUrl(p))}"><button class="x" type="button">×</button>`;
-      t.querySelector(".x").onclick = () => { state.keptPaths = state.keptPaths.filter(x => x !== p); renderThumbs(); };
+      t.draggable = true;
+      const src = entry.type === "kept" ? esc(imageUrl(entry.path)) : URL.createObjectURL(entry.blob);
+      t.innerHTML = `
+        <img src="${src}">
+        <span class="order">${i + 1}</span>
+        <button class="x" type="button">×</button>
+        <div class="move-row">
+          <button type="button" class="mv" data-dir="-1">◀</button>
+          <button type="button" class="mv" data-dir="1">▶</button>
+        </div>
+      `;
+      t.querySelector(".x").onclick = () => { state.order.splice(i,1); renderThumbs(); };
+      t.querySelectorAll(".mv").forEach(btn => {
+        btn.onclick = () => {
+          const j = i + parseInt(btn.dataset.dir, 10);
+          if(j < 0 || j >= state.order.length) return;
+          [state.order[i], state.order[j]] = [state.order[j], state.order[i]];
+          renderThumbs();
+        };
+      });
+      t.addEventListener("dragstart", () => { dragIndex = i; t.classList.add("dragging"); });
+      t.addEventListener("dragend", () => t.classList.remove("dragging"));
+      t.addEventListener("dragover", (e) => e.preventDefault());
+      t.addEventListener("drop", (e) => {
+        e.preventDefault();
+        if(dragIndex === null || dragIndex === i) return;
+        const [moved] = state.order.splice(dragIndex, 1);
+        state.order.splice(i, 0, moved);
+        dragIndex = null;
+        renderThumbs();
+      });
       box.appendChild(t);
     });
-    state.newBlobs.forEach((blob, i) => {
-      const t = document.createElement("div");
-      t.className = "edit-thumb";
-      t.innerHTML = `<img src="${URL.createObjectURL(blob)}"><button class="x" type="button">×</button>`;
-      t.querySelector(".x").onclick = () => { state.newBlobs.splice(i,1); renderThumbs(); };
-      box.appendChild(t);
-    });
-    if(state.keptPaths.length + state.newBlobs.length < 3){
+    if(state.order.length < 3){
       const add = document.createElement("div");
       add.className = "add-photo";
       add.textContent = "+";
@@ -195,10 +221,10 @@ function renderItemEdit(item, tab, onSaved, attachedImagePath){
   }
   renderThumbs();
 
-  if(attachedImagePath && state.keptPaths.length + state.newBlobs.length < 3){
+  if(attachedImagePath && state.order.length < 3){
     fetch(imageUrl(attachedImagePath))
       .then(r => r.blob())
-      .then(blob => { state.newBlobs.push(blob); renderThumbs(); })
+      .then(blob => { state.order.push({type:"new",blob}); renderThumbs(); })
       .catch(() => {});
   }
 
@@ -206,7 +232,7 @@ function renderItemEdit(item, tab, onSaved, attachedImagePath){
     const f = ev.target.files && ev.target.files[0];
     if(!f) return;
     const blob = await compressImage(f);
-    state.newBlobs.push(blob);
+    state.order.push({type:"new",blob});
     renderThumbs();
     ev.target.value = "";
   });
@@ -217,13 +243,29 @@ function renderItemEdit(item, tab, onSaved, attachedImagePath){
     const btn = div.querySelector("#saveBtn");
     btn.disabled = true; btn.textContent = "저장 중...";
     try {
-      const removed = (item.image_paths||[]).filter(p => !state.keptPaths.includes(p));
-      for(const p of removed){
-        await api("/remove-image", { method:"POST", body: JSON.stringify({ id: item.id, path: p }) });
-      }
-      for(const blob of state.newBlobs){
-        const b64 = await blobToBase64(blob);
-        await api("/add-image", { method:"POST", body: JSON.stringify({ id: item.id, imageBase64: b64 }) });
+      const originalPaths = item.image_paths||[];
+      const keptOrder = state.order.filter(e=>e.type==="kept").map(e=>e.path);
+      const stillKept = originalPaths.filter(p=>keptOrder.includes(p));
+      const reordered = JSON.stringify(stillKept) !== JSON.stringify(keptOrder);
+      if(reordered){
+        // 순서가 바뀐 경우, 기존 이미지를 전부 지우고 화면에 보이는 순서 그대로 다시 올려요
+        for(const p of originalPaths){
+          await api("/remove-image", { method:"POST", body: JSON.stringify({ id: item.id, path: p }) });
+        }
+        for(const entry of state.order){
+          const blob = entry.type==="kept" ? await fetch(imageUrl(entry.path)).then(r=>r.blob()) : entry.blob;
+          const b64 = await blobToBase64(blob);
+          await api("/add-image", { method:"POST", body: JSON.stringify({ id: item.id, imageBase64: b64 }) });
+        }
+      } else {
+        const removed = originalPaths.filter(p => !keptOrder.includes(p));
+        for(const p of removed){
+          await api("/remove-image", { method:"POST", body: JSON.stringify({ id: item.id, path: p }) });
+        }
+        for(const entry of state.order.filter(e=>e.type==="new")){
+          const b64 = await blobToBase64(entry.blob);
+          await api("/add-image", { method:"POST", body: JSON.stringify({ id: item.id, imageBase64: b64 }) });
+        }
       }
       const tags = div.querySelector("#f_tags").value.split(",").map(t=>t.trim()).filter(Boolean);
       await api("/update", { method:"POST", body: JSON.stringify({
