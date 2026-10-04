@@ -80,8 +80,24 @@ function fieldsHTML(images){
     <div class="field"><label>추가 설명 <span style="font-weight:normal;color:var(--m)">(선택)</span></label><input id="f_desc" placeholder="한 줄로 짧게 — 비워두면 표시 안 돼요"></div>
     <div class="field"><label>제작자 (${esc(BY_LABELS[ITEM.product] || "Design by")})</label><input id="f_nick" value="${esc(ITEM.nickname)}" readonly style="background:#f5f6fa;color:var(--m);cursor:not-allowed"><p class="hint">실제 등록자 닉네임으로 고정돼요</p></div>
     <button class="go" id="downloadBtn">⬇️ PNG로 저장</button>
+    <button class="go" id="copyCaptionBtn" style="background:white;color:var(--a);border:1px solid var(--ab)">📋 캡션 복사하기</button>
     <p class="hint" style="text-align:center" id="dimHint"></p>
   `;
+}
+
+const PRODUCT_HASHTAGS = {
+  PRODUCT_DESIGN: "#제품디자인",
+  CHARACTER_MAKER: "#캐릭터디자인",
+  PICTURE_BOOK_MAKER: "#AI그림책"
+};
+function buildCaption(){
+  const title = document.getElementById("f_title").value.trim();
+  const desc = document.getElementById("f_desc").value.trim();
+  const nick = document.getElementById("f_nick").value.trim();
+  const byLabel = BY_LABELS[ITEM.product] || "Design by";
+  const tagHashtags = (ITEM.tags||[]).map(t => "#" + t.replace(/\s+/g,""));
+  const hashtags = [...tagHashtags, PRODUCT_HASHTAGS[ITEM.product] || "", "#COLORM", "#AI메이커", "#AIMAKERGALLERY"].filter(Boolean);
+  return [title, desc, "", `${byLabel} ${nick}`, "", hashtags.join(" ")].filter(l => l !== undefined).join("\n");
 }
 
 function render(){
@@ -220,6 +236,11 @@ function wire(){
   loadImageForEditing(firstSrc);
   wireDrag();
   document.getElementById("downloadBtn").onclick = download;
+  document.getElementById("copyCaptionBtn").onclick = () => {
+    navigator.clipboard.writeText(buildCaption())
+      .then(() => alert("캡션이 복사됐어요! 인스타그램 캡션창에 붙여넣어 주세요."))
+      .catch(() => alert("복사에 실패했어요."));
+  };
 }
 
 async function download(){
