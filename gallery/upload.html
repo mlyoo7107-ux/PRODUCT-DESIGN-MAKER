@@ -54,6 +54,9 @@ footer a{color:var(--m)}
 
 <div class="card" id="formCard">
 <form id="uploadForm">
+<label>작품 종류 *</label>
+<div class="tabs" id="productTabs"></div>
+
 <label>작품 이미지 * (최대 3장, 드래그하거나 화살표로 순서 변경)</label>
 <input type="file" id="imageFile" accept="image/*" multiple style="display:none">
 <div class="preview-row" id="previewRow"></div>
@@ -104,17 +107,39 @@ const SUPABASE_URL = "https://cdrbxkwouxihsxzhhnbz.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_9BNpTY7OIbFN7iMmCg9TlQ_Glu4_s9G";
 const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const BUCKET = "gallery-images";
-const CATEGORIES = ["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"];
+const PRODUCTS = {
+  PRODUCT_DESIGN: { label: "🎨 제품디자인", categories: ["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"] },
+  CHARACTER_MAKER: { label: "🧸 캐릭터디자인", categories: ["그림책","브랜드·마스코트","굿즈·상품","이모티콘","교육 콘텐츠","SNS 콘텐츠","영상·애니메이션","게임·콘텐츠","기타"] },
+  PICTURE_BOOK_MAKER: { label: "📖 AI 그림책", categories: ["기타"] }
+};
+const PRODUCT_ORDER = ["PRODUCT_DESIGN","CHARACTER_MAKER","PICTURE_BOOK_MAKER"];
+let activeProduct = "PRODUCT_DESIGN";
 
 const prefillTitle = new URLSearchParams(location.search).get("title");
 if(prefillTitle) document.getElementById("title").value = prefillTitle.slice(0, 40);
 
 const catSelect = document.getElementById("category");
-CATEGORIES.forEach(c => {
-  const opt = document.createElement("option");
-  opt.value = c; opt.textContent = c;
-  catSelect.appendChild(opt);
-});
+function renderCategories(){
+  catSelect.innerHTML = '<option value="" disabled selected>선택해주세요</option>';
+  PRODUCTS[activeProduct].categories.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c; opt.textContent = c;
+    catSelect.appendChild(opt);
+  });
+}
+function renderProductTabs(){
+  const el = document.getElementById("productTabs");
+  el.innerHTML = PRODUCT_ORDER.map(key => `<div class="tab${key===activeProduct?" on":""}" data-v="${key}">${PRODUCTS[key].label}</div>`).join("");
+  el.querySelectorAll(".tab").forEach(tab => {
+    tab.onclick = () => {
+      activeProduct = tab.dataset.v;
+      renderProductTabs();
+      renderCategories();
+    };
+  });
+}
+renderProductTabs();
+renderCategories();
 
 let makerType = "BASIC";
 document.querySelectorAll("#makerTabs .tab").forEach(tab => {
@@ -247,7 +272,7 @@ document.getElementById("uploadForm").addEventListener("submit", async (ev) => {
 
     const { error: insertErr } = await supa.from("submissions").insert({
       title, nickname, maker_type: makerType, concept, category, tags,
-      image_paths: paths, consent: true, status: "pending", product: "PRODUCT_DESIGN"
+      image_paths: paths, consent: true, status: "pending", product: activeProduct
     });
     if(insertErr) throw insertErr;
 
