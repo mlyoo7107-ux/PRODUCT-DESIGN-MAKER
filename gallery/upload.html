@@ -114,7 +114,8 @@ const PRODUCTS = {
   PICTURE_BOOK_MAKER: { label: "📖 AI 그림책", maxImages: 5, titlePh: "예: 숲속 친구들의 하루", tagsPh: "예: 동화, 자연, 어린이", categories: ["기타"] }
 };
 const PRODUCT_ORDER = ["PRODUCT_DESIGN","CHARACTER_MAKER","PICTURE_BOOK_MAKER"];
-let activeProduct = "PRODUCT_DESIGN";
+const requestedProduct = new URLSearchParams(location.search).get("product");
+let activeProduct = PRODUCTS[requestedProduct] ? requestedProduct : "PRODUCT_DESIGN";
 
 const prefillTitle = new URLSearchParams(location.search).get("title");
 if(prefillTitle) document.getElementById("title").value = prefillTitle.slice(0, 40);
