@@ -61,6 +61,11 @@ const TOOL_NAMES = {
   CHARACTER_MAKER: "Character Maker",
   PICTURE_BOOK_MAKER: "Picture Book Maker"
 };
+const BY_LABELS = {
+  PRODUCT_DESIGN: "Design by",
+  CHARACTER_MAKER: "Design by",
+  PICTURE_BOOK_MAKER: "Story by"
+};
 let ratioManuallySet = false;
 const RATIOS = { "4:5": {w:1080,h:1350,label:"4:5 (세로형, 추천)"}, "1:1": {w:1080,h:1080,label:"1:1 (정사각형)"} };
 
@@ -73,7 +78,7 @@ function fieldsHTML(images){
     <div class="field"><label>확대</label><input type="range" id="f_zoom" min="100" max="250" value="100" style="width:100%"><p class="hint">미리보기를 드래그하면 위치도 옮길 수 있어요</p></div>
     <div class="field"><label>작품명</label><input id="f_title" value="${esc(ITEM.title)}"></div>
     <div class="field"><label>추가 설명 <span style="font-weight:normal;color:var(--m)">(선택)</span></label><input id="f_desc" placeholder="한 줄로 짧게 — 비워두면 표시 안 돼요"></div>
-    <div class="field"><label>디자이너 (Design by)</label><input id="f_nick" value="${esc(ITEM.nickname)}" readonly style="background:#f5f6fa;color:var(--m);cursor:not-allowed"><p class="hint">실제 등록자 닉네임으로 고정돼요</p></div>
+    <div class="field"><label>제작자 (${esc(BY_LABELS[ITEM.product] || "Design by")})</label><input id="f_nick" value="${esc(ITEM.nickname)}" readonly style="background:#f5f6fa;color:var(--m);cursor:not-allowed"><p class="hint">실제 등록자 닉네임으로 고정돼요</p></div>
     <button class="go" id="downloadBtn">⬇️ PNG로 저장</button>
     <p class="hint" style="text-align:center" id="dimHint"></p>
   `;
@@ -197,7 +202,8 @@ function wire(){
   function sync(){
     document.getElementById("o_title").textContent = v("f_title");
     const desc = v("f_desc").trim();
-    document.getElementById("o_by").textContent = (desc ? desc + " · " : "") + "Design by " + v("f_nick");
+    const byLabel = BY_LABELS[ITEM.product] || "Design by";
+    document.getElementById("o_by").textContent = (desc ? desc + " · " : "") + byLabel + " " + v("f_nick");
     return imageUrl(ITEM.image_paths[v("f_img_main")]);
   }
   document.getElementById("f_img_main").addEventListener("input", () => {
