@@ -32,8 +32,6 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 .p-brand .names small{display:block;font-size:14px;letter-spacing:3px;color:#fff;opacity:.9;font-weight:bold}
 .p-text{position:absolute;left:72px;right:72px;bottom:48px}
 .p-title{font-size:58px;font-weight:900;color:#fff;line-height:1.2;white-space:pre-wrap;text-shadow:0 4px 16px rgba(0,0,0,.4)}
-.p-desc{margin-top:16px;font-size:22px;font-weight:500;color:#fff;opacity:.88;line-height:1.4;text-shadow:0 2px 8px rgba(0,0,0,.35)}
-.p-desc:empty{display:none}
 .p-by{margin-top:14px;font-size:24px;font-weight:600;color:#fff;opacity:.92;text-shadow:0 2px 8px rgba(0,0,0,.35)}
 .p-foot{flex:none;padding:30px 72px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #eee;background:#fff}
 .p-foot .l{font-size:17px;color:var(--m)}
@@ -83,10 +81,9 @@ function posterHTML(){
     <div class="p-photo">
       <img id="o_img_main" src="${img(0)}" crossorigin="anonymous">
       <div class="p-scrim"></div>
-      <div class="p-brand"><div class="bar"></div><div class="names"><b>COLOR.M</b><small>MAKER GALLERY</small></div></div>
+      <div class="p-brand"><div class="bar"></div><div class="names"><b>COLOR.M</b><small>AI MAKER GALLERY</small></div></div>
       <div class="p-text">
         <div class="p-title" id="o_title"></div>
-        <div class="p-desc" id="o_desc"></div>
         <div class="p-by" id="o_by"></div>
       </div>
     </div>
@@ -101,8 +98,8 @@ function wire(){
   const v = id => document.getElementById(id).value;
   function sync(){
     document.getElementById("o_title").textContent = v("f_title");
-    document.getElementById("o_desc").textContent = v("f_desc");
-    document.getElementById("o_by").textContent = "Design by " + v("f_nick");
+    const desc = v("f_desc").trim();
+    document.getElementById("o_by").textContent = (desc ? desc + " · " : "") + "Design by " + v("f_nick");
     document.getElementById("o_img_main").src = imageUrl(ITEM.image_paths[v("f_img_main")]);
   }
   ["f_title","f_desc","f_nick","f_img_main"].forEach(id=>document.getElementById(id).addEventListener("input",sync));
