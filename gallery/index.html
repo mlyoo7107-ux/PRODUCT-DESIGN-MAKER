@@ -17,18 +17,19 @@
 :root{--a:#ff2d86;--ab:#ffb3d1;--b:#f5f6fa;--l:#e2e5ee;--t:#171512;--m:#7a7268}
 *{box-sizing:border-box}
 body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
-header{text-align:center;background:white;padding:32px 15px;border-bottom:1px solid var(--l)}
-header small{color:var(--a);font-weight:bold;letter-spacing:2px}
-header h1{margin:7px 0;font-size:26px;font-weight:900}
-header p{color:var(--m);margin:0;font-size:14px}
-.top-actions{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
-.btn{padding:10px 18px;border-radius:24px;font-size:13px;font-weight:bold;text-decoration:none;cursor:pointer;border:1px solid var(--l);background:white;color:var(--t)}
-.btn.primary{background:var(--a);color:white;border-color:var(--a)}
-.btn.primary:hover{background:#e0247a}
-.btn.outline{color:var(--a);border-color:var(--a)}
-.btn.outline:hover{background:#ffe6f1}
+.top-bar{position:sticky;top:0;z-index:41;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;flex-wrap:wrap;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--l)}
+.top-bar-brand{display:flex;align-items:center;gap:14px}
+.top-logo{height:40px;width:auto;display:block}
+.app-name{color:#df79a4;font-size:12px;font-weight:800;letter-spacing:.15em;white-space:nowrap}
+.top-actions{display:flex;align-items:center;gap:14px}
+.top-actions a.btn{font-size:12.5px;color:var(--m);text-decoration:none;font-weight:bold}
+.top-actions a.btn:hover{color:var(--a)}
+.top-actions a.btn.primary{background:var(--a);color:white;padding:7px 14px;border-radius:16px}
+.top-actions a.btn.primary:hover{background:#e0247a;color:white}
+.top-actions span.btn{font-size:12.5px;color:var(--m);font-weight:bold;opacity:.6}
+@media(max-width:640px){.top-bar{padding:10px 16px}.top-logo{height:32px}.app-name{display:none}}
 main{max-width:1100px;margin:auto;padding:20px 15px 60px}
-.filters-wrap{position:sticky;top:0;z-index:10;background:var(--b);padding:14px 0;margin-top:-14px}
+.filters-wrap{position:sticky;top:64px;z-index:10;background:var(--b);padding:14px 0}
 .product-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .product-tab{padding:9px 16px;border:1px solid var(--l);border-radius:20px;font-size:13.5px;font-weight:bold;cursor:pointer;background:white;transition:background .15s,border-color .15s,color .15s}
 .product-tab:hover{border-color:var(--a);color:var(--a)}
@@ -55,10 +56,8 @@ footer img{max-width:120px;opacity:.85}
 footer p{margin:12px 0 0;font-size:12px;color:var(--m)}
 footer a{color:var(--m)}
 </style></head><body>
-<header>
-<small>COLOR.M · GALLERY</small>
-<h1>MAKER GALLERY</h1>
-<p>COLOR.M Product Design Maker로 만든 작품들을 구경해보세요.</p>
+<header class="top-bar">
+<div class="top-bar-brand"><img src="../logo-colorm.png" alt="COLOR.M" class="top-logo"><span class="app-name">MAKER GALLERY</span></div>
 <div class="top-actions" id="topActions"></div>
 </header>
 <main>
@@ -82,7 +81,7 @@ const PRODUCTS = {
   },
   CHARACTER_MAKER: {
     label: "🧸 캐릭터", makerUrl: null,
-    categories: ["동물","인물","판타지","오브젝트","브랜드·마스코트","기타"]
+    categories: ["그림책","브랜드·마스코트","굿즈·상품","이모티콘","교육 콘텐츠","SNS 콘텐츠","영상·애니메이션","게임·콘텐츠","기타"]
   }
 };
 const PRODUCT_ORDER = ["PRODUCT_DESIGN","CHARACTER_MAKER"];
@@ -98,8 +97,8 @@ function renderTopActions(){
   const p = PRODUCTS[activeProduct];
   const el = document.getElementById("topActions");
   el.innerHTML = `
+    ${p.makerUrl ? `<a class="btn" href="${p.makerUrl}">Maker로 가기</a>` : `<span class="btn" style="cursor:default">Maker 준비 중</span>`}
     <a class="btn primary" href="upload.html">✨ 내 작품 자랑하기</a>
-    ${p.makerUrl ? `<a class="btn outline" href="${p.makerUrl}">Maker로 가기 →</a>` : `<span class="btn outline" style="opacity:.5;cursor:default">Maker 준비 중</span>`}
   `;
 }
 
