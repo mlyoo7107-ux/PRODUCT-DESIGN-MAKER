@@ -96,8 +96,11 @@ function buildCaption(){
   const nick = document.getElementById("f_nick").value.trim();
   const byLabel = BY_LABELS[ITEM.product] || "Design by";
   const tagHashtags = (ITEM.tags||[]).map(t => "#" + t.replace(/\s+/g,""));
-  const hashtags = [...tagHashtags, PRODUCT_HASHTAGS[ITEM.product] || "", "#COLORM", "#AI메이커", "#AIMAKERGALLERY"].filter(Boolean);
-  return [title, desc, "", `${byLabel} ${nick}`, "", hashtags.join(" ")].filter(l => l !== undefined).join("\n");
+  const hashtags = [...new Set([...tagHashtags, PRODUCT_HASHTAGS[ITEM.product] || "", "#COLORM", "#AI메이커", "#AIMAKERGALLERY"].filter(Boolean))];
+  const lines = [title];
+  if(desc) lines.push(desc);
+  lines.push("", `${byLabel} ${nick}`, "", hashtags.join(" "));
+  return lines.join("\n");
 }
 
 function render(){
