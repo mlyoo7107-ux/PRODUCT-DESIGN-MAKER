@@ -105,12 +105,18 @@ function posterHTML(){
 
 let imgView = {zoom:1, panX:0, panY:0, naturalW:0, naturalH:0, baseW:0, baseH:0};
 
+const REF_H = 1350; // 4:5 기준 — 글자 크기가 "정상"으로 보이는 기준 비율
+const BASE_TITLE_SIZE = 58, BASE_BY_SIZE = 24;
+
 function applyRatio(){
   const key = document.getElementById("f_ratio").value;
   const r = RATIOS[key];
   document.getElementById("posterRoot").style.height = r.h + "px";
   document.getElementById("preview-wrap-el").style.height = (r.h/3) + "px";
   document.getElementById("dimHint").textContent = `${r.w} × ${r.h}px (인스타그램 ${key})`;
+  const scale = r.h / REF_H;
+  document.getElementById("o_title").style.fontSize = (BASE_TITLE_SIZE * scale) + "px";
+  document.getElementById("o_by").style.fontSize = (BASE_BY_SIZE * scale) + "px";
 }
 
 function containerH(){
