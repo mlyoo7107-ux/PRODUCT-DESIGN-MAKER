@@ -15,38 +15,25 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 @media(max-width:860px){.layout{grid-template-columns:1fr}}
 .panel{background:white;border:1px solid var(--l);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px}
 .field label{display:block;font-size:12.5px;font-weight:bold;margin-bottom:6px;color:var(--t)}
-.field input,.field select,.field textarea{width:100%;padding:9px 10px;border:1px solid var(--l);border-radius:8px;font-size:13px;font-family:inherit;background:white}
-.field textarea{resize:vertical;min-height:52px}
+.field input,.field select{width:100%;padding:9px 10px;border:1px solid var(--l);border-radius:8px;font-size:13px;font-family:inherit;background:white}
 .field .hint{font-size:11px;color:var(--m);margin-top:4px}
-.sec-title{font-size:11px;font-weight:bold;color:var(--a);letter-spacing:.5px;text-transform:uppercase;margin:4px 0 -4px}
 .go{display:block;width:100%;padding:14px;background:var(--a);color:white;border:0;border-radius:24px;font-size:14px;font-weight:bold;cursor:pointer;text-align:center}
 .go:hover{background:#e0247a}
 .go:disabled{background:var(--ab);cursor:not-allowed}
 .preview-outer{display:flex;justify-content:center}
 .preview-wrap{width:360px;height:480px;overflow:hidden;position:relative;border-radius:10px;box-shadow:0 4px 20px rgba(23,21,18,.12);background:#fff}
 #posterRoot{width:1080px;height:1440px;transform:scale(.33333);transform-origin:top left;position:absolute;top:0;left:0;background:#fff;display:flex;flex-direction:column}
-.p-top{flex:1;display:flex;padding:72px;gap:48px}
-.p-left{flex:1;display:flex;flex-direction:column;min-width:0}
-.p-brand{display:flex;align-items:center;gap:14px}
-.p-brand .bar{width:4px;height:44px;background:var(--a);border-radius:2px;flex:none}
-.p-brand .names b{display:block;font-size:24px;font-weight:900;color:var(--t)}
-.p-brand .names small{display:block;font-size:13px;letter-spacing:3px;color:var(--m);font-weight:bold}
-.p-title{margin-top:44px;font-size:62px;font-weight:900;color:var(--a);line-height:1.18;white-space:pre-wrap}
-.p-sub{margin-top:18px;font-size:22px;color:#8a8375;letter-spacing:.5px}
-.p-rule{margin-top:30px;width:56px;height:4px;background:var(--a);border-radius:2px}
-.p-concept{margin-top:26px;font-size:26px;font-weight:600;color:#222;line-height:1.5;white-space:pre-wrap}
-.p-img{width:420px;flex:none;border-radius:28px;overflow:hidden;background:#eee}
-.p-img img{width:100%;height:100%;object-fit:cover;display:block}
-.p-bottom{flex:none;background:#fdf9fa;border-top:1px solid #eee;padding:48px 72px;display:flex;align-items:flex-start}
-.p-col{flex:1;display:flex;flex-direction:column;min-width:0}
-.p-arrow{flex:none;width:40px;display:flex;align-items:center;justify-content:center;font-size:26px;color:#c9beb8;align-self:center;margin-top:60px}
-.p-num{display:flex;align-items:baseline;gap:8px}
-.p-num b{font-size:28px;font-weight:900;color:var(--a)}
-.p-num span{font-size:15px;font-weight:bold;letter-spacing:2px;color:var(--m)}
-.p-col .p-colimg{margin-top:16px;width:100%;aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#eee}
-.p-col .p-colimg img{width:100%;height:100%;object-fit:cover;display:block}
-.p-col .p-desc{margin-top:16px;font-size:19px;color:#333;line-height:1.5;white-space:pre-wrap}
-.p-foot{flex:none;padding:26px 72px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #eee}
+.p-photo{position:relative;flex:1;overflow:hidden;background:#eee}
+.p-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.p-scrim{position:absolute;left:0;right:0;bottom:0;height:62%;background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.38) 45%,rgba(0,0,0,0) 100%)}
+.p-brand{position:absolute;top:48px;left:48px;display:flex;align-items:center;gap:12px}
+.p-brand .bar{width:4px;height:36px;background:#fff;border-radius:2px;flex:none}
+.p-brand .names b{display:block;font-size:19px;font-weight:900;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.35)}
+.p-brand .names small{display:block;font-size:11px;letter-spacing:2.5px;color:#fff;opacity:.9;font-weight:bold}
+.p-text{position:absolute;left:48px;right:48px;bottom:48px}
+.p-title{font-size:58px;font-weight:900;color:#fff;line-height:1.2;white-space:pre-wrap;text-shadow:0 4px 16px rgba(0,0,0,.4)}
+.p-by{margin-top:14px;font-size:24px;font-weight:600;color:#fff;opacity:.92;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+.p-foot{flex:none;padding:30px 72px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #eee;background:#fff}
 .p-foot .l{font-size:17px;color:var(--m)}
 .p-foot .l b{color:var(--a)}
 .p-foot .r{display:flex;align-items:center;gap:14px}
@@ -69,19 +56,9 @@ let ITEM = null;
 function fieldsHTML(images){
   const opts = images.map((p,i)=>`<option value="${i}">이미지 ${i+1}</option>`).join("");
   return `
-    <div class="field"><label>작품명 (제목 전체가 마젠타로 표시돼요)</label><input id="f_title" value="${esc(ITEM.title)}"></div>
-    <div class="field"><label>영문 · 키워드 한 줄</label><input id="f_sub" placeholder="예: Lipstick × Mini Pouch × Keyring"></div>
-    <div class="field"><label>한 줄 콘셉트</label><textarea id="f_concept">${esc(ITEM.concept||"")}</textarea></div>
     <div class="field"><label>대표 이미지</label><select id="f_img_main">${opts}</select></div>
-    <div class="sec-title">01 Problem</div>
-    <div class="field"><label>이미지</label><select id="f_img_problem">${opts}</select></div>
-    <div class="field"><label>설명 (최대 2줄)</label><textarea id="f_t_problem" placeholder="예: 외출할 때 립스틱 하나 때문에&#10;파우치를 따로 챙기기 번거롭습니다."></textarea></div>
-    <div class="sec-title">02 Idea</div>
-    <div class="field"><label>이미지</label><select id="f_img_idea">${opts}</select></div>
-    <div class="field"><label>설명 (최대 2줄)</label><textarea id="f_t_idea" placeholder="아이디어를 짧게 적어주세요"></textarea></div>
-    <div class="sec-title">03 Design</div>
-    <div class="field"><label>이미지</label><select id="f_img_design">${opts}</select></div>
-    <div class="field"><label>설명 (최대 2줄)</label><textarea id="f_t_design" placeholder="예: 캐릭터 + 지퍼 수납 + 키링을 결합한&#10;휴대용 립스틱 케이스입니다."></textarea></div>
+    <div class="field"><label>작품명</label><input id="f_title" value="${esc(ITEM.title)}"></div>
+    <div class="field"><label>디자이너 (Design by)</label><input id="f_nick" value="${esc(ITEM.nickname)}"></div>
     <button class="go" id="downloadBtn">⬇️ PNG로 저장</button>
     <p class="hint" style="text-align:center">1080 × 1440px (인스타그램 세로형 3:4)</p>
   `;
@@ -100,33 +77,13 @@ function render(){
 function posterHTML(){
   const img = p => esc(imageUrl(ITEM.image_paths[p]||ITEM.image_paths[0]));
   return `
-    <div class="p-top">
-      <div class="p-left">
-        <div class="p-brand"><div class="bar"></div><div class="names"><b>COLOR.M</b><small>MAKER GALLERY</small></div></div>
+    <div class="p-photo">
+      <img id="o_img_main" src="${img(0)}" crossorigin="anonymous">
+      <div class="p-scrim"></div>
+      <div class="p-brand"><div class="bar"></div><div class="names"><b>COLOR.M</b><small>MAKER GALLERY</small></div></div>
+      <div class="p-text">
         <div class="p-title" id="o_title"></div>
-        <div class="p-sub" id="o_sub"></div>
-        <div class="p-rule"></div>
-        <div class="p-concept" id="o_concept"></div>
-      </div>
-      <div class="p-img"><img id="o_img_main" src="${img(0)}" crossorigin="anonymous"></div>
-    </div>
-    <div class="p-bottom">
-      <div class="p-col">
-        <div class="p-num"><b>01</b><span>PROBLEM</span></div>
-        <div class="p-colimg"><img id="o_img_problem" src="${img(0)}" crossorigin="anonymous"></div>
-        <div class="p-desc" id="o_t_problem"></div>
-      </div>
-      <div class="p-arrow">→</div>
-      <div class="p-col">
-        <div class="p-num"><b>02</b><span>IDEA</span></div>
-        <div class="p-colimg"><img id="o_img_idea" src="${img(1)}" crossorigin="anonymous"></div>
-        <div class="p-desc" id="o_t_idea"></div>
-      </div>
-      <div class="p-arrow">→</div>
-      <div class="p-col">
-        <div class="p-num"><b>03</b><span>DESIGN</span></div>
-        <div class="p-colimg"><img id="o_img_design" src="${img(2)}" crossorigin="anonymous"></div>
-        <div class="p-desc" id="o_t_design"></div>
+        <div class="p-by" id="o_by"></div>
       </div>
     </div>
     <div class="p-foot">
@@ -140,20 +97,10 @@ function wire(){
   const v = id => document.getElementById(id).value;
   function sync(){
     document.getElementById("o_title").textContent = v("f_title");
-    document.getElementById("o_sub").textContent = v("f_sub");
-    document.getElementById("o_concept").textContent = v("f_concept");
-    document.getElementById("o_t_problem").textContent = v("f_t_problem");
-    document.getElementById("o_t_idea").textContent = v("f_t_idea");
-    document.getElementById("o_t_design").textContent = v("f_t_design");
+    document.getElementById("o_by").textContent = "Design by " + v("f_nick");
     document.getElementById("o_img_main").src = imageUrl(ITEM.image_paths[v("f_img_main")]);
-    document.getElementById("o_img_problem").src = imageUrl(ITEM.image_paths[v("f_img_problem")]);
-    document.getElementById("o_img_idea").src = imageUrl(ITEM.image_paths[v("f_img_idea")]);
-    document.getElementById("o_img_design").src = imageUrl(ITEM.image_paths[v("f_img_design")]);
   }
-  ["f_title","f_sub","f_concept","f_t_problem","f_t_idea","f_t_design","f_img_main","f_img_problem","f_img_idea","f_img_design"]
-    .forEach(id=>document.getElementById(id).addEventListener("input",sync));
-  document.getElementById("f_img_idea").value = Math.min(1, ITEM.image_paths.length-1);
-  document.getElementById("f_img_design").value = Math.min(2, ITEM.image_paths.length-1);
+  ["f_title","f_nick","f_img_main"].forEach(id=>document.getElementById(id).addEventListener("input",sync));
   sync();
   document.getElementById("downloadBtn").onclick = download;
 }
