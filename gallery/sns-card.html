@@ -120,7 +120,7 @@ function containerH(){
 function fitImageToContainer(){
   if(!imgView.naturalW) return;
   const h = containerH();
-  const coverScale = Math.max(1080/imgView.naturalW, h/imgView.naturalH);
+  const coverScale = Math.max(1080/imgView.naturalW, h/imgView.naturalH) * 1.15;
   imgView.baseW = imgView.naturalW * coverScale;
   imgView.baseH = imgView.naturalH * coverScale;
   imgView.zoom = 1; imgView.panX = 0; imgView.panY = 0;
