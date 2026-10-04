@@ -17,7 +17,7 @@
 :root{--a:#ff2d86;--ab:#ffb3d1;--b:#f5f6fa;--l:#e2e5ee;--t:#171512;--m:#7a7268}
 *{box-sizing:border-box}
 body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
-.top-bar{position:sticky;top:0;z-index:41;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;flex-wrap:wrap;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--l)}
+.top-bar{position:sticky;top:0;z-index:41;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;flex-wrap:wrap;background:#fff;border-bottom:1px solid var(--l)}
 .top-bar-brand{display:flex;align-items:center;gap:14px}
 .top-logo{height:40px;width:auto;display:block}
 .app-name{color:#df79a4;font-size:12px;font-weight:800;letter-spacing:.15em;white-space:nowrap}
@@ -29,13 +29,16 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 .top-actions span.btn{font-size:12.5px;color:var(--m);font-weight:bold;opacity:.6}
 @media(max-width:640px){.top-bar{padding:10px 16px}.top-logo{height:32px}.app-name{display:none}}
 main{max-width:1100px;margin:auto;padding:20px 15px 60px}
-.filters-wrap{position:sticky;top:64px;z-index:10;background:var(--b);padding:14px 0}
-.product-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.filters-wrap{position:sticky;top:var(--topbar-h,64px);z-index:10;background:var(--b);padding:14px 0}
+.product-tabs{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin-bottom:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.product-tabs::-webkit-scrollbar{display:none}
+.product-tab{flex:none}
 .product-tab{padding:9px 16px;border:1px solid var(--l);border-radius:20px;font-size:13.5px;font-weight:bold;cursor:pointer;background:white;transition:background .15s,border-color .15s,color .15s}
 .product-tab:hover{border-color:var(--a);color:var(--a)}
 .product-tab.on{background:var(--t);border-color:var(--t);color:white}
-.filters{display:flex;gap:7px;flex-wrap:wrap;margin:0}
-.filter-chip{padding:8px 14px;border:1px solid var(--l);border-radius:20px;font-size:13px;cursor:pointer;background:white;transition:background .15s,border-color .15s,color .15s}
+.filters{display:flex;gap:7px;flex-wrap:nowrap;overflow-x:auto;margin:0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filter-chip{padding:8px 14px;border:1px solid var(--l);border-radius:20px;font-size:13px;cursor:pointer;background:white;transition:background .15s,border-color .15s,color .15s;flex:none;white-space:nowrap}
 .filter-chip:hover{border-color:var(--a);color:var(--a)}
 .filter-chip.on{background:var(--a);border-color:var(--a);color:white;font-weight:bold}
 .empty .soon{display:block;font-size:13px;margin-top:8px;color:var(--ab)}
@@ -166,5 +169,13 @@ async function load(){
   renderGrid();
 }
 load();
+
+function syncTopbarHeight(){
+  const tb = document.querySelector(".top-bar");
+  if(tb) document.documentElement.style.setProperty("--topbar-h", tb.offsetHeight + "px");
+}
+window.addEventListener("resize", syncTopbarHeight);
+syncTopbarHeight();
+setTimeout(syncTopbarHeight, 300);
 </script>
 </body></html>
