@@ -76,6 +76,7 @@ const PRODUCTS = {
   PICTURE_BOOK_MAKER: { label: "📖 AI 그림책", color: "#f97316", categories: ["기타"] }
 };
 const PRODUCT_ORDER = ["ALL","PRODUCT_DESIGN","CHARACTER_MAKER","PICTURE_BOOK_MAKER"];
+const MAX_IMAGES = 5;
 let activeProductFilter = "ALL";
 function categoriesFor(product){ return (PRODUCTS[product] || PRODUCTS.PRODUCT_DESIGN).categories; }
 function productLabel(key){ return (PRODUCTS[key] || {}).label || key || "알 수 없음"; }
@@ -179,7 +180,7 @@ function renderItemEdit(item, tab, onSaved, attachedImagePath){
       <label>한 줄 컨셉</label><textarea id="f_concept">${esc(item.concept||"")}</textarea>
       <label>카테고리</label><select id="f_category">${catOptions}</select>
       <label>태그 (쉼표로 구분)</label><input id="f_tags" value="${esc((item.tags||[]).join(", "))}">
-      <label>사진 (최대 3장, 드래그하거나 화살표로 순서 변경)</label>
+      <label>사진 (최대 ${MAX_IMAGES}장, 드래그하거나 화살표로 순서 변경)</label>
       <div class="edit-thumbs" id="editThumbs"></div>
       <input type="file" id="addPhotoInput" accept="image/*" style="display:none">
       <div class="actions" style="margin-top:14px">
@@ -230,7 +231,7 @@ function renderItemEdit(item, tab, onSaved, attachedImagePath){
       });
       box.appendChild(t);
     });
-    if(state.order.length < 3){
+    if(state.order.length < MAX_IMAGES){
       const add = document.createElement("div");
       add.className = "add-photo";
       add.textContent = "+";
@@ -240,7 +241,7 @@ function renderItemEdit(item, tab, onSaved, attachedImagePath){
   }
   renderThumbs();
 
-  if(attachedImagePath && state.order.length < 3){
+  if(attachedImagePath && state.order.length < MAX_IMAGES){
     fetch(imageUrl(attachedImagePath))
       .then(r => r.blob())
       .then(blob => { state.order.push({type:"new",blob}); renderThumbs(); })
