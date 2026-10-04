@@ -1,0 +1,200 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SNS 이미지 만들기 — COLOR.M GALLERY</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{--a:#ff2d86;--ab:#ffb3d1;--b:#f5f6fa;--l:#e2e5ee;--t:#171512;--m:#7a7268}
+*{box-sizing:border-box}
+body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
+.topbar{background:white;border-bottom:1px solid var(--l);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.topbar a{color:var(--m);font-size:13px;font-weight:bold;text-decoration:none}
+.topbar a:hover{color:var(--a)}
+.topbar h1{font-size:15px;margin:0}
+.layout{max-width:1200px;margin:auto;padding:24px 20px 80px;display:grid;grid-template-columns:360px 1fr;gap:28px;align-items:start}
+@media(max-width:860px){.layout{grid-template-columns:1fr}}
+.panel{background:white;border:1px solid var(--l);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.field label{display:block;font-size:12.5px;font-weight:bold;margin-bottom:6px;color:var(--t)}
+.field input,.field select,.field textarea{width:100%;padding:9px 10px;border:1px solid var(--l);border-radius:8px;font-size:13px;font-family:inherit;background:white}
+.field textarea{resize:vertical;min-height:52px}
+.field .hint{font-size:11px;color:var(--m);margin-top:4px}
+.sec-title{font-size:11px;font-weight:bold;color:var(--a);letter-spacing:.5px;text-transform:uppercase;margin:4px 0 -4px}
+.go{display:block;width:100%;padding:14px;background:var(--a);color:white;border:0;border-radius:24px;font-size:14px;font-weight:bold;cursor:pointer;text-align:center}
+.go:hover{background:#e0247a}
+.go:disabled{background:var(--ab);cursor:not-allowed}
+.preview-outer{display:flex;justify-content:center}
+.preview-wrap{width:360px;height:480px;overflow:hidden;position:relative;border-radius:10px;box-shadow:0 4px 20px rgba(23,21,18,.12);background:#fff}
+#posterRoot{width:1080px;height:1440px;transform:scale(.33333);transform-origin:top left;position:absolute;top:0;left:0;background:#fff;display:flex;flex-direction:column}
+.p-top{flex:1;display:flex;padding:72px;gap:48px}
+.p-left{flex:1;display:flex;flex-direction:column;min-width:0}
+.p-brand{display:flex;align-items:center;gap:14px}
+.p-brand .bar{width:4px;height:44px;background:var(--a);border-radius:2px;flex:none}
+.p-brand .names b{display:block;font-size:24px;font-weight:900;color:var(--t)}
+.p-brand .names small{display:block;font-size:13px;letter-spacing:3px;color:var(--m);font-weight:bold}
+.p-title{margin-top:44px;font-size:62px;font-weight:900;color:var(--a);line-height:1.18;white-space:pre-wrap}
+.p-sub{margin-top:18px;font-size:22px;color:#8a8375;letter-spacing:.5px}
+.p-rule{margin-top:30px;width:56px;height:4px;background:var(--a);border-radius:2px}
+.p-concept{margin-top:26px;font-size:26px;font-weight:600;color:#222;line-height:1.5;white-space:pre-wrap}
+.p-img{width:420px;flex:none;border-radius:28px;overflow:hidden;background:#eee}
+.p-img img{width:100%;height:100%;object-fit:cover;display:block}
+.p-bottom{flex:none;background:#fdf9fa;border-top:1px solid #eee;padding:48px 72px;display:flex;align-items:flex-start}
+.p-col{flex:1;display:flex;flex-direction:column;min-width:0}
+.p-arrow{flex:none;width:40px;display:flex;align-items:center;justify-content:center;font-size:26px;color:#c9beb8;align-self:center;margin-top:60px}
+.p-num{display:flex;align-items:baseline;gap:8px}
+.p-num b{font-size:28px;font-weight:900;color:var(--a)}
+.p-num span{font-size:15px;font-weight:bold;letter-spacing:2px;color:var(--m)}
+.p-col .p-colimg{margin-top:16px;width:100%;aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#eee}
+.p-col .p-colimg img{width:100%;height:100%;object-fit:cover;display:block}
+.p-col .p-desc{margin-top:16px;font-size:19px;color:#333;line-height:1.5;white-space:pre-wrap}
+.p-foot{flex:none;padding:26px 72px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #eee}
+.p-foot .l{font-size:17px;color:var(--m)}
+.p-foot .l b{color:var(--a)}
+.p-foot .r{display:flex;align-items:center;gap:14px}
+.p-foot .r b{font-size:17px;color:var(--a)}
+.p-foot .circle{width:38px;height:38px;border-radius:50%;background:var(--a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px}
+.state{text-align:center;padding:100px 20px;color:var(--m)}
+</style></head><body>
+<div class="topbar"><a href="index.html">← 갤러리로</a><h1>SNS 이미지 만들기</h1><span style="width:70px"></span></div>
+<div id="app"><div class="state">불러오는 중...</div></div>
+<script>
+const SUPABASE_URL = "https://cdrbxkwouxihsxzhhnbz.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_9BNpTY7OIbFN7iMmCg9TlQ_Glu4_s9G";
+const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const BUCKET = "gallery-images";
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function imageUrl(path){ return supa.storage.from(BUCKET).getPublicUrl(path).data.publicUrl; }
+
+let ITEM = null;
+
+function fieldsHTML(images){
+  const opts = images.map((p,i)=>`<option value="${i}">이미지 ${i+1}</option>`).join("");
+  return `
+    <div class="field"><label>작품명 (제목 전체가 마젠타로 표시돼요)</label><input id="f_title" value="${esc(ITEM.title)}"></div>
+    <div class="field"><label>영문 · 키워드 한 줄</label><input id="f_sub" placeholder="예: Lipstick × Mini Pouch × Keyring"></div>
+    <div class="field"><label>한 줄 콘셉트</label><textarea id="f_concept">${esc(ITEM.concept||"")}</textarea></div>
+    <div class="field"><label>대표 이미지</label><select id="f_img_main">${opts}</select></div>
+    <div class="sec-title">01 Problem</div>
+    <div class="field"><label>이미지</label><select id="f_img_problem">${opts}</select></div>
+    <div class="field"><label>설명 (최대 2줄)</label><textarea id="f_t_problem" placeholder="예: 외출할 때 립스틱 하나 때문에&#10;파우치를 따로 챙기기 번거롭습니다."></textarea></div>
+    <div class="sec-title">02 Idea</div>
+    <div class="field"><label>이미지</label><select id="f_img_idea">${opts}</select></div>
+    <div class="field"><label>설명 (최대 2줄)</label><textarea id="f_t_idea" placeholder="아이디어를 짧게 적어주세요"></textarea></div>
+    <div class="sec-title">03 Design</div>
+    <div class="field"><label>이미지</label><select id="f_img_design">${opts}</select></div>
+    <div class="field"><label>설명 (최대 2줄)</label><textarea id="f_t_design" placeholder="예: 캐릭터 + 지퍼 수납 + 키링을 결합한&#10;휴대용 립스틱 케이스입니다."></textarea></div>
+    <button class="go" id="downloadBtn">⬇️ PNG로 저장</button>
+    <p class="hint" style="text-align:center">1080 × 1440px (인스타그램 세로형 3:4)</p>
+  `;
+}
+
+function render(){
+  document.getElementById("app").innerHTML = `
+    <div class="layout">
+      <div class="panel">${fieldsHTML(ITEM.image_paths)}</div>
+      <div class="preview-outer"><div class="preview-wrap"><div id="posterRoot">${posterHTML()}</div></div></div>
+    </div>
+  `;
+  wire();
+}
+
+function posterHTML(){
+  const img = p => esc(imageUrl(ITEM.image_paths[p]||ITEM.image_paths[0]));
+  return `
+    <div class="p-top">
+      <div class="p-left">
+        <div class="p-brand"><div class="bar"></div><div class="names"><b>COLOR.M</b><small>MAKER GALLERY</small></div></div>
+        <div class="p-title" id="o_title"></div>
+        <div class="p-sub" id="o_sub"></div>
+        <div class="p-rule"></div>
+        <div class="p-concept" id="o_concept"></div>
+      </div>
+      <div class="p-img"><img id="o_img_main" src="${img(0)}" crossorigin="anonymous"></div>
+    </div>
+    <div class="p-bottom">
+      <div class="p-col">
+        <div class="p-num"><b>01</b><span>PROBLEM</span></div>
+        <div class="p-colimg"><img id="o_img_problem" src="${img(0)}" crossorigin="anonymous"></div>
+        <div class="p-desc" id="o_t_problem"></div>
+      </div>
+      <div class="p-arrow">→</div>
+      <div class="p-col">
+        <div class="p-num"><b>02</b><span>IDEA</span></div>
+        <div class="p-colimg"><img id="o_img_idea" src="${img(1)}" crossorigin="anonymous"></div>
+        <div class="p-desc" id="o_t_idea"></div>
+      </div>
+      <div class="p-arrow">→</div>
+      <div class="p-col">
+        <div class="p-num"><b>03</b><span>DESIGN</span></div>
+        <div class="p-colimg"><img id="o_img_design" src="${img(2)}" crossorigin="anonymous"></div>
+        <div class="p-desc" id="o_t_design"></div>
+      </div>
+    </div>
+    <div class="p-foot">
+      <div class="l">Made with <b>Product Prompt Maker</b></div>
+      <div class="r"><b>COLOR.M MAKER GALLERY</b><div class="circle">→</div></div>
+    </div>
+  `;
+}
+
+function wire(){
+  const v = id => document.getElementById(id).value;
+  function sync(){
+    document.getElementById("o_title").textContent = v("f_title");
+    document.getElementById("o_sub").textContent = v("f_sub");
+    document.getElementById("o_concept").textContent = v("f_concept");
+    document.getElementById("o_t_problem").textContent = v("f_t_problem");
+    document.getElementById("o_t_idea").textContent = v("f_t_idea");
+    document.getElementById("o_t_design").textContent = v("f_t_design");
+    document.getElementById("o_img_main").src = imageUrl(ITEM.image_paths[v("f_img_main")]);
+    document.getElementById("o_img_problem").src = imageUrl(ITEM.image_paths[v("f_img_problem")]);
+    document.getElementById("o_img_idea").src = imageUrl(ITEM.image_paths[v("f_img_idea")]);
+    document.getElementById("o_img_design").src = imageUrl(ITEM.image_paths[v("f_img_design")]);
+  }
+  ["f_title","f_sub","f_concept","f_t_problem","f_t_idea","f_t_design","f_img_main","f_img_problem","f_img_idea","f_img_design"]
+    .forEach(id=>document.getElementById(id).addEventListener("input",sync));
+  document.getElementById("f_img_idea").value = Math.min(1, ITEM.image_paths.length-1);
+  document.getElementById("f_img_design").value = Math.min(2, ITEM.image_paths.length-1);
+  sync();
+  document.getElementById("downloadBtn").onclick = download;
+}
+
+async function download(){
+  const btn = document.getElementById("downloadBtn");
+  btn.disabled = true; btn.textContent = "생성 중...";
+  const original = document.getElementById("posterRoot");
+  const clone = original.cloneNode(true);
+  clone.style.transform = "none";
+  clone.style.position = "fixed";
+  clone.style.top = "0";
+  clone.style.left = "-99999px";
+  document.body.appendChild(clone);
+  try{
+    const canvas = await html2canvas(clone, {width:1080, height:1440, scale:1, useCORS:true, backgroundColor:"#ffffff"});
+    const link = document.createElement("a");
+    link.download = (ITEM.title||"colorm-sns").replace(/[^a-zA-Z0-9가-힣]+/g,"_") + ".png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }catch(e){
+    alert("이미지 생성에 실패했어요: " + e.message);
+  }finally{
+    document.body.removeChild(clone);
+    btn.disabled = false; btn.textContent = "⬇️ PNG로 저장";
+  }
+}
+
+(async function(){
+  const id = new URLSearchParams(location.search).get("id");
+  const app = document.getElementById("app");
+  if(!id){ app.innerHTML = `<div class="state">작품 id가 없어요. 상세페이지에서 들어와주세요.</div>`; return; }
+  const { data, error } = await supa
+    .from("submissions")
+    .select("id,title,nickname,maker_type,concept,category,tags,image_paths,created_at")
+    .eq("id", id)
+    .eq("status", "approved")
+    .maybeSingle();
+  if(error || !data){ app.innerHTML = `<div class="state">작품을 찾을 수 없어요.</div>`; return; }
+  ITEM = data;
+  render();
+})();
+</script>
+</body></html>
