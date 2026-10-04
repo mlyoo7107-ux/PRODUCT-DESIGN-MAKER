@@ -24,7 +24,10 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 .preview-wrap{width:360px;overflow:hidden;position:relative;border-radius:10px;box-shadow:0 4px 20px rgba(23,21,18,.12);background:#fff}
 #posterRoot{width:1080px;transform:scale(.33333);transform-origin:top left;position:absolute;top:0;left:0;background:#fff;display:flex;flex-direction:column}
 .p-photo{position:relative;flex:1;overflow:hidden;background:#eee}
-.p-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.p-photo img{position:absolute;top:50%;left:50%;max-width:none;display:block;user-select:none;-webkit-user-drag:none}
+.preview-wrap{cursor:grab}
+.preview-wrap.dragging{cursor:grabbing}
+.drag-hint{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:#fff;font-size:11px;padding:5px 10px;border-radius:12px;pointer-events:none;z-index:5;white-space:nowrap}
 .p-scrim{position:absolute;left:0;right:0;bottom:0;height:62%;background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.38) 45%,rgba(0,0,0,0) 100%)}
 .p-brand{position:absolute;top:56px;left:72px;display:flex;align-items:center;gap:14px}
 .p-brand .bar{width:5px;height:46px;background:#fff;border-radius:2px;flex:none}
@@ -62,6 +65,7 @@ function fieldsHTML(images){
   return `
     <div class="field"><label>대표 이미지</label><select id="f_img_main">${opts}</select></div>
     <div class="field"><label>비율</label><select id="f_ratio">${ratioOpts}</select><p class="hint">사진에 맞춰 자동으로 추천하며, 직접 바꿀 수도 있어요</p></div>
+    <div class="field"><label>확대</label><input type="range" id="f_zoom" min="100" max="250" value="100" style="width:100%"><p class="hint">미리보기를 드래그하면 위치도 옮길 수 있어요</p></div>
     <div class="field"><label>작품명</label><input id="f_title" value="${esc(ITEM.title)}"></div>
     <div class="field"><label>추가 설명 <span style="font-weight:normal;color:var(--m)">(선택)</span></label><input id="f_desc" placeholder="한 줄로 짧게 — 비워두면 표시 안 돼요"></div>
     <div class="field"><label>디자이너 (Design by)</label><input id="f_nick" value="${esc(ITEM.nickname)}"></div>
@@ -74,7 +78,7 @@ function render(){
   document.getElementById("app").innerHTML = `
     <div class="layout">
       <div class="panel">${fieldsHTML(ITEM.image_paths)}</div>
-      <div class="preview-outer"><div class="preview-wrap" id="preview-wrap-el"><div id="posterRoot">${posterHTML()}</div></div></div>
+      <div class="preview-outer"><div class="preview-wrap" id="preview-wrap-el"><div class="drag-hint">🖱️ 드래그해서 사진 위치 조정</div><div id="posterRoot">${posterHTML()}</div></div></div>
     </div>
   `;
   wire();
@@ -99,6 +103,8 @@ function posterHTML(){
   `;
 }
 
+let imgView = {zoom:1, panX:0, panY:0, naturalW:0, naturalH:0, baseW:0, baseH:0};
+
 function applyRatio(){
   const key = document.getElementById("f_ratio").value;
   const r = RATIOS[key];
@@ -107,16 +113,72 @@ function applyRatio(){
   document.getElementById("dimHint").textContent = `${r.w} × ${r.h}px (인스타그램 ${key})`;
 }
 
-function suggestRatioForImage(src){
-  if(ratioManuallySet) return;
+function containerH(){
+  return RATIOS[document.getElementById("f_ratio").value].h;
+}
+
+function fitImageToContainer(){
+  if(!imgView.naturalW) return;
+  const h = containerH();
+  const coverScale = Math.max(1080/imgView.naturalW, h/imgView.naturalH);
+  imgView.baseW = imgView.naturalW * coverScale;
+  imgView.baseH = imgView.naturalH * coverScale;
+  imgView.zoom = 1; imgView.panX = 0; imgView.panY = 0;
+  document.getElementById("f_zoom").value = 100;
+  applyImgTransform();
+}
+
+function clampPan(){
+  const h = containerH();
+  const effW = imgView.baseW * imgView.zoom, effH = imgView.baseH * imgView.zoom;
+  const maxPanX = Math.max(0, (effW - 1080) / 2), maxPanY = Math.max(0, (effH - h) / 2);
+  imgView.panX = Math.max(-maxPanX, Math.min(maxPanX, imgView.panX));
+  imgView.panY = Math.max(-maxPanY, Math.min(maxPanY, imgView.panY));
+}
+
+function applyImgTransform(){
+  clampPan();
+  const img = document.getElementById("o_img_main");
+  const effW = imgView.baseW * imgView.zoom, effH = imgView.baseH * imgView.zoom;
+  img.style.width = effW + "px";
+  img.style.height = effH + "px";
+  img.style.transform = `translate(-50%,-50%) translate(${imgView.panX}px, ${imgView.panY}px)`;
+}
+
+function loadImageForEditing(src){
   const probe = new Image();
   probe.onload = () => {
-    if(ratioManuallySet) return;
-    const key = (probe.naturalWidth / probe.naturalHeight) >= 0.95 ? "1:1" : "4:5";
-    document.getElementById("f_ratio").value = key;
-    applyRatio();
+    imgView.naturalW = probe.naturalWidth;
+    imgView.naturalH = probe.naturalHeight;
+    if(!ratioManuallySet){
+      const key = (probe.naturalWidth / probe.naturalHeight) >= 0.95 ? "1:1" : "4:5";
+      document.getElementById("f_ratio").value = key;
+      applyRatio();
+    }
+    fitImageToContainer();
   };
   probe.src = src;
+}
+
+function wireDrag(){
+  const wrap = document.getElementById("preview-wrap-el");
+  const scaleFactor = 360/1080;
+  let dragging = false, start = {x:0,y:0}, startPan = {x:0,y:0};
+  wrap.addEventListener("mousedown", e => {
+    dragging = true; wrap.classList.add("dragging");
+    start = {x:e.clientX, y:e.clientY};
+    startPan = {x:imgView.panX, y:imgView.panY};
+    e.preventDefault();
+  });
+  window.addEventListener("mousemove", e => {
+    if(!dragging) return;
+    const dx = (e.clientX - start.x) / scaleFactor;
+    const dy = (e.clientY - start.y) / scaleFactor;
+    imgView.panX = startPan.x + dx;
+    imgView.panY = startPan.y + dy;
+    applyImgTransform();
+  });
+  window.addEventListener("mouseup", () => { dragging = false; wrap.classList.remove("dragging"); });
 }
 
 function wire(){
@@ -125,16 +187,21 @@ function wire(){
     document.getElementById("o_title").textContent = v("f_title");
     const desc = v("f_desc").trim();
     document.getElementById("o_by").textContent = (desc ? desc + " · " : "") + "Design by " + v("f_nick");
-    const src = imageUrl(ITEM.image_paths[v("f_img_main")]);
-    document.getElementById("o_img_main").src = src;
-    return src;
+    return imageUrl(ITEM.image_paths[v("f_img_main")]);
   }
-  document.getElementById("f_img_main").addEventListener("input", () => suggestRatioForImage(sync()));
+  document.getElementById("f_img_main").addEventListener("input", () => {
+    const src = sync();
+    document.getElementById("o_img_main").src = src;
+    loadImageForEditing(src);
+  });
   ["f_title","f_desc","f_nick"].forEach(id=>document.getElementById(id).addEventListener("input",sync));
-  document.getElementById("f_ratio").addEventListener("change", () => { ratioManuallySet = true; applyRatio(); });
+  document.getElementById("f_ratio").addEventListener("change", () => { ratioManuallySet = true; applyRatio(); fitImageToContainer(); });
+  document.getElementById("f_zoom").addEventListener("input", e => { imgView.zoom = Number(e.target.value)/100; applyImgTransform(); });
   const firstSrc = sync();
+  document.getElementById("o_img_main").src = firstSrc;
   applyRatio();
-  suggestRatioForImage(firstSrc);
+  loadImageForEditing(firstSrc);
+  wireDrag();
   document.getElementById("downloadBtn").onclick = download;
 }
 
