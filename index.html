@@ -170,7 +170,7 @@ textarea{resize:vertical}
 <div class="step-panel" data-step="9">
 <p id="freeStatus" style="text-align:center;font-size:13px;color:var(--m);margin:12px 0 8px"></p>
 <button class="go" onclick="make();if(document.getElementById('result').classList.contains('on'))showStep(10)">✨ PRODUCT DESIGN PROMPT 만들기</button>
-<div class="card" id="paywall" style="display:none;border:2px solid var(--a);background:#ffe6f1;text-align:center"><div style="font-size:28px">🔒</div><div class="title" style="margin-top:6px">무료 체험을 모두 사용하셨어요</div><p class="hint" style="font-size:14px">무료 3회를 다 사용하셨어요. 계속 사용하시려면 구매가 필요해요 — 1회 결제로 횟수 제한 없이 계속 쓸 수 있어요.</p><a class="go" href="landing.html" style="display:block;margin-top:10px;text-decoration:none">9,900원으로 계속 사용하기</a><div style="margin-top:16px;padding-top:14px;border-top:1px dashed #f0b8cf"><p class="hint" style="font-size:13px;margin:0 0 8px">수업에서 받은 <b>이용 코드</b>가 있나요?</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><input id="accessCode" type="text" autocomplete="off" placeholder="이용 코드 입력" style="flex:1;min-width:160px;max-width:260px;padding:10px 12px;border:1px solid #e3c9d4;border-radius:10px;font:inherit" onkeydown="if(event.key==='Enter')submitAccessCode()"><button type="button" onclick="submitAccessCode()" style="padding:10px 16px;border:1px solid var(--a);background:#fff;color:var(--a);border-radius:10px;font:inherit;font-weight:700;cursor:pointer">적용</button></div><p id="accessCodeMsg" class="hint" style="font-size:13px;margin:8px 0 0"></p></div></div>
+<div class="card" id="paywall" style="display:none;border:2px solid var(--a);background:#ffe6f1;text-align:center"><div style="font-size:28px">🔒</div><div class="title" style="margin-top:6px">무료 체험을 모두 사용하셨어요</div><p class="hint" style="font-size:14px">무료 3회를 다 사용하셨어요. 계속 사용하시려면 구매가 필요해요 — 1회 결제로 횟수 제한 없이 계속 쓸 수 있어요.</p><a class="go" href="landing.html" style="display:block;margin-top:10px;text-decoration:none">9,900원으로 계속 사용하기</a></div>
 </div>
 <div class="card result" id="result"><div class="step">RESULT</div><div class="title" style="font-size:26px;margin:10px 0 6px!important">🎉 나만의 제품 디자인 완성!</div><p class="hint" style="margin:0 0 18px">기획부터 완성까지, 아래에서 프롬프트를 확인하고 원하는 AI 도구에 맞춰 복사하세요.</p><div style="margin-bottom:18px">
 <div class="tip">💡 <b>사용 방법</b> 아래 "한글 프롬프트" 또는 "영문 이미지 생성 프롬프트" 중 하나를 복사해서 사용 중인 AI 이미지 생성 도구(미드저니, 챗GPT, DALL·E 등)에 붙여넣으세요. 스케치·레퍼런스 이미지를 첨부했다면 프롬프트와 함께 그 이미지도 같이 올려주세요.</div>
@@ -734,11 +734,12 @@ const MORE_PROMPTS=[
  {label:"Exploded View (분해도)",exKey:"Exploded View / 분해도",icon:"💥",complex:true,ko:"제품 하나의 분해도로, 모든 구성 부품을 조립 축을 따라 분리해서 보여주고 내부 구조·결합부·조립 관계가 명확히 드러나야 한다. 이미지 안에는 이 분해도 하나만 있어야 하며, 조립된 완제품 사본이나 다른 각도의 추가 이미지를 따로 그려 넣지 않는다. 실제로 설명된 부품과 구조만 표현하고, 명시되지 않은 부품이나 장치를 상상해서 추가하지 않는다.",en:"exploded view of a single product, all components separated along their logical assembly axis, clearly revealing internal structure, joints, fasteners and the assembly/transformation relationship. Show only ONE exploded arrangement of this single product in the frame — do not add extra assembled copies, duplicate hero shots, or additional views of the product elsewhere in the image."},
  {label:"디테일 뷰",exKey:"Detail View / 디테일뷰",icon:"🔍",complex:false,ko:"제품 하나의 가장 중요한 기능 부위, 인터페이스, 결합부, 재질과 마감을 클로즈업으로 보여준다.",en:"close-up detail view of the single product's most important functional components, interfaces, joints, materials and finishes"},
  {label:"결착·구조 확대",exKey:"결착·구조 확대",icon:"🔩",complex:true,ko:"제품 하나의 결착 또는 구조 메커니즘을 확대해서, 부품이 연결·잠금·해제·회전·슬라이드되는 원리가 시각적으로 이해되도록 보여준다.",en:"magnified close-up of the single product's attachment or structural mechanism, clearly showing how the parts connect, lock, release, rotate, slide or detach so the connection principle is visually understandable"},
- {label:"사실적 제품 렌더링",exKey:"사실적 제품 렌더링",icon:"📷",complex:false,ko:"실제 촬영한 제품 사진처럼 표현한다. 현실적인 소재, 표면, 조명, 반사와 그림자를 갖추며 기본적으로 완성 제품 하나가 중심이 되는 제품 사진 형태여야 한다.",en:"photorealistic product photography look, realistic materials, surfaces, natural or studio lighting, accurate reflections and shadows, by default a single completed product as the clear subject, professional commercial product-photography quality"},
- {label:"사용 장면",exKey:"사용 장면",icon:"🎬",complex:false,ko:"완성된 제품 하나가 실제 사용 환경에 놓여 있는 사실적인 장면으로, 사용자가 제품과 상호작용하는 모습이 잘 드러나야 한다.",en:"realistic single-scene photograph showing one completed product actually placed and used in a real-world context, clearly conveying how the user interacts with it"},
+ {label:"사실적 제품 렌더링",exKey:"사실적 제품 렌더링",icon:"📷",complex:false,customizable:true,customPlaceholder:"예: 스튜디오 흰 배경, 측면에서 부드러운 조명",ko:"실제 촬영한 제품 사진처럼 표현한다. 현실적인 소재, 표면, 조명, 반사와 그림자를 갖추며 기본적으로 완성 제품 하나가 중심이 되는 제품 사진 형태여야 한다.",en:"photorealistic product photography look, realistic materials, surfaces, natural or studio lighting, accurate reflections and shadows, by default a single completed product as the clear subject, professional commercial product-photography quality"},
+ {label:"사용 장면",exKey:"사용 장면",icon:"🎬",complex:false,customizable:true,customPlaceholder:"예: 캠핑장에서 밤에 사용하는 모습",ko:"완성된 제품 하나가 실제 사용 환경에 놓여 있는 사실적인 장면으로, 사용자가 제품과 상호작용하는 모습이 잘 드러나야 한다.",en:"realistic single-scene photograph showing one completed product actually placed and used in a real-world context, clearly conveying how the user interacts with it"},
  {label:"컬러링 도안 (아웃라인)",exKey:"컬러링 도안 (아웃라인)",icon:"🖍️",complex:false,ko:"흰 배경에 제품 하나만 표현한다. 검은색 선, 닫힌 외곽선, 일정한 선 굵기로 그리고 컬러·음영·그라데이션 없이 출력해서 직접 색칠할 수 있는 도안이어야 한다.",en:"single product only on a plain white background, black outlines only, fully closed contour lines, uniform line weight, no color, no shading, no gradients, printable coloring-page line drawing suitable for hand-coloring"}
 ];
 let morePromptsData=[];
+let moreCustomScene={};
 function showAnyExample(key){
  const f=VIEW_EXAMPLES[key]||STYLE_EXAMPLES[key]; if(!f)return;
  document.getElementById("viewModalImg").src=f;
@@ -762,11 +763,16 @@ function buildMorePrompts(){
  const isMulti=outputVal==="형태 아이디어 여러 안"||outputVal==="구조·결착 아이디어 여러 안";
  const cautionKo="\n\n※ 여러 콘셉트를 비교하는 중이라면, 콘셉트 하나를 먼저 고른 뒤에 이 프롬프트를 사용하는 걸 추천해요 — 안끼리 섞이면 결과가 복잡해질 수 있어요.";
  const cautionEn="\n\nNOTE: if you're comparing multiple concepts, pick one concept first before using this prompt — mixing concepts here tends to produce a cluttered result.";
- morePromptsData=MORE_PROMPTS.map(mp=>({
-  label:mp.label,icon:mp.icon,exKey:mp.exKey,
-  ko:`${refKo}\n\n[제품] ${category?category+" · ":""}${product}\n[스타일/CMF] ${style}. ${cmf}.\n\n[내용] ${mp.ko}\n\n${avoidKo}${isMulti&&mp.complex?cautionKo:""}`,
-  en:`${refEn}\n\nPRODUCT: ${categoryEn?categoryEn+" — ":""}${productEn}\nDESIGN LANGUAGE: ${styleEn}; ${cmfEn}.\n\nCONTENT: ${mp.en}\n\n${avoidEn}${isMulti&&mp.complex?cautionEn:""}`
- }));
+ morePromptsData=MORE_PROMPTS.map((mp,i)=>{
+  const customVal=(moreCustomScene[i]||"").trim();
+  const customKo=customVal?`\n\n[추가 설명] ${customVal}`:"";
+  const customEn=customVal?`\n\nADDITIONAL DETAIL: ${customVal}`:"";
+  return{
+   label:mp.label,icon:mp.icon,exKey:mp.exKey,
+   ko:`${refKo}\n\n[제품] ${category?category+" · ":""}${product}\n[스타일/CMF] ${style}. ${cmf}.\n\n[내용] ${mp.ko}${customKo}\n\n${avoidKo}${isMulti&&mp.complex?cautionKo:""}`,
+   en:`${refEn}\n\nPRODUCT: ${categoryEn?categoryEn+" — ":""}${productEn}\nDESIGN LANGUAGE: ${styleEn}; ${cmfEn}.\n\nCONTENT: ${mp.en}${customEn}\n\n${avoidEn}${isMulti&&mp.complex?cautionEn:""}`
+  };
+ });
  return morePromptsData;
 }
 function renderMorePrompts(){
@@ -774,14 +780,25 @@ function renderMorePrompts(){
  buildMorePrompts();
  const lang=currentPromptTab==="ko"?"ko":"en";
  const tip=images.generated?"":'<p class="hint" style="margin:0 0 12px">💡 위에서 완성된 이미지를 등록하면, 이 프롬프트들이 그 이미지를 기준으로 더 정확하게 맞춰져요.</p>';
- list.innerHTML=tip+morePromptsData.map((p,i)=>`<div style="margin-top:${i===0?"0":"14px"}">
+ list.innerHTML=tip+morePromptsData.map((p,i)=>{
+  const mp=MORE_PROMPTS[i];
+  const customField=mp.customizable?`<input type="text" id="moreCustom_${i}" value="${(moreCustomScene[i]||"").replace(/"/g,"&quot;")}" placeholder="✏️ 추가로 넣고 싶은 장면 설명 (선택) — ${mp.customPlaceholder}" style="margin-bottom:8px" oninput="updateCustomScene(${i},this.value)">`:"";
+  return`<div style="margin-top:${i===0?"0":"14px"}">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
    <b style="font-size:13px">${p.icon} ${p.label}</b>
    <span class="ex-link" onclick="showAnyExample('${p.exKey}')">🔍 예시</span>
    <button type="button" class="copy" style="margin:0 0 0 auto" onclick="copyMorePrompt(${i})">프롬프트 복사</button>
   </div>
-  <div class="box" style="font-size:12.5px">${p[lang].replace(/&/g,"&amp;").replace(/</g,"&lt;")}</div>
- </div>`).join("")+'<p class="hint" style="margin:14px 0 0">※ 여기서 만들어지는 이미지들은 정확한 설계 도면이 아니라, 디자인 아이디어를 표현하기 위한 참고용 이미지입니다.</p>';
+  ${customField}
+  <div class="box" id="moreBox_${i}" style="font-size:12.5px">${p[lang].replace(/&/g,"&amp;").replace(/</g,"&lt;")}</div>
+ </div>`;
+ }).join("")+'<p class="hint" style="margin:14px 0 0">※ 여기서 만들어지는 이미지들은 정확한 설계 도면이 아니라, 디자인 아이디어를 표현하기 위한 참고용 이미지입니다.</p>';
+}
+function updateCustomScene(i,val){
+ moreCustomScene[i]=val;
+ buildMorePrompts();
+ const box=document.getElementById("moreBox_"+i);
+ if(box){const lang=currentPromptTab==="ko"?"ko":"en"; box.textContent=morePromptsData[i][lang];}
 }
 function copyMorePrompt(i){
  const p=morePromptsData[i]; if(!p)return;
@@ -1097,34 +1114,19 @@ document.querySelector("main").addEventListener("click",e=>{if(e.target.classLis
 
 const FREE_LIMIT=3;
 // 다른 기기(폰 등)에서 쓰기 위한 개인 링크: index.html?order=<주문번호>
-// 결제 성공 화면에서 자동으로 이 형태의 링크를 보여줘요. 링크를 아는 사람은 누구나 열 수 있어서,
-// 서버(Workers)가 주문마다 기기 수를 세고 정해진 대수(MAX_DEVICES, 3대)까지만 열어줘요.
-// 기기 구분용 무작위 ID — 같은 사이트의 다른 페이지(payment-success.html)와 함께 써요
-function cmDeviceId(){
- try{
-  let id=localStorage.getItem("cmDeviceId");
-  if(!id){
-   id=(crypto.randomUUID?crypto.randomUUID().replace(/-/g,""):Date.now().toString(36)+Math.random().toString(36).slice(2,14));
-   localStorage.setItem("cmDeviceId",id);
-  }
-  return id;
- }catch(e){return ""}
-}
+// 결제 성공 화면에서 자동으로 이 형태의 링크를 보여줘요. 이 주문번호가 실제로
+// 결제된 게 맞는지 매번 서버(Workers)에 물어봐서 확인하기 때문에, 남이 봐도
+// 자기 결제로는 못 풀고 그 주문 본인만 풀 수 있어요.
 (function applyOrderUnlockParam(){
  try{
   const q=new URLSearchParams(location.search);
   const orderId=q.get("order");
   if(!orderId||!CONFIG.PAYMENT_STATUS_API_URL)return;
-  fetch(CONFIG.PAYMENT_STATUS_API_URL+"?orderId="+encodeURIComponent(orderId)+"&device="+encodeURIComponent(cmDeviceId()))
+  fetch(CONFIG.PAYMENT_STATUS_API_URL+"?orderId="+encodeURIComponent(orderId))
    .then(r=>r.json()).then(data=>{
     if(data&&data.paid&&data.plan==="basic"){
      localStorage.setItem("cmPdmPaid","1");
-     localStorage.setItem("cmPdmOrder",orderId);
      updateFreeStatus();
-    }else if(data&&data.refunded){
-     alert("환불 처리된 결제예요. 이 링크로는 더 이상 이용할 수 없어요.");
-    }else if(data&&data.limit){
-     alert(`이 결제 링크는 이미 기기 ${data.max}대에서 사용 중이에요.\n다른 기기에서 쓰시려면 결제하신 정보(주문번호)와 함께 문의해 주세요.`);
     }
    }).catch(()=>{}).finally(()=>{
     const url=new URL(location.href); url.searchParams.delete("order");
@@ -1132,63 +1134,30 @@ function cmDeviceId(){
    });
  }catch(e){}
 })();
-// 결제로 잠금을 푼 브라우저는 하루 한 번 서버에 다시 물어봐요. 환불된 주문이면 잠금을 다시 걸어요.
-// (네트워크 오류 등 확인이 안 될 때는 아무것도 바꾸지 않아요)
-(function recheckPaidOrder(){
- try{
-  const orderId=localStorage.getItem("cmPdmOrder");
-  if(!orderId||!CONFIG.PAYMENT_STATUS_API_URL||new URLSearchParams(location.search).get("order"))return;
-  const last=parseInt(localStorage.getItem("cmPdmOrderChecked")||"0",10)||0;
-  if(Date.now()-last<24*60*60*1000)return;
-  fetch(CONFIG.PAYMENT_STATUS_API_URL+"?orderId="+encodeURIComponent(orderId)+"&device="+encodeURIComponent(cmDeviceId()))
-   .then(r=>r.json()).then(data=>{
-    localStorage.setItem("cmPdmOrderChecked",String(Date.now()));
-    if(data&&data.refunded){
-     localStorage.removeItem("cmPdmPaid");
-     localStorage.removeItem("cmPdmOrder");
-     updateFreeStatus();
-    }
-   }).catch(()=>{});
- }catch(e){}
-})();
-// 이용 코드(수업용 무료 기간 · 결제 고객 수동 안내)는 페이지에 적지 않고 결제 서버(Workers)에서 확인해요.
-// 코드 추가·종료일 관리: Cloudflare 대시보드 → KV(ORDERS) → key "code:<코드>" (자세한 형식은 worker.js 맨 위 설명)
-// 링크로 줄 때: index.html?unlock=<코드>  /  화면에서 입력할 때: 무료 체험이 끝난 뒤 나오는 '이용 코드' 칸
-const CODE_APP="pdm";
-function applyAccessCode(raw,onDone){
- const code=(raw||"").trim();
- const done=(msg)=>{ if(onDone)onDone(msg); };
- if(!code||!CONFIG.PAYMENT_STATUS_API_URL){ done("코드를 입력해 주세요."); return; }
- fetch(CONFIG.PAYMENT_STATUS_API_URL+"code?c="+encodeURIComponent(code)+"&app="+CODE_APP)
-  .then(r=>r.json()).then(data=>{
-   if(data&&data.valid&&data.type==="paid"){
-    localStorage.setItem("cmPdmPaid","1");
-    done("이용 권한이 확인됐어요!");
-   }else if(data&&data.valid&&data.type==="class"&&data.endsAt){
-    // 종료 시각은 서버가 정한 날짜 그대로 — 다른 기기에서 다시 입력해도 같은 날 끝나요
-    localStorage.setItem("cmPdmClassExpiry",String(data.endsAt));
-    done("수업용 무료 이용 기간이 적용됐어요!");
-   }else{
-    done(data&&data.expired?"이용 기간이 끝난 코드예요.":"확인되지 않는 코드예요. 철자를 다시 확인해 주세요.");
-   }
-   updateFreeStatus();
-  }).catch(()=>done("지금은 코드를 확인할 수 없어요. 잠시 후 다시 시도해 주세요."));
-}
+// 고정 비밀 코드 — 개인 링크를 못 쓰는 특수한 경우의 수동 대응용입니다. (결제 고객 · 평생 이용)
+// 공개하지 말고, 결제 확인 후 개별적으로만 안내해 주세요.
+const UNLOCK_CODE="colorm-basic-2026";
+// 수업 수강생 전용 무료 이용 코드 — 결제 없이 30일 동안만 무제한 이용할 수 있어요.
+// LMS·수업 게시판 등 수강생만 보는 곳에만 공유하세요. 학기마다 바꾸고 싶으면 이 값만 수정하면 돼요.
+const CLASS_UNLOCK_CODE="colorm-class-2026";
+const CLASS_TRIAL_DAYS=30;
 (function applyUnlockParam(){
  try{
   const q=new URLSearchParams(location.search);
   const code=q.get("unlock");
-  if(!code)return;
-  applyAccessCode(code);
-  const url=new URL(location.href); url.searchParams.delete("unlock");
-  history.replaceState(null,"",url.toString());
+  if(code===UNLOCK_CODE){
+   localStorage.setItem("cmPdmPaid","1");
+  }else if(code===CLASS_UNLOCK_CODE){
+   if(!localStorage.getItem("cmPdmClassExpiry")){
+    localStorage.setItem("cmPdmClassExpiry",String(Date.now()+CLASS_TRIAL_DAYS*24*60*60*1000));
+   }
+  }
+  if(code===UNLOCK_CODE||code===CLASS_UNLOCK_CODE){
+   const url=new URL(location.href); url.searchParams.delete("unlock");
+   history.replaceState(null,"",url.toString());
+  }
  }catch(e){}
 })();
-function submitAccessCode(){
- const input=document.getElementById("accessCode"), msg=document.getElementById("accessCodeMsg");
- msg.textContent="확인하는 중이에요…";
- applyAccessCode(input.value,(m)=>{ msg.textContent=m; });
-}
 function isReallyPaid(){try{return localStorage.getItem("cmPdmPaid")==="1"}catch(e){return false}}
 function classDaysLeft(){
  try{
