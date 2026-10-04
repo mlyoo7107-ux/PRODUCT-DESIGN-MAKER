@@ -105,7 +105,7 @@ function renderTopActions(){
   const el = document.getElementById("topActions");
   el.innerHTML = `
     ${p.makerUrl ? `<a class="btn" href="${p.makerUrl}">Maker로 가기</a>` : `<span class="btn" style="cursor:default">Maker 준비 중</span>`}
-    <a class="btn primary" href="upload.html">✨ 내 작품 자랑하기</a>
+    <a class="btn primary" href="upload.html?product=${activeProduct}">✨ 내 작품 자랑하기</a>
   `;
 }
 
