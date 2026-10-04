@@ -56,6 +56,11 @@ function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")
 function imageUrl(path){ return supa.storage.from(BUCKET).getPublicUrl(path).data.publicUrl; }
 
 let ITEM = null;
+const TOOL_NAMES = {
+  PRODUCT_DESIGN: "Product Prompt Maker",
+  CHARACTER_MAKER: "Character Maker",
+  PICTURE_BOOK_MAKER: "Picture Book Maker"
+};
 let ratioManuallySet = false;
 const RATIOS = { "4:5": {w:1080,h:1350,label:"4:5 (세로형, 추천)"}, "1:1": {w:1080,h:1080,label:"1:1 (정사각형)"} };
 
@@ -97,7 +102,7 @@ function posterHTML(){
       </div>
     </div>
     <div class="p-foot">
-      <div class="l">Made with <b>Product Prompt Maker</b></div>
+      <div class="l">Made with <b>${esc(TOOL_NAMES[ITEM.product] || "Product Prompt Maker")}</b></div>
       <div class="r"><b>COLOR.M MAKER GALLERY</b><div class="circle">M</div></div>
     </div>
   `;
@@ -243,7 +248,7 @@ async function download(){
   if(!id){ app.innerHTML = `<div class="state">작품 id가 없어요. 상세페이지에서 들어와주세요.</div>`; return; }
   const { data, error } = await supa
     .from("submissions")
-    .select("id,title,nickname,maker_type,concept,category,tags,image_paths,created_at")
+    .select("id,title,nickname,maker_type,concept,category,product,tags,image_paths,created_at")
     .eq("id", id)
     .eq("status", "approved")
     .maybeSingle();
