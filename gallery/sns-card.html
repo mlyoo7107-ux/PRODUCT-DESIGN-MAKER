@@ -67,7 +67,7 @@ const BY_LABELS = {
   PICTURE_BOOK_MAKER: "Story by"
 };
 let ratioManuallySet = false;
-const RATIOS = { "4:5": {w:1080,h:1350,label:"4:5 (세로형, 추천)"}, "1:1": {w:1080,h:1080,label:"1:1 (정사각형)"} };
+const RATIOS = { "4:5": {w:1080,h:1350,label:"4:5 (세로형, 추천)"}, "3:4": {w:1080,h:1440,label:"3:4 (세로형, 긴)"}, "1:1": {w:1080,h:1080,label:"1:1 (정사각형)"} };
 
 function fieldsHTML(images){
   const opts = images.map((p,i)=>`<option value="${i}">이미지 ${i+1}</option>`).join("");
