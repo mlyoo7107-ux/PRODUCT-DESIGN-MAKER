@@ -32,7 +32,8 @@ h1{font-size:20px;margin:0 0 18px}
 .edit-form label{font-size:12px;font-weight:bold;display:block;margin:10px 0 4px}
 .edit-form input,.edit-form textarea,.edit-form select{width:100%;padding:9px;border:1px solid #e3ddd0;border-radius:8px;font-size:13px;font-family:inherit}
 .edit-form textarea{min-height:60px;resize:vertical}
-.edit-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.edit-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;border-radius:12px;transition:background .15s,box-shadow .15s}
+.edit-thumbs.drag-over{background:#fff5fa;box-shadow:0 0 0 2px var(--a) inset}
 .edit-thumb{position:relative;width:84px;height:84px;cursor:grab}
 .edit-thumb.dragging{opacity:.4}
 .edit-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px;background:var(--l);pointer-events:none}
@@ -248,14 +249,29 @@ function renderItemEdit(item, tab, onSaved, attachedImagePath){
       .catch(() => {});
   }
 
-  div.querySelector("#addPhotoInput").addEventListener("change", async (ev) => {
-    const f = ev.target.files && ev.target.files[0];
-    if(!f) return;
-    const blob = await compressImage(f);
-    state.order.push({type:"new",blob});
+  async function addNewBlobs(fileList){
+    const files = Array.from(fileList || []).filter(f => f.type.startsWith("image/"));
+    const remaining = MAX_IMAGES - state.order.length;
+    for(const f of files.slice(0, remaining)){
+      const blob = await compressImage(f);
+      state.order.push({type:"new",blob});
+    }
     renderThumbs();
+  }
+
+  div.querySelector("#addPhotoInput").addEventListener("change", async (ev) => {
+    await addNewBlobs(ev.target.files);
     ev.target.value = "";
   });
+
+  const editThumbsEl = div.querySelector("#editThumbs");
+  ["dragenter","dragover"].forEach(evt => {
+    editThumbsEl.addEventListener(evt, (e) => { e.preventDefault(); editThumbsEl.classList.add("drag-over"); });
+  });
+  ["dragleave","drop"].forEach(evt => {
+    editThumbsEl.addEventListener(evt, (e) => { e.preventDefault(); editThumbsEl.classList.remove("drag-over"); });
+  });
+  editThumbsEl.addEventListener("drop", async (e) => { await addNewBlobs(e.dataTransfer.files); });
 
   div.querySelector("#cancelBtn").onclick = () => { div.replaceWith(renderItemView(item, tab)); };
 
