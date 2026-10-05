@@ -29,7 +29,8 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 .top-actions span.btn{font-size:12.5px;color:var(--m);font-weight:bold;opacity:.6}
 @media(max-width:640px){.top-bar{padding:10px 16px}.top-logo{height:32px}.app-name{display:none}}
 main{max-width:1100px;margin:auto;padding:20px 15px 60px}
-.filters-wrap{position:sticky;top:var(--topbar-h,64px);z-index:10;background:var(--b);padding:14px 0}
+.filters-wrap{position:sticky;top:var(--topbar-h,64px);z-index:10;background:var(--b);padding:14px 0;max-height:160px;overflow:hidden;transition:max-height .25s ease,padding .25s ease}
+.filters-wrap.collapsed{max-height:0;padding:0 0}
 .product-tabs{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin-bottom:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .product-tabs::-webkit-scrollbar{display:none}
 .product-tab{flex:none}
@@ -177,5 +178,25 @@ function syncTopbarHeight(){
 window.addEventListener("resize", syncTopbarHeight);
 syncTopbarHeight();
 setTimeout(syncTopbarHeight, 300);
+
+// 인스타그램처럼: 아래로 스크롤하면(피드를 더 볼 때) 필터 숨김, 위로 스크롤하면(되돌아갈 때) 다시 표시
+let lastScrollY = window.scrollY;
+let scrollTicking = false;
+function onFiltersScroll(){
+  const currentY = window.scrollY;
+  const wrap = document.querySelector(".filters-wrap");
+  if(wrap){
+    if(currentY > lastScrollY && currentY > 80){
+      wrap.classList.add("collapsed");
+    } else if(currentY < lastScrollY){
+      wrap.classList.remove("collapsed");
+    }
+  }
+  lastScrollY = currentY;
+  scrollTicking = false;
+}
+window.addEventListener("scroll", () => {
+  if(!scrollTicking){ requestAnimationFrame(onFiltersScroll); scrollTicking = true; }
+}, {passive:true});
 </script>
 </body></html>
