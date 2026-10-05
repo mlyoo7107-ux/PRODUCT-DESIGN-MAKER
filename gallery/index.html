@@ -59,7 +59,7 @@ main{max-width:1100px;margin:auto;padding:20px 15px 60px}
 .filter-chip.on{background:var(--a);border-color:var(--a);color:white;font-weight:bold}
 .empty .soon{display:block;font-size:13px;margin-top:8px;color:var(--ab)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
-.card-wrap{position:relative}
+.card-wrap{position:relative;min-width:0;max-width:100%}
 .card{background:white;border:1px solid var(--l);border-radius:16px;overflow:hidden;text-decoration:none;color:var(--t);display:block;box-shadow:0 2px 8px rgba(23,21,18,.05);transition:transform .15s}
 .card:hover{transform:translateY(-3px)}
 .share-fab{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(23,21,18,.55);color:white;border:0;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;z-index:2}
@@ -82,7 +82,7 @@ main{max-width:1100px;margin:auto;padding:20px 15px 60px}
   .view-toggle{display:flex;flex:none;gap:6px}
   .view-toggle button{width:38px;height:38px;border-radius:10px;border:1px solid var(--l);background:white;font-size:17px;line-height:1;cursor:pointer;color:var(--m)}
   .view-toggle button.on{background:var(--t);color:white;border-color:var(--t)}
-  .grid.list-view{grid-template-columns:1fr !important}
+  .grid.list-view{grid-template-columns:minmax(0,1fr) !important}
   .grid.list-view .card .body{padding:12px 14px}
   .grid.list-view .card .maker-badge{font-size:10px;padding:2px 8px;margin-bottom:6px}
   .grid.list-view .card .title{font-size:15px;margin:0 0 4px}
