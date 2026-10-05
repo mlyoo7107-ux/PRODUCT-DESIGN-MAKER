@@ -144,9 +144,19 @@ function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")
 function imageUrl(path){ return supa.storage.from(BUCKET).getPublicUrl(path).data.publicUrl; }
 
 let allItems = [];
-let activeProduct = "PRODUCT_DESIGN";
-let activeCategory = "전체";
+const urlParams = new URLSearchParams(location.search);
+let activeProduct = PRODUCTS[urlParams.get("product")] ? urlParams.get("product") : "PRODUCT_DESIGN";
+let activeCategory = urlParams.get("category") || "전체";
+if(!PRODUCTS[activeProduct].categories.includes(activeCategory) && activeCategory !== "전체") activeCategory = "전체";
 let viewMode = "2";
+
+function syncUrl(){
+  const params = new URLSearchParams();
+  params.set("product", activeProduct);
+  if(activeCategory !== "전체") params.set("category", activeCategory);
+  const newUrl = location.pathname + "?" + params.toString();
+  history.replaceState(null, "", newUrl);
+}
 try{ viewMode = localStorage.getItem("galleryView") || "2"; }catch(e){}
 
 function initViewToggle(){
@@ -179,7 +189,7 @@ function renderBottomNav(){
   if(!el) return;
   el.innerHTML = `
     <a href="javascript:void(0)" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span class="icon" style="font-weight:900;font-size:22px">⬆︎</span><span>맨 위로</span></a>
-    <a href="index.html"><span class="icon">🖼️</span><span>갤러리</span></a>
+    <a href="javascript:void(0)" onclick="shareCurrentView()"><span class="icon">🔗</span><span>공유</span></a>
     ${p.makerUrl ? `<a href="${p.makerUrl}"><span class="icon">🎨</span><span>메이커</span></a>` : `<span style="opacity:.5"><span class="icon">🎨</span><span>준비 중</span></span>`}
     <a href="upload.html?product=${activeProduct}"><span class="icon">✨</span><span>자랑하기</span></a>
   `;
@@ -192,6 +202,7 @@ function renderProductTabs(){
     tab.onclick = () => {
       activeProduct = tab.dataset.p;
       activeCategory = "전체";
+      syncUrl();
       renderProductTabs(); renderTopActions(); renderFilters(); renderGrid();
     };
   });
@@ -202,7 +213,7 @@ function renderFilters(){
   const cats = ["전체", ...PRODUCTS[activeProduct].categories];
   el.innerHTML = cats.map(c => `<div class="filter-chip${c===activeCategory?" on":""}" data-c="${esc(c)}">${esc(c)}</div>`).join("");
   el.querySelectorAll(".filter-chip").forEach(chip => {
-    chip.onclick = () => { activeCategory = chip.dataset.c; renderFilters(); renderGrid(); };
+    chip.onclick = () => { activeCategory = chip.dataset.c; syncUrl(); renderFilters(); renderGrid(); };
   });
 }
 
@@ -235,6 +246,19 @@ function renderGrid(){
       shareItem(btn.dataset.id, btn.dataset.title);
     });
   });
+}
+
+function shareCurrentView(){
+  syncUrl();
+  const title = PRODUCTS[activeProduct].label.replace(/^\S+\s/, "") + " — COLOR.M MAKER GALLERY";
+  const url = location.href;
+  if(navigator.share){
+    navigator.share({ title, url }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(url)
+      .then(() => alert("이 화면 링크가 복사됐어요! 다른 사람에게 붙여넣어 보내보세요."))
+      .catch(() => alert("복사에 실패했어요. 주소를 직접 선택해서 복사해주세요."));
+  }
 }
 
 function shareItem(id, title){
