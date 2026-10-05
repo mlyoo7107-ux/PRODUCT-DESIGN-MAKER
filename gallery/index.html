@@ -70,6 +70,7 @@ main{max-width:1100px;margin:auto;padding:20px 15px 60px}
 .card .maker-badge.pro{background:var(--a);color:white}
 .card .title{font-size:15px;font-weight:bold;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card .nick{font-size:12px;color:var(--m);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.view-toggle{display:none}
 @media(max-width:640px){
   .grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:10px}
   .card .body{padding:8px 9px}
@@ -77,6 +78,15 @@ main{max-width:1100px;margin:auto;padding:20px 15px 60px}
   .card .title{font-size:12.5px;margin:0 0 2px}
   .share-fab{width:26px;height:26px;font-size:12px;top:6px;right:6px}
   .card .nick{font-size:10.5px}
+  .view-toggle{display:flex;justify-content:flex-end;gap:6px;margin:-6px 0 10px}
+  .view-toggle button{width:30px;height:30px;border-radius:8px;border:1px solid var(--l);background:white;font-size:14px;line-height:1;cursor:pointer;color:var(--m)}
+  .view-toggle button.on{background:var(--t);color:white;border-color:var(--t)}
+  .grid.list-view{grid-template-columns:1fr !important}
+  .grid.list-view .card .body{padding:12px 14px}
+  .grid.list-view .card .maker-badge{font-size:10px;padding:2px 8px;margin-bottom:6px}
+  .grid.list-view .card .title{font-size:15px;margin:0 0 4px}
+  .grid.list-view .card .nick{font-size:12px}
+  .grid.list-view .share-fab{width:32px;height:32px;font-size:15px;top:8px;right:8px}
 }
 .empty{text-align:center;padding:80px 20px;color:var(--m)}
 .loading{text-align:center;padding:80px 20px;color:var(--m)}
@@ -96,6 +106,10 @@ footer a{color:var(--m)}
 <div class="filters-wrap">
 <div class="product-tabs" id="productTabs"></div>
 <div class="filters" id="filters"></div>
+</div>
+<div class="view-toggle" id="viewToggle">
+<button type="button" data-v="2" aria-label="2열 보기">⊞</button>
+<button type="button" data-v="1" aria-label="1열 보기">☰</button>
 </div>
 <div id="content"><div class="loading">불러오는 중...</div></div>
 </main>
@@ -129,6 +143,22 @@ function imageUrl(path){ return supa.storage.from(BUCKET).getPublicUrl(path).dat
 let allItems = [];
 let activeProduct = "PRODUCT_DESIGN";
 let activeCategory = "전체";
+let viewMode = "2";
+try{ viewMode = localStorage.getItem("galleryView") || "2"; }catch(e){}
+
+function initViewToggle(){
+  const toggle = document.getElementById("viewToggle");
+  if(!toggle) return;
+  toggle.querySelectorAll("button").forEach(btn => {
+    btn.classList.toggle("on", btn.dataset.v === viewMode);
+    btn.onclick = () => {
+      viewMode = btn.dataset.v;
+      toggle.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.v === viewMode));
+      try{ localStorage.setItem("galleryView", viewMode); }catch(e){}
+      renderGrid();
+    };
+  });
+}
 
 function renderTopActions(){
   const p = PRODUCTS[activeProduct];
@@ -182,7 +212,7 @@ function renderGrid(){
     content.innerHTML = `<div class="empty">아직 등록된 작품이 없어요.<br>가장 먼저 작품을 올려보세요!${soon}</div>`;
     return;
   }
-  content.innerHTML = `<div class="grid">${items.map(item => `
+  content.innerHTML = `<div class="grid${viewMode==='1' ? ' list-view' : ''}">${items.map(item => `
     <div class="card-wrap">
       <a class="card" href="detail.html?id=${esc(item.id)}">
         <img class="thumb" src="${esc(imageUrl(item.image_paths[0]))}" alt="${esc(item.title)}" loading="lazy">
@@ -230,6 +260,7 @@ async function load(){
   renderProductTabs();
   renderTopActions();
   renderFilters();
+  initViewToggle();
   renderGrid();
 }
 load();
