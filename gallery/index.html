@@ -20,6 +20,7 @@ html,body{max-width:100%;overflow-x:hidden}
 body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
 .top-bar{position:sticky;top:0;z-index:41;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;flex-wrap:wrap;background:#fff;border-bottom:1px solid var(--l)}
 .top-bar-brand{display:flex;align-items:center;gap:14px}
+.top-bar-right{display:flex;align-items:center;gap:14px}
 .home-badge{display:inline-flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;border-radius:50%;background:var(--a)}
 .home-badge:hover{background:#e0247a}
 .top-logo{height:40px;width:auto;display:block}
@@ -85,8 +86,11 @@ footer p{margin:12px 0 0;font-size:12px;color:var(--m)}
 footer a{color:var(--m)}
 </style></head><body>
 <header class="top-bar">
-<div class="top-bar-brand"><img src="../logo-colorm.png" alt="COLOR.M" class="top-logo"><a class="home-badge" href="https://colorm.net" target="_blank" rel="noopener" aria-label="홈페이지"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"/></svg></a><span class="app-name">AI MAKER GALLERY</span></div>
+<div class="top-bar-brand"><img src="../logo-colorm.png" alt="COLOR.M" class="top-logo"><span class="app-name">AI MAKER GALLERY</span></div>
+<div class="top-bar-right">
 <div class="top-actions" id="topActions"></div>
+<a class="home-badge" href="https://colorm.net" target="_blank" rel="noopener" aria-label="홈페이지"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"/></svg></a>
+</div>
 </header>
 <main>
 <div class="filters-wrap">
