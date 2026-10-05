@@ -31,7 +31,7 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 .top-actions a.btn.primary{background:var(--a);color:white;padding:7px 14px;border-radius:16px}
 .top-actions a.btn.primary:hover{background:#e0247a;color:white}
 .top-actions span.btn{font-size:12.5px;color:var(--m);font-weight:bold;opacity:.6}
-@media(max-width:640px){.top-bar{padding:10px 16px}.top-logo{height:32px}.app-name{display:none}.top-actions{display:none}}
+@media(max-width:640px){.top-bar{padding:10px 16px}.top-logo{height:32px}.app-name{display:none}.top-actions{display:none}main{padding-top:10px}}
 main{max-width:1100px;margin:auto;padding:20px 15px 60px}
 .bottom-nav{display:none}
 @media(max-width:640px){
@@ -43,7 +43,7 @@ main{max-width:1100px;margin:auto;padding:20px 15px 60px}
   main{padding-bottom:84px}
   footer{padding-bottom:84px}
 }
-.filters-wrap{position:sticky;top:var(--topbar-h,64px);z-index:10;background:var(--b);padding:14px 0;max-height:160px;overflow:hidden;transition:max-height .25s ease,padding .25s ease}
+.filters-wrap{position:sticky;top:var(--topbar-h,64px);z-index:10;background:var(--b);padding:10px 0 8px;max-height:160px;overflow:hidden;transition:max-height .25s ease,padding .25s ease}
 .filters-wrap.collapsed{max-height:0;padding:0 0}
 .product-tabs{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin-bottom:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .product-tabs::-webkit-scrollbar{display:none}
@@ -51,7 +51,8 @@ main{max-width:1100px;margin:auto;padding:20px 15px 60px}
 .product-tab{padding:9px 16px;border:1px solid var(--l);border-radius:20px;font-size:13.5px;font-weight:bold;cursor:pointer;background:white;transition:background .15s,border-color .15s,color .15s}
 .product-tab:hover{border-color:var(--a);color:var(--a)}
 .product-tab.on{background:var(--t);border-color:var(--t);color:white}
-.filters{display:flex;gap:7px;flex-wrap:nowrap;overflow-x:auto;margin:0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.filters-row{display:flex;align-items:center;gap:8px}
+.filters{display:flex;gap:7px;flex-wrap:nowrap;overflow-x:auto;margin:0;flex:1;min-width:0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .filters::-webkit-scrollbar{display:none}
 .filter-chip{padding:8px 14px;border:1px solid var(--l);border-radius:20px;font-size:13px;cursor:pointer;background:white;transition:background .15s,border-color .15s,color .15s;flex:none;white-space:nowrap}
 .filter-chip:hover{border-color:var(--a);color:var(--a)}
@@ -78,8 +79,8 @@ main{max-width:1100px;margin:auto;padding:20px 15px 60px}
   .card .title{font-size:12.5px;margin:0 0 2px}
   .share-fab{width:26px;height:26px;font-size:12px;top:6px;right:6px}
   .card .nick{font-size:10.5px}
-  .view-toggle{display:flex;justify-content:flex-end;gap:6px;margin:-6px 0 10px}
-  .view-toggle button{width:30px;height:30px;border-radius:8px;border:1px solid var(--l);background:white;font-size:14px;line-height:1;cursor:pointer;color:var(--m)}
+  .view-toggle{display:flex;flex:none;gap:6px}
+  .view-toggle button{width:38px;height:38px;border-radius:10px;border:1px solid var(--l);background:white;font-size:17px;line-height:1;cursor:pointer;color:var(--m)}
   .view-toggle button.on{background:var(--t);color:white;border-color:var(--t)}
   .grid.list-view{grid-template-columns:1fr !important}
   .grid.list-view .card .body{padding:12px 14px}
@@ -105,11 +106,13 @@ footer a{color:var(--m)}
 <main>
 <div class="filters-wrap">
 <div class="product-tabs" id="productTabs"></div>
+<div class="filters-row">
 <div class="filters" id="filters"></div>
-</div>
 <div class="view-toggle" id="viewToggle">
 <button type="button" data-v="2" aria-label="2열 보기">⊞</button>
 <button type="button" data-v="1" aria-label="1열 보기">☰</button>
+</div>
+</div>
 </div>
 <div id="content"><div class="loading">불러오는 중...</div></div>
 </main>
