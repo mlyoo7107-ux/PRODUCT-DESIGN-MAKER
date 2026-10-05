@@ -137,7 +137,7 @@ function renderBottomNav(){
   const el = document.getElementById("bottomNav");
   if(!el) return;
   el.innerHTML = `
-    <a href="javascript:void(0)" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span class="icon">⬆️</span><span>맨 위로</span></a>
+    <a href="javascript:void(0)" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span class="icon" style="font-weight:900;font-style:normal">↑</span><span>맨 위로</span></a>
     <a href="https://colorm.net" target="_blank" rel="noopener"><span class="icon">🏠</span><span>홈페이지</span></a>
     ${p.makerUrl ? `<a href="${p.makerUrl}"><span class="icon">🎨</span><span>Maker로 이동</span></a>` : `<span style="opacity:.5"><span class="icon">🎨</span><span>준비 중</span></span>`}
     <a href="upload.html?product=${activeProduct}"><span class="icon">✨</span><span>자랑하기</span></a>
