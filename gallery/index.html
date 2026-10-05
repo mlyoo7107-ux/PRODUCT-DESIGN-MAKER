@@ -126,7 +126,8 @@ function renderBottomNav(){
   const el = document.getElementById("bottomNav");
   if(!el) return;
   el.innerHTML = `
-    <a href="javascript:void(0)" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span class="icon">🏠</span><span>홈</span></a>
+    <a href="javascript:void(0)" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span class="icon">⬆️</span><span>맨 위로</span></a>
+    <a href="https://colorm.net" target="_blank" rel="noopener"><span class="icon">🏠</span><span>홈페이지</span></a>
     ${p.makerUrl ? `<a href="${p.makerUrl}"><span class="icon">🎨</span><span>Maker로 이동</span></a>` : `<span style="opacity:.5"><span class="icon">🎨</span><span>준비 중</span></span>`}
     <a href="upload.html?product=${activeProduct}"><span class="icon">✨</span><span>자랑하기</span></a>
   `;
@@ -202,16 +203,36 @@ syncTopbarHeight();
 setTimeout(syncTopbarHeight, 300);
 
 // 인스타그램처럼: 아래로 스크롤하면(피드를 더 볼 때) 필터 숨김, 위로 스크롤하면(되돌아갈 때) 다시 표시
+// (스크롤 노이즈로 인한 떨림 방지: 누적 이동량 임계치 + 전환 중 잠금)
 let lastScrollY = window.scrollY;
 let scrollTicking = false;
+let scrollAccum = 0;
+let filtersLocked = false;
+const FILTERS_THRESHOLD = 12;
+function lockFilters(){
+  filtersLocked = true;
+  setTimeout(() => { filtersLocked = false; }, 300);
+}
 function onFiltersScroll(){
   const currentY = window.scrollY;
   const wrap = document.querySelector(".filters-wrap");
-  if(wrap){
-    if(currentY > lastScrollY && currentY > 80){
-      wrap.classList.add("collapsed");
-    } else if(currentY < lastScrollY){
-      wrap.classList.remove("collapsed");
+  const diff = currentY - lastScrollY;
+  if(wrap && !filtersLocked){
+    if(currentY <= 80){
+      if(wrap.classList.contains("collapsed")){ wrap.classList.remove("collapsed"); lockFilters(); }
+      scrollAccum = 0;
+    } else {
+      if((diff > 0 && scrollAccum < 0) || (diff < 0 && scrollAccum > 0)) scrollAccum = 0;
+      scrollAccum += diff;
+      if(scrollAccum > FILTERS_THRESHOLD && !wrap.classList.contains("collapsed")){
+        wrap.classList.add("collapsed");
+        scrollAccum = 0;
+        lockFilters();
+      } else if(scrollAccum < -FILTERS_THRESHOLD && wrap.classList.contains("collapsed")){
+        wrap.classList.remove("collapsed");
+        scrollAccum = 0;
+        lockFilters();
+      }
     }
   }
   lastScrollY = currentY;
