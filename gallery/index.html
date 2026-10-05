@@ -29,6 +29,15 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 .top-actions span.btn{font-size:12.5px;color:var(--m);font-weight:bold;opacity:.6}
 @media(max-width:640px){.top-bar{padding:10px 16px}.top-logo{height:32px}.app-name{display:none}}
 main{max-width:1100px;margin:auto;padding:20px 15px 60px}
+.bottom-nav{display:none}
+@media(max-width:640px){
+  .bottom-nav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;background:#fff;border-top:1px solid var(--l);padding:8px 10px calc(8px + env(safe-area-inset-bottom));justify-content:space-around;align-items:center}
+  .bottom-nav a,.bottom-nav span{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:var(--m);font-size:10.5px;font-weight:bold;flex:1;cursor:pointer}
+  .bottom-nav .icon{font-size:20px}
+  .bottom-nav a:hover,.bottom-nav a.active{color:var(--a)}
+  main{padding-bottom:84px}
+  footer{padding-bottom:84px}
+}
 .filters-wrap{position:sticky;top:var(--topbar-h,64px);z-index:10;background:var(--b);padding:14px 0;max-height:160px;overflow:hidden;transition:max-height .25s ease,padding .25s ease}
 .filters-wrap.collapsed{max-height:0;padding:0 0}
 .product-tabs{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin-bottom:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -72,6 +81,7 @@ footer a{color:var(--m)}
 <div id="content"><div class="loading">불러오는 중...</div></div>
 </main>
 <footer><img src="../logo-colorm.png" alt="COLOR.M"><p>© 2026 COLOR.M · <a href="https://colorm.net" target="_blank" rel="noopener">colorm.net</a></p></footer>
+<nav class="bottom-nav" id="bottomNav"></nav>
 <script>
 const SUPABASE_URL = "https://cdrbxkwouxihsxzhhnbz.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_9BNpTY7OIbFN7iMmCg9TlQ_Glu4_s9G";
@@ -107,6 +117,19 @@ function renderTopActions(){
   el.innerHTML = `
     ${p.makerUrl ? `<a class="btn" href="${p.makerUrl}">Maker로 가기</a>` : `<span class="btn" style="cursor:default">Maker 준비 중</span>`}
     <a class="btn primary" href="upload.html?product=${activeProduct}">✨ 내 작품 자랑하기</a>
+  `;
+  renderBottomNav();
+}
+
+function renderBottomNav(){
+  const p = PRODUCTS[activeProduct];
+  const el = document.getElementById("bottomNav");
+  if(!el) return;
+  el.innerHTML = `
+    <a href="https://colorm.net" target="_blank" rel="noopener"><span class="icon">🏠</span><span>홈</span></a>
+    <a class="active" href="index.html"><span class="icon">🖼️</span><span>갤러리</span></a>
+    ${p.makerUrl ? `<a href="${p.makerUrl}"><span class="icon">🎨</span><span>Maker로 이동</span></a>` : `<span style="opacity:.5"><span class="icon">🎨</span><span>준비 중</span></span>`}
+    <a href="upload.html?product=${activeProduct}"><span class="icon">✨</span><span>자랑하기</span></a>
   `;
 }
 
