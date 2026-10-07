@@ -58,7 +58,27 @@ footer img{max-width:130px}
 .biz-info[open] summary:after{content:" ▴"}
 .biz-info p{margin:8px auto 0;line-height:1.8;max-width:420px}
 header{position:sticky;top:0;z-index:50}
-</style>
+/* ---------- 학교 · 교사 · 학부모 (2026-10-07 추가) ---------- */
+.edu-sec{background:linear-gradient(180deg,#fff,#fff5f9)}
+.edu-sec .edu-eyebrow{color:var(--a);font-weight:bold;letter-spacing:2px;font-size:12px;margin:0 0 6px}
+.edu-sec .edu-lead{color:var(--m);font-size:15px;line-height:1.6;margin:-12px 0 22px}
+.edu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.edu-card{background:#fff;border:1px solid var(--l);border-radius:16px;padding:18px}
+.edu-card .ico{font-size:28px}
+.edu-card>b{display:block;font-size:16px;margin:6px 0 8px;color:var(--a)}
+.edu-card ul{margin:0;padding-left:18px;display:grid;gap:7px;font-size:14px;line-height:1.55;color:#4a4540}
+.edu-card ul b{color:var(--t)}
+.edu-contact{margin-top:18px;text-align:center;font-size:15px;color:#4a4540;background:#fff;border:1px dashed var(--ab);border-radius:14px;padding:14px 16px}
+.edu-contact p{margin:0}
+.edu-contact .mail-sub{margin-top:4px;font-size:14px}
+.edu-contact .mail-row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 8px}
+.edu-contact .mail-addr{font-size:18px;font-weight:900;color:var(--a);text-decoration:none}
+.edu-contact .mail-addr:hover{text-decoration:underline}
+.edu-contact .copy-mail{border:1px solid var(--ab);background:#fff;color:var(--a);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:bold;cursor:pointer}
+.edu-contact .copy-mail:hover{background:#ffe6f1}
+.edu-contact .mail-tip{font-size:13px;color:var(--m)}
+.copied-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--t);color:#fff;padding:10px 20px;border-radius:30px;font-size:14px;font-weight:bold;z-index:99}
+@media(max-width:760px){.edu-grid{grid-template-columns:1fr}}</style>
 </head><body>
 <header>
 <div class="wrap">
@@ -77,6 +97,42 @@ header{position:sticky;top:0;z-index:50}
 <div class="bullet"><span class="mark">✓</span>아이디어는 있지만, 제품의 형태·구조·기능을 어떻게 정리할지 막막한 분</div>
 <div class="bullet"><span class="mark">✓</span>제품디자인 프로세스에 맞춰 아이디어를 체계적으로 발전시키고 싶은 분</div>
 <div class="bullet"><span class="mark">✓</span>전공자가 아니어도 제품디자인 아이디어를 구체화해보고 싶은 분</div>
+<div class="bullet"><span class="mark">✓</span>문제 해결·발명·메이커 수업을 하고 싶은 선생님, 그 과정을 기록하고 싶은 학생</div>
+<div class="bullet"><span class="mark">✓</span>생활 속 문제 해결 프로젝트·발명 교육이 필요한 학교·기관</div>
+</div>
+</section>
+
+<!-- 학교 · 교사 · 학부모 (2026-10-07 추가) -->
+<section class="wrap edu-sec">
+<p class="edu-eyebrow">FOR SCHOOL &amp; FAMILY</p>
+<h2>학교 · 교사 · 학부모님께</h2>
+<p class="edu-lead">결과만 만들어 주는 도구가 아니라, <b>"어떤 문제를, 누구를 위해, 어떻게 해결할지"를 스스로 생각하게 하는</b> 디자인 수업 도구예요.</p>
+<div class="edu-grid">
+<div class="edu-card"><span class="ico">👩‍🏫</span><b>선생님 · 수업</b><ul>
+<li>문제 → 사용자 → 기능 → 구조 → 형태 → CMF로 이어지는 <b>디자인 사고 과정</b>을 그대로 수업 흐름으로</li>
+<li>학생마다 <b>디자인 기획 요약</b>이 정리돼 발표·피드백·평가 자료로 활용</li>
+<li>작업파일·TXT·PDF로 <b>과정 중심 포트폴리오</b> 기록</li>
+<li>기술·가정, 미술·디자인, 발명·메이커 교육, 창의적 체험활동, 진로 수업에</li>
+</ul></div>
+<div class="edu-card"><span class="ico">🏫</span><b>학교 · 기관</b><ul>
+<li>생활 속 불편을 찾아 해결하는 <b>문제 해결 프로젝트</b></li>
+<li>발명·메이커 대회 준비, <b>아이디어 정리와 시각화</b></li>
+<li>교실·학교 공간, 안전·위생 개선 아이디어 제안</li>
+<li><b>회원가입 없이</b> 바로 사용, 첨부한 스케치·레퍼런스 이미지는 각자 브라우저에만 저장</li>
+</ul></div>
+<div class="edu-card"><span class="ico">👨‍👩‍👧</span><b>학부모 · 가정</b><ul>
+<li>아이와 함께 <b>생활 속 불편</b>을 찾아 제품 아이디어로</li>
+<li>발명 대회·과제를 아이 스스로 정리하도록 돕기</li>
+<li>디자인·공학 분야에 관심 있는 아이의 <b>진로 탐색</b> 첫걸음</li>
+<li>초등 고학년부터는 직접, 저학년은 부모님과 함께 하면 좋아요</li>
+</ul></div>
+</div>
+<div class="edu-contact">
+<p>🏷️ 학교·학원·기관의 <b>단체·수업 이용</b> 또는 <b>교육 문의</b>는 이메일로 보내 주세요.</p>
+<p class="mail-sub">수업용 이용 코드 발급과 COLOR.M이 직접 진행하는 제품디자인 강의·워크숍도 문의하실 수 있어요.</p>
+<p class="mail-row"><a class="mail-addr" href="mailto:mlyoo71@naver.com?subject=%5BCOLOR.M%20%EC%A0%9C%ED%92%88%EB%94%94%EC%9E%90%EC%9D%B8%20%EB%A9%94%EC%9D%B4%EC%BB%A4%5D%20%EB%8B%A8%EC%B2%B4%C2%B7%EC%88%98%EC%97%85%20%EC%9D%B4%EC%9A%A9%20%2F%20%EA%B5%90%EC%9C%A1%20%EB%AC%B8%EC%9D%98">✉️ mlyoo71@naver.com</a>
+<button type="button" class="copy-mail" id="copyMail">주소 복사</button></p>
+<p class="mail-tip">메일 제목에 <b>[단체·수업 이용]</b> 또는 <b>[교육 문의]</b>, 내용에 기관명 · 대상과 인원 · 희망 일정을 적어 주시면 빠르게 안내해 드려요.</p>
 </div>
 </section>
 
@@ -122,8 +178,9 @@ header{position:sticky;top:0;z-index:50}
 <a class="go" href="index.html" style="display:block;margin-top:18px;text-decoration:none">메이커로 이동하기 →</a>
 </div>
 <div class="price-card" id="payCard">
-<div class="badge">⭐ 오픈 특가</div>
+<div class="badge">⭐ 오픈 이벤트 · 12월 31일까지</div>
 <div class="amount">9,900<small>원</small></div>
+<p style="color:var(--a);font-size:13px;font-weight:bold;margin:0 0 4px">이벤트가 · 2027년 1월 1일부터 12,900원</p>
 <p style="color:var(--m);font-size:13px;margin:2px 0 0">1회 결제 · 추가 이용료 없음</p>
 <p style="color:var(--m);font-size:14px;margin:10px 0 0">커피 한 잔 가격으로, 횟수 제한 없이 계속 사용하세요.</p>
 <label class="agree"><input type="checkbox" id="agreeRefund" onchange="syncPayBtn()"><span>디지털 콘텐츠 특성상 <b>이용 시작 후에는 청약철회(환불)가 제한</b>된다는 안내를 확인했으며, 무료 체험 3회로 충분히 확인한 뒤 결제합니다. <span style="color:var(--a)">(필수)</span></span></label>
@@ -211,5 +268,11 @@ function startPayment(){
  PayApp.setParam('skip_cstpage','y');
  PayApp.payrequest();
 }
+</script>
+<script>
+/* 문의 이메일 주소 복사 (메일 앱이 없는 PC·웹메일 사용자용) — 2026-10-07 추가 */
+(function(){var b=document.getElementById('copyMail');if(!b)return;b.addEventListener('click',function(){var a='mlyoo71@naver.com';function done(){var n=document.createElement('div');n.className='copied-toast';n.textContent='이메일 주소를 복사했어요';document.body.appendChild(n);setTimeout(function(){n.remove()},1600)}
+if(navigator.clipboard){navigator.clipboard.writeText(a).then(done,function(){fallback();done()})}else{fallback();done()}
+function fallback(){var t=document.createElement('textarea');t.value=a;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}})})();
 </script>
 </body></html>

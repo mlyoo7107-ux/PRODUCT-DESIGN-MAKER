@@ -49,6 +49,14 @@ h2{font-size:22px;font-weight:900;margin:0 0 24px}
 .plans-head p{color:var(--m);font-size:14px;margin:0}
 .plans{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;align-items:stretch}
 @media(max-width:640px){.plans{grid-template-columns:1fr}}
+/* PRO 자리 — 수업·단체 이용권 + 올인원 패스 (2026-10-07) */
+.plan-alt-col{display:flex;flex-direction:column;gap:16px}
+.plan.alt{padding:22px 20px;flex:1}
+.plan.alt .plan-name{font-size:19px}
+.plan.alt .plan-features{flex:none;margin-bottom:16px}
+.plan.alt .alt-price{font-size:17px;font-weight:900;color:var(--a);margin:4px 0 14px}
+.plan.alt.soon{background:#fffafc;border-style:dashed}
+.plan .soon-badge{background:#fff;color:var(--a);border:1px solid var(--ab)}
 .plan{background:white;border:1px solid var(--l);border-radius:20px;padding:28px 22px;text-align:center;display:flex;flex-direction:column;position:relative}
 .plan.basic{border:2px solid var(--a);box-shadow:0 8px 24px rgba(255,45,134,.1)}
 .plan .plan-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--a);color:white;font-weight:bold;font-size:12px;padding:6px 16px;border-radius:20px;white-space:nowrap}
@@ -91,7 +99,27 @@ footer img{max-width:130px}
 .biz-info summary:after{content:" ▾"}
 .biz-info[open] summary:after{content:" ▴"}
 .biz-info p{margin:8px auto 0;line-height:1.8;max-width:420px}
-</style>
+/* ---------- 학교 · 교사 · 학부모 (2026-10-07 추가) ---------- */
+.edu-sec{background:linear-gradient(180deg,#fff,#fff5f9)}
+.edu-sec .edu-eyebrow{color:var(--a);font-weight:bold;letter-spacing:2px;font-size:12px;margin:0 0 6px}
+.edu-sec .edu-lead{color:var(--m);font-size:15px;line-height:1.6;margin:-12px 0 22px}
+.edu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.edu-card{background:#fff;border:1px solid var(--l);border-radius:16px;padding:18px}
+.edu-card .ico{font-size:28px}
+.edu-card>b{display:block;font-size:16px;margin:6px 0 8px;color:var(--a)}
+.edu-card ul{margin:0;padding-left:18px;display:grid;gap:7px;font-size:14px;line-height:1.55;color:#4a4540}
+.edu-card ul b{color:var(--t)}
+.edu-contact{margin-top:18px;text-align:center;font-size:15px;color:#4a4540;background:#fff;border:1px dashed var(--ab);border-radius:14px;padding:14px 16px}
+.edu-contact p{margin:0}
+.edu-contact .mail-sub{margin-top:4px;font-size:14px}
+.edu-contact .mail-row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 8px}
+.edu-contact .mail-addr{font-size:18px;font-weight:900;color:var(--a);text-decoration:none}
+.edu-contact .mail-addr:hover{text-decoration:underline}
+.edu-contact .copy-mail{border:1px solid var(--ab);background:#fff;color:var(--a);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:bold;cursor:pointer}
+.edu-contact .copy-mail:hover{background:#ffe6f1}
+.edu-contact .mail-tip{font-size:13px;color:var(--m)}
+.copied-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--t);color:#fff;padding:10px 20px;border-radius:30px;font-size:14px;font-weight:bold;z-index:99}
+@media(max-width:760px){.edu-grid{grid-template-columns:1fr}}</style>
 </head><body>
 <header>
 <div class="wrap">
@@ -110,6 +138,42 @@ footer img{max-width:130px}
 <div class="bullet"><span class="mark">✓</span>아이디어는 있지만, 제품의 형태·구조·기능을 어떻게 정리할지 막막한 분</div>
 <div class="bullet"><span class="mark">✓</span>제품디자인 프로세스에 맞춰 아이디어를 체계적으로 발전시키고 싶은 분</div>
 <div class="bullet"><span class="mark">✓</span>전공자가 아니어도 제품디자인 아이디어를 구체화해보고 싶은 분</div>
+<div class="bullet"><span class="mark">✓</span>문제 해결·발명·메이커 수업을 하고 싶은 선생님, 그 과정을 기록하고 싶은 학생</div>
+<div class="bullet"><span class="mark">✓</span>생활 속 문제 해결 프로젝트·발명 교육이 필요한 학교·기관</div>
+</div>
+</section>
+
+<!-- 학교 · 교사 · 학부모 (2026-10-07 추가) -->
+<section class="wrap edu-sec">
+<p class="edu-eyebrow">FOR SCHOOL &amp; FAMILY</p>
+<h2>학교 · 교사 · 학부모님께</h2>
+<p class="edu-lead">결과만 만들어 주는 도구가 아니라, <b>"어떤 문제를, 누구를 위해, 어떻게 해결할지"를 스스로 생각하게 하는</b> 디자인 수업 도구예요.</p>
+<div class="edu-grid">
+<div class="edu-card"><span class="ico">👩‍🏫</span><b>선생님 · 수업</b><ul>
+<li>문제 → 사용자 → 기능 → 구조 → 형태 → CMF로 이어지는 <b>디자인 사고 과정</b>을 그대로 수업 흐름으로</li>
+<li>학생마다 <b>디자인 기획 요약</b>이 정리돼 발표·피드백·평가 자료로 활용</li>
+<li>작업파일·TXT·PDF로 <b>과정 중심 포트폴리오</b> 기록</li>
+<li>기술·가정, 미술·디자인, 발명·메이커 교육, 창의적 체험활동, 진로 수업에</li>
+</ul></div>
+<div class="edu-card"><span class="ico">🏫</span><b>학교 · 기관</b><ul>
+<li>생활 속 불편을 찾아 해결하는 <b>문제 해결 프로젝트</b></li>
+<li>발명·메이커 대회 준비, <b>아이디어 정리와 시각화</b></li>
+<li>교실·학교 공간, 안전·위생 개선 아이디어 제안</li>
+<li><b>회원가입 없이</b> 바로 사용, 첨부한 스케치·레퍼런스 이미지는 각자 브라우저에만 저장</li>
+</ul></div>
+<div class="edu-card"><span class="ico">👨‍👩‍👧</span><b>학부모 · 가정</b><ul>
+<li>아이와 함께 <b>생활 속 불편</b>을 찾아 제품 아이디어로</li>
+<li>발명 대회·과제를 아이 스스로 정리하도록 돕기</li>
+<li>디자인·공학 분야에 관심 있는 아이의 <b>진로 탐색</b> 첫걸음</li>
+<li>초등 고학년부터는 직접, 저학년은 부모님과 함께 하면 좋아요</li>
+</ul></div>
+</div>
+<div class="edu-contact">
+<p>🏷️ 학교·학원·기관의 <b>단체·수업 이용</b> 또는 <b>교육 문의</b>는 이메일로 보내 주세요.</p>
+<p class="mail-sub">수업용 이용 코드 발급과 COLOR.M이 직접 진행하는 제품디자인 강의·워크숍도 문의하실 수 있어요.</p>
+<p class="mail-row"><a class="mail-addr" href="mailto:mlyoo71@naver.com?subject=%5BCOLOR.M%20%EC%A0%9C%ED%92%88%EB%94%94%EC%9E%90%EC%9D%B8%20%EB%A9%94%EC%9D%B4%EC%BB%A4%5D%20%EB%8B%A8%EC%B2%B4%C2%B7%EC%88%98%EC%97%85%20%EC%9D%B4%EC%9A%A9%20%2F%20%EA%B5%90%EC%9C%A1%20%EB%AC%B8%EC%9D%98">✉️ mlyoo71@naver.com</a>
+<button type="button" class="copy-mail" id="copyMail">주소 복사</button></p>
+<p class="mail-tip">메일 제목에 <b>[단체·수업 이용]</b> 또는 <b>[교육 문의]</b>, 내용에 기관명 · 대상과 인원 · 희망 일정을 적어 주시면 빠르게 안내해 드려요.</p>
 </div>
 </section>
 
@@ -144,12 +208,12 @@ footer img{max-width:130px}
 <div class="bullet"><span class="mark">3</span>완성된 프롬프트를 복사해 ChatGPT·DALL·E·Midjourney 등 AI 이미지 생성 도구에 활용해요.</div>
 <div class="bullet"><span class="mark">4</span>스케치나 레퍼런스 이미지가 있다면 함께 첨부해 원하는 디자인 방향을 더 정확하게 전달할 수 있어요.</div>
 </div>
-<p style="color:var(--m);font-size:14px;margin-top:16px">※ COLOR.M Product Design Maker는 제품디자인 아이디어를 정리하고 AI 이미지 생성을 위한 프롬프트를 만드는 도구입니다. PRO는 서비스 안에서 바로 AI 이미지를 생성합니다. 생성되는 프롬프트·이미지는 AI가 만든 참고 자료이며, 과제·수업에서의 특정 결과나 평가를 보장하지 않습니다.</p>
+<p style="color:var(--m);font-size:14px;margin-top:16px">※ COLOR.M Product Design Maker는 제품디자인 아이디어를 정리하고 AI 이미지 생성을 위한 프롬프트를 만드는 도구입니다. 생성되는 프롬프트·이미지는 AI가 만든 참고 자료이며, 과제·수업에서의 특정 결과나 평가를 보장하지 않습니다.</p>
 </section>
 
 <section class="wrap wrap-wide">
 <div class="plans-head">
-<div class="badge">⭐ 오픈 특가</div>
+<div class="badge">⭐ 오픈 이벤트 · 12월 31일까지</div>
 <h2>지금, 더 특별한 가격으로 시작하세요!</h2>
 <p>제품디자인 아이디어부터 시각화까지, COLOR.M이 함께합니다.</p>
 </div>
@@ -161,6 +225,7 @@ footer img{max-width:130px}
 <div class="plan-sub">프롬프트 메이커</div>
 <p class="plan-desc">좋은 아이디어를 만드는<br>가장 쉬운 방법</p>
 <div class="amount">9,900<small>원</small></div>
+<p style="color:var(--a);font-size:13px;font-weight:bold;margin:0 0 4px">이벤트가 · 2027년 1월 1일부터 12,900원</p>
 <p class="plan-note">한 번 결제로, 평생 이용</p>
 <ul class="plan-features">
 <li class="on"><span class="ico">✓</span>제품디자인 프롬프트 무제한 생성</li>
@@ -181,36 +246,34 @@ footer img{max-width:130px}
 </div>
 </div>
 
-<div class="plan pro">
-<div class="plan-name">PRO</div>
-<div class="plan-sub">AI 디자인 스튜디오</div>
-<p class="plan-desc">아이디어를 넘어,<br>바로 눈에 보이는 디자인까지</p>
-<div class="amount">19,700<small>원</small></div>
-<p class="plan-note">한 번 결제로, 평생 이용</p>
-<div class="plan-examples">
-<img src="style-photoreal.webp" alt="PRO 생성 이미지 예시 1">
-<img src="style-industrial.webp" alt="PRO 생성 이미지 예시 2">
-<img src="style-sketch.webp" alt="PRO 생성 이미지 예시 3">
-<img src="style-coloring.webp" alt="PRO 생성 이미지 예시 4">
-</div>
+<!-- PRO 카드 자리 (2026-10-07): PRO는 AI 이미지 품질 문제로 보류 → 수업·단체 이용권 + 올인원 패스(출시 예정)로 대체.
+     아래 스크립트(checkAlreadyPaid)가 PRO 요소를 찾으므로 숨긴 자리만 남겨 둠 -->
+<div class="plan-alt-col">
+<div class="plan alt">
+<div class="plan-name">🏫 수업·단체 이용권</div>
+<div class="plan-sub">학교 · 학원 · 기관</div>
+<p class="plan-desc">학급·학기 단위로<br>학생 모두가 함께 사용</p>
+<div class="alt-price">학급 · 기간별 맞춤 안내</div>
 <ul class="plan-features">
-<li class="on"><span class="ico">✓</span>BASIC의 모든 기능 포함</li>
-<li class="on"><span class="ico">✓</span><b>AI 제품디자인 이미지 생성 50장 포함</b></li>
-<li class="on"><span class="ico">✓</span>스케치 / 렌더링 / 사용 장면 등 다양한 스타일</li>
-<li class="on"><span class="ico">✓</span>생성 이미지 발전 · CMF 변경 · 디테일 수정</li>
-<li class="on"><span class="ico">✓</span>수업 / 과제 / 포트폴리오에 바로 활용</li>
-<li class="on"><span class="ico">✓</span>이미지 소진 후 추가 크레딧 구매 가능</li>
+<li class="on"><span class="ico">✓</span>BASIC의 모든 기능을 학생 전원이 사용</li>
+<li class="on"><span class="ico">✓</span>수업 기간에 맞춘 <b>수업용 이용 코드</b> 발급</li>
+<li class="on"><span class="ico">✓</span>COLOR.M이 직접 진행하는 강의·워크숍 함께 문의 가능</li>
 </ul>
-<div id="paidAreaPro" style="display:none;background:#ffe6f1;border:1px solid var(--ab);border-radius:12px;padding:14px;text-align:left">
-<div style="font-weight:bold;color:var(--a);margin-bottom:6px">✅ 이미 구매하셨어요</div>
-<p style="font-size:13px;margin:0 0 12px">이 기기에서는 이미 PRO를 구매하셨어요. AI 이미지 생성 기능은 아직 준비 중이며, 완성되는 대로 바로 이용하실 수 있게 안내드릴게요.</p>
-<button class="go" disabled style="margin-top:0">준비중입니다</button>
+<a class="go go-outline" href="mailto:mlyoo71@naver.com?subject=%5BCOLOR.M%20%EC%A0%9C%ED%92%88%EB%94%94%EC%9E%90%EC%9D%B8%20%EB%A9%94%EC%9D%B4%EC%BB%A4%5D%20%EC%88%98%EC%97%85%C2%B7%EB%8B%A8%EC%B2%B4%20%EC%9D%B4%EC%9A%A9%EA%B6%8C%20%EB%AC%B8%EC%9D%98" style="margin-top:0;text-decoration:none">✉️ 이메일로 문의하기 →</a>
+<p class="notice" style="margin-top:8px">mlyoo71@naver.com · 기관명 · 인원 · 희망 기간을 적어 주세요</p>
 </div>
-<div id="payAreaPro">
-<label class="agree"><input type="checkbox" id="agreeRefundPro" onchange="syncPayBtn('Pro')"><span>디지털 콘텐츠 특성상 <b>이용 시작 후 환불이 제한</b>된다는 안내를 확인했습니다. <span style="color:var(--a)">(필수)</span></span></label>
-<button class="go go-outline" id="payBtnPro" onclick="startPayment('PRO')" disabled>19,700원 결제하기 →</button>
-<p class="notice" style="margin-top:8px">🔧 AI 이미지 생성 기능 연결 준비 중이에요</p>
+<div class="plan alt soon">
+<div class="plan-badge soon-badge">출시 예정</div>
+<div class="plan-name">🎁 COLOR.M 올인원 패스</div>
+<div class="plan-sub">제품디자인 + 캐릭터디자인 메이커</div>
+<p class="plan-desc">COLOR.M 메이커를<br>한 번에, 더 합리적으로</p>
+<ul class="plan-features">
+<li class="on"><span class="ico">✓</span>제품디자인 메이커 BASIC</li>
+<li class="on"><span class="ico">✓</span>캐릭터디자인 메이커 BASIC</li>
+</ul>
+<a class="go go-outline" href="https://mlyoo7107-ux.github.io/CHARACTER-DESIGN-MAKER/landing.html" target="_blank" rel="noopener" style="margin-top:0;text-decoration:none">캐릭터디자인 메이커 둘러보기 →</a>
 </div>
+<div id="paidAreaPro" hidden></div><div id="payAreaPro" hidden><input type="checkbox" id="agreeRefundPro" hidden><button id="payBtnPro" hidden></button></div>
 </div>
 </div>
 
@@ -221,20 +284,20 @@ footer img{max-width:130px}
 
 <div class="plans-perks">
 <div class="perk"><b>∞ 한 번 결제로</b>평생 이용</div>
-<div class="perk"><b>🚫 추가 이용료</b>없음 (BASIC / PRO)</div>
+<div class="perk"><b>🚫 추가 이용료</b>없음</div>
 <div class="perk"><b>🛡 안전한 결제</b>카드, 간편결제 모두 지원</div>
 </div>
 
 <p class="notice">📌 결제 후 전용 이용 링크가 발급되며 바로 사용하실 수 있습니다. 구매 전 무료 체험 3회로 미리 확인해 주세요.</p>
-<p class="notice">🔒 BASIC은 페이앱을 통한 안전한 결제로 바로 이용하실 수 있어요. PRO의 AI 이미지 생성 기능은 연결 준비 중이라, 준비되는 대로 결제가 열려요.</p>
+<p class="notice">🔒 BASIC은 페이앱을 통한 안전한 결제로 바로 이용하실 수 있어요. 수업·단체 이용권은 이메일로 문의해 주세요.</p>
 </section>
 
 <section class="wrap">
 <h2>자주 묻는 질문</h2>
 <div class="faq">
-<div class="faq-item"><b>BASIC과 PRO는 뭐가 다른가요?</b><p>BASIC은 제품디자인 프롬프트(텍스트)까지 만들어드려요. 완성된 프롬프트를 미드저니·챗GPT·DALL·E 등에 붙여넣으면 이미지가 만들어져요. PRO는 여기서 더 나아가, 도구 안에서 바로 AI 이미지를 생성하고 시안 비교·발전·CMF 변경 등 디자인을 완성해가는 과정까지 제공해요.</p></div>
-<div class="faq-item"><b>PRO의 이미지 50장은 어떻게 차감되나요?</b><p>이미지를 생성하거나 발전시킬 때마다 1장씩 차감돼요. 남은 크레딧은 화면에서 바로 확인할 수 있고, 다 사용해도 BASIC의 프롬프트 메이커 기능은 계속 이용하실 수 있어요. 추가 크레딧은 별도로 구매하실 수 있어요.</p></div>
-<div class="faq-item"><b>결제 후 계속 쓸 수 있나요?</b><p>네, 1회 결제로 기간 제한 없이 계속 사용하실 수 있습니다. (PRO의 이미지 생성은 포함된 크레딧 안에서 이용해요.)</p></div>
+<div class="faq-item"><b>이미지도 직접 만들어 주나요?</b><p>BASIC은 제품디자인 프롬프트(텍스트)까지 만들어드려요. 완성된 프롬프트를 미드저니·챗GPT·DALL·E 등에 붙여넣으면 이미지가 만들어져요.</p></div>
+<div class="faq-item"><b>학교·학원에서 학생들과 함께 쓸 수 있나요?</b><p>네. 수업·단체 이용권으로 학급·수업 기간에 맞춘 수업용 이용 코드를 안내해 드려요. 기관명·인원·희망 기간을 적어 mlyoo71@naver.com으로 문의해 주세요.</p></div>
+<div class="faq-item"><b>결제 후 계속 쓸 수 있나요?</b><p>네, 1회 결제로 기간 제한 없이 계속 사용하실 수 있습니다.</p></div>
 <div class="faq-item"><b>PC와 폰에서 같이 쓸 수 있나요?</b><p>네! 결제하시면 이메일로 접속 링크를 보내드려요. 그 링크를 PC·폰·태블릿 등 원하시는 기기에서 열어주시면 바로 사용하실 수 있어요. 다만 이 링크는 본인만 사용해주시고, 다른 분과 공유하지는 말아주세요 :)</p></div>
 <div class="faq-item"><b>환불이 가능한가요?</b><p>구매 전 무료 체험 3회로 미리 결과물을 확인하실 수 있어요. 결제 후 접속 링크가 발급되어 콘텐츠 제공이 시작된 이후에는 전자상거래법에 따라 청약철회(환불)가 제한됩니다. 다만 콘텐츠에 결함이 있는 경우에는 환불해드립니다.</p></div>
 </div>
@@ -319,5 +382,11 @@ function startPayment(plan){
  PayApp.setParam('skip_cstpage','y');
  PayApp.payrequest();
 }
+</script>
+<script>
+/* 문의 이메일 주소 복사 (메일 앱이 없는 PC·웹메일 사용자용) — 2026-10-07 추가 */
+(function(){var b=document.getElementById('copyMail');if(!b)return;b.addEventListener('click',function(){var a='mlyoo71@naver.com';function done(){var n=document.createElement('div');n.className='copied-toast';n.textContent='이메일 주소를 복사했어요';document.body.appendChild(n);setTimeout(function(){n.remove()},1600)}
+if(navigator.clipboard){navigator.clipboard.writeText(a).then(done,function(){fallback();done()})}else{fallback();done()}
+function fallback(){var t=document.createElement('textarea');t.value=a;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}})})();
 </script>
 </body></html>
