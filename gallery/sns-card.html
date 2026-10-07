@@ -29,20 +29,20 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 .preview-wrap.dragging{cursor:grabbing}
 .drag-hint{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:#fff;font-size:11px;padding:5px 10px;border-radius:12px;pointer-events:none;z-index:5;white-space:nowrap}
 .p-scrim{position:absolute;left:0;right:0;bottom:0;height:62%;background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.38) 45%,rgba(0,0,0,0) 100%)}
-.p-brand{position:absolute;top:56px;left:72px;display:flex;align-items:center;gap:14px}
-.p-brand .bar{width:5px;height:46px;background:#fff;border-radius:2px;flex:none}
-.p-brand .names b{display:block;font-size:25px;font-weight:900;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.35)}
-.p-brand .names small{display:block;font-size:14px;letter-spacing:3px;color:#fff;opacity:.9;font-weight:bold}
-.p-brand .names em{display:block;font-style:normal;font-size:11px;letter-spacing:1.5px;color:#fff;opacity:.72;font-weight:600;margin-top:4px;text-shadow:0 2px 8px rgba(0,0,0,.35)}
-.p-text{position:absolute;left:72px;right:72px;bottom:48px}
+.p-brand{position:absolute;top:calc(56px*var(--k,1));left:calc(72px*var(--k,1));display:flex;align-items:center;gap:calc(14px*var(--k,1))}
+.p-brand .bar{width:calc(5px*var(--k,1));height:calc(46px*var(--k,1));background:#fff;border-radius:calc(2px*var(--k,1));flex:none}
+.p-brand .names b{display:block;font-size:calc(25px*var(--k,1));font-weight:900;color:#fff;text-shadow:0 calc(2px*var(--k,1)) calc(10px*var(--k,1)) rgba(0,0,0,.35)}
+.p-brand .names small{display:block;font-size:calc(14px*var(--k,1));letter-spacing:calc(3px*var(--k,1));color:#fff;opacity:.9;font-weight:bold}
+.p-brand .names em{display:block;font-style:normal;font-size:calc(11px*var(--k,1));letter-spacing:calc(1.5px*var(--k,1));color:#fff;opacity:.72;font-weight:600;margin-top:calc(4px*var(--k,1));text-shadow:0 calc(2px*var(--k,1)) calc(8px*var(--k,1)) rgba(0,0,0,.35)}
+.p-text{position:absolute;left:calc(72px*var(--k,1));right:calc(72px*var(--k,1));bottom:calc(48px*var(--k,1))}
 .p-title{font-size:58px;font-weight:900;color:#fff;line-height:1.2;white-space:pre-wrap;text-shadow:0 4px 16px rgba(0,0,0,.4)}
-.p-by{margin-top:14px;font-size:24px;font-weight:600;color:#fff;opacity:.92;text-shadow:0 2px 8px rgba(0,0,0,.35)}
-.p-foot{flex:none;padding:30px 72px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #eee;background:#fff}
-.p-foot .l{font-size:17px;color:var(--m)}
+.p-by{margin-top:calc(14px*var(--k,1));font-size:calc(24px*var(--k,1));font-weight:600;color:#fff;opacity:.92;text-shadow:0 calc(2px*var(--k,1)) calc(8px*var(--k,1)) rgba(0,0,0,.35)}
+.p-foot{flex:none;padding:calc(30px*var(--k,1)) calc(72px*var(--k,1));display:flex;align-items:center;justify-content:space-between;border-top:calc(1px*var(--k,1)) solid #eee;background:#fff}
+.p-foot .l{font-size:calc(17px*var(--k,1));color:var(--m)}
 .p-foot .l b{color:var(--a)}
 .p-foot .r{display:flex;align-items:center;gap:14px}
-.p-foot .r b{font-size:17px;color:var(--a)}
-.p-foot .circle{width:34px;height:34px;border-radius:50%;background:var(--a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900}
+.p-foot .r b{font-size:calc(17px*var(--k,1));color:var(--a)}
+.p-foot .circle{width:calc(34px*var(--k,1));height:calc(34px*var(--k,1));border-radius:50%;background:var(--a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:calc(16px*var(--k,1));font-weight:900}
 .state{text-align:center;padding:100px 20px;color:var(--m)}
 </style></head><body>
 <div class="topbar"><a href="index.html" id="backLink">← 갤러리로</a><h1>SNS 이미지 만들기</h1><span style="width:70px"></span></div>
@@ -67,7 +67,13 @@ const BY_LABELS = {
   PICTURE_BOOK_MAKER: "Story by"
 };
 let ratioManuallySet = false;
-const RATIOS = { "4:5": {w:1080,h:1350,label:"4:5 (세로형, 추천)"}, "3:4": {w:1080,h:1440,label:"3:4 (세로형, 긴)"}, "1:1": {w:1080,h:1080,label:"1:1 (정사각형)"} };
+const RATIOS = {
+  "4:5": {w:1080,h:1350,label:"4:5 (세로형, 추천)",use:"인스타그램 피드"},
+  "3:4": {w:1080,h:1440,label:"3:4 (세로형, 긴)",use:"인스타그램 · 스레드"},
+  "1:1": {w:1080,h:1080,label:"1:1 (정사각형)",use:"인스타그램 · 카카오"},
+  "16:9": {w:1920,h:1080,label:"16:9 (가로형)",use:"유튜브 · 블로그 · 발표 자료"},
+  "1.91:1": {w:1910,h:1000,label:"1.91:1 (가로형, 링크 공유)",use:"페이스북 · 블로그 대표 이미지"}
+};
 
 function fieldsHTML(images){
   const opts = images.map((p,i)=>`<option value="${i}">이미지 ${i+1}</option>`).join("");
@@ -137,13 +143,26 @@ let imgView = {zoom:1, panX:0, panY:0, naturalW:0, naturalH:0, baseW:0, baseH:0}
 const REF_H = 1350; // 4:5 기준 — 글자 크기가 "정상"으로 보이는 기준 비율
 const BASE_TITLE_SIZE = 58, BASE_BY_SIZE = 24;
 
+/* 미리보기 축소 비율 — 세로형은 폭 360px, 가로형은 화면에 맞춰 최대 560px */
+let previewScale = 1/3;
 function applyRatio(){
   const key = document.getElementById("f_ratio").value;
   const r = RATIOS[key];
-  document.getElementById("posterRoot").style.height = r.h + "px";
-  document.getElementById("preview-wrap-el").style.height = (r.h/3) + "px";
-  document.getElementById("dimHint").textContent = `${r.w} × ${r.h}px (인스타그램 ${key})`;
-  const scale = r.h / REF_H;
+  const room = document.querySelector(".preview-outer").clientWidth || 360;
+  const viewW = Math.min(r.w > r.h ? 560 : 360, room);
+  previewScale = viewW / r.w;
+  const root = document.getElementById("posterRoot");
+  root.style.width = r.w + "px";
+  root.style.height = r.h + "px";
+  root.style.transform = `scale(${previewScale})`;
+  const wrap = document.getElementById("preview-wrap-el");
+  wrap.style.width = viewW + "px";
+  wrap.style.height = (r.h * previewScale) + "px";
+  document.getElementById("dimHint").textContent = `${r.w} × ${r.h}px (${r.use})`;
+  /* 가로형은 화면이 넓어서 로고·하단 글자·제목을 키움 */
+  const wide = r.w > r.h;
+  root.style.setProperty("--k", wide ? 1.4 : 1);
+  const scale = wide ? 1.05 : r.h / REF_H;
   document.getElementById("o_title").style.fontSize = (BASE_TITLE_SIZE * scale) + "px";
   document.getElementById("o_by").style.fontSize = (BASE_BY_SIZE * scale) + "px";
 }
@@ -151,11 +170,14 @@ function applyRatio(){
 function containerH(){
   return RATIOS[document.getElementById("f_ratio").value].h;
 }
+function containerW(){
+  return RATIOS[document.getElementById("f_ratio").value].w;
+}
 
 function fitImageToContainer(){
   if(!imgView.naturalW) return;
   const h = containerH();
-  const coverScale = Math.max(1080/imgView.naturalW, h/imgView.naturalH) * 1.15;
+  const coverScale = Math.max(containerW()/imgView.naturalW, h/imgView.naturalH) * 1.15;
   imgView.baseW = imgView.naturalW * coverScale;
   imgView.baseH = imgView.naturalH * coverScale;
   imgView.zoom = 1; imgView.panX = 0; imgView.panY = 0;
@@ -166,7 +188,7 @@ function fitImageToContainer(){
 function clampPan(){
   const h = containerH();
   const effW = imgView.baseW * imgView.zoom, effH = imgView.baseH * imgView.zoom;
-  const maxPanX = Math.max(0, (effW - 1080) / 2), maxPanY = Math.max(0, (effH - h) / 2);
+  const maxPanX = Math.max(0, (effW - containerW()) / 2), maxPanY = Math.max(0, (effH - h) / 2);
   imgView.panX = Math.max(-maxPanX, Math.min(maxPanX, imgView.panX));
   imgView.panY = Math.max(-maxPanY, Math.min(maxPanY, imgView.panY));
 }
@@ -186,7 +208,8 @@ function loadImageForEditing(src){
     imgView.naturalW = probe.naturalWidth;
     imgView.naturalH = probe.naturalHeight;
     if(!ratioManuallySet){
-      const key = (probe.naturalWidth / probe.naturalHeight) >= 0.95 ? "1:1" : "4:5";
+      const ar = probe.naturalWidth / probe.naturalHeight;
+      const key = ar >= 1.3 ? "16:9" : ar >= 0.95 ? "1:1" : "4:5";
       document.getElementById("f_ratio").value = key;
       applyRatio();
     }
@@ -197,7 +220,7 @@ function loadImageForEditing(src){
 
 function wireDrag(){
   const wrap = document.getElementById("preview-wrap-el");
-  const scaleFactor = 360/1080;
+
   let dragging = false, start = {x:0,y:0}, startPan = {x:0,y:0};
   wrap.addEventListener("mousedown", e => {
     dragging = true; wrap.classList.add("dragging");
@@ -207,8 +230,8 @@ function wireDrag(){
   });
   window.addEventListener("mousemove", e => {
     if(!dragging) return;
-    const dx = (e.clientX - start.x) / scaleFactor;
-    const dy = (e.clientY - start.y) / scaleFactor;
+    const dx = (e.clientX - start.x) / previewScale;
+    const dy = (e.clientY - start.y) / previewScale;
     imgView.panX = startPan.x + dx;
     imgView.panY = startPan.y + dy;
     applyImgTransform();
@@ -238,6 +261,7 @@ function wire(){
   applyRatio();
   loadImageForEditing(firstSrc);
   wireDrag();
+  window.addEventListener("resize", applyRatio); // 화면 폭이 바뀌면 미리보기 크기 다시 맞춤
   document.getElementById("downloadBtn").onclick = download;
   document.getElementById("copyCaptionBtn").onclick = () => {
     navigator.clipboard.writeText(buildCaption())
@@ -256,6 +280,7 @@ async function download(){
   clone.style.position = "fixed";
   clone.style.top = "0";
   clone.style.left = "-99999px";
+  clone.style.width = r.w + "px";
   clone.style.height = r.h + "px";
   document.body.appendChild(clone);
   try{
