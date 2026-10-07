@@ -145,6 +145,12 @@ function renderProductTabs(){
 renderProductTabs();
 renderCategories();
 
+/* 메이커에서 넘겨준 한 줄 컨셉 · 카테고리 · 태그 자동 입력 (없으면 빈칸 그대로) */
+const prefill = new URLSearchParams(location.search);
+if(prefill.get("concept")) document.getElementById("concept").value = prefill.get("concept").slice(0, 150);
+if(prefill.get("tags")) document.getElementById("tags").value = prefill.get("tags").slice(0, 100);
+if(PRODUCTS[activeProduct].categories.includes(prefill.get("category"))) catSelect.value = prefill.get("category");
+
 let makerType = "BASIC";
 document.querySelectorAll("#makerTabs .tab").forEach(tab => {
   tab.onclick = () => {
