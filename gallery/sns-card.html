@@ -45,7 +45,7 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 .p-foot .circle{width:34px;height:34px;border-radius:50%;background:var(--a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900}
 .state{text-align:center;padding:100px 20px;color:var(--m)}
 </style></head><body>
-<div class="topbar"><a href="index.html">← 갤러리로</a><h1>SNS 이미지 만들기</h1><span style="width:70px"></span></div>
+<div class="topbar"><a href="index.html" id="backLink">← 갤러리로</a><h1>SNS 이미지 만들기</h1><span style="width:70px"></span></div>
 <div id="app"><div class="state">불러오는 중...</div></div>
 <script>
 const SUPABASE_URL = "https://cdrbxkwouxihsxzhhnbz.supabase.co";
@@ -284,6 +284,8 @@ async function download(){
     .maybeSingle();
   if(error || !data){ app.innerHTML = `<div class="state">작품을 찾을 수 없어요.</div>`; return; }
   ITEM = data;
+  /* 작품이 속한 메이커 탭(캐릭터·제품 등)의 갤러리로 돌아가기 */
+  if(/^[A-Z_]+$/.test(data.product || "")) document.getElementById("backLink").href = "index.html?product=" + data.product;
   render();
 })();
 </script>

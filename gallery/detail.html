@@ -34,7 +34,7 @@ footer p{margin:12px 0 0;font-size:12px;color:var(--m)}
 footer a{color:var(--m)}
 </style></head><body>
 <div class="wrap">
-<a class="back" href="index.html">← 갤러리로</a>
+<a class="back" href="index.html" id="backLink">← 갤러리로</a>
 <div id="content"><div class="state">불러오는 중...</div></div>
 </div>
 <footer><img src="../logo-colorm.png" alt="COLOR.M"><p>© 2026 COLOR.M · <a href="https://colorm.net" target="_blank" rel="noopener">colorm.net</a></p></footer>
@@ -80,7 +80,7 @@ function shareKakao(item, imgUrl){
   }
   const { data, error } = await supa
     .from("submissions")
-    .select("id,title,nickname,maker_type,concept,category,tags,image_paths,created_at")
+    .select("id,title,nickname,maker_type,concept,category,product,tags,image_paths,created_at")
     .eq("id", id)
     .eq("status", "approved")
     .maybeSingle();
@@ -90,6 +90,8 @@ function shareKakao(item, imgUrl){
     return;
   }
 
+  /* 작품이 속한 메이커 탭(캐릭터·제품 등)의 갤러리로 돌아가기 */
+  if(/^[A-Z_]+$/.test(data.product || "")) document.getElementById("backLink").href = "index.html?product=" + data.product;
   const imgUrl = imageUrl(data.image_paths[0]);
   content.innerHTML = `
     <div class="card">

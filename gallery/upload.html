@@ -92,14 +92,14 @@ footer a{color:var(--m)}
 <p class="msg" id="errMsg"></p>
 <button type="submit" class="go" id="submitBtn">제출하기</button>
 </form>
-<a class="back" href="index.html">← 갤러리로 돌아가기</a>
+<a class="back gallery-back" href="index.html">← 갤러리로 돌아가기</a>
 </div>
 
 <div class="card success" id="successCard" style="display:none">
 <div class="icon">🎉</div>
 <h2 style="margin:12px 0 8px">제출됐어요!</h2>
 <p style="color:var(--m);font-size:14px">관리자 검토 후 갤러리에 공개돼요. 조금만 기다려주세요.</p>
-<a class="go" href="index.html" style="display:block;text-decoration:none;margin-top:20px">갤러리로 가기 →</a>
+<a class="go gallery-back" href="index.html" style="display:block;text-decoration:none;margin-top:20px">갤러리로 가기 →</a>
 </div>
 </div>
 <footer><img src="../logo-colorm.png" alt="COLOR.M"><p>© 2026 COLOR.M · <a href="https://colorm.net" target="_blank" rel="noopener">colorm.net</a></p></footer>
@@ -129,7 +129,10 @@ function renderCategories(){
     catSelect.appendChild(opt);
   });
 }
+/* "갤러리로" 링크는 지금 고른 메이커 탭(캐릭터·제품 등)의 갤러리로 */
+function syncBackLinks(){ document.querySelectorAll(".gallery-back").forEach(a => a.href = "index.html?product=" + activeProduct); }
 function renderProductTabs(){
+  syncBackLinks();
   const el = document.getElementById("productTabs");
   el.innerHTML = PRODUCT_ORDER.map(key => `<div class="tab${key===activeProduct?" on":""}" data-v="${key}">${PRODUCTS[key].label}</div>`).join("");
   el.querySelectorAll(".tab").forEach(tab => {
