@@ -58,6 +58,8 @@ main{max-width:1100px;margin:auto;padding:20px 15px 60px}
 .filter-chip{padding:8px 14px;border:1px solid var(--l);border-radius:20px;font-size:13px;cursor:pointer;background:white;transition:background .15s,border-color .15s,color .15s;flex:none;white-space:nowrap}
 .filter-chip:hover{border-color:var(--a);color:var(--a)}
 .filter-chip.on{background:var(--pc,var(--a));border-color:var(--pc,var(--a));color:white;font-weight:bold}
+.cdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px;border:1px solid rgba(0,0,0,.12)}
+.filter-chip.on .cdot{border-color:#fff}
 .empty .soon{display:block;font-size:13px;margin-top:8px;color:var(--ab)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
 .card-wrap{position:relative;min-width:0;max-width:100%}
@@ -136,10 +138,14 @@ const PRODUCTS = {
   },
   PICTURE_BOOK_MAKER: {
     label: "📖 마음색 그림책", makerUrl: null, color: "#f97316",
-    categories: ["기타"]
+    categories: ["빨강·코랄","주황·노랑","초록·라임","민트·청록","파랑·네이비","보라·라벤더","분홍·마젠타","갈색·회색","기타"]
   }
 };
 const PRODUCT_ORDER = ["PRODUCT_DESIGN","CHARACTER_MAKER","PICTURE_BOOK_MAKER"];
+const CATEGORY_DOT_COLORS = {
+  "빨강·코랄": "#EF5350", "주황·노랑": "#F6A33A", "초록·라임": "#6CC070", "민트·청록": "#4CC3B8",
+  "파랑·네이비": "#4C7BD9", "보라·라벤더": "#9B7BDB", "분홍·마젠타": "#E8559B", "갈색·회색": "#9A8374"
+};
 
 function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 function imageUrl(path){ return supa.storage.from(BUCKET).getPublicUrl(path).data.publicUrl; }
@@ -213,7 +219,10 @@ function renderProductTabs(){
 function renderFilters(){
   const el = document.getElementById("filters");
   const cats = ["전체", ...PRODUCTS[activeProduct].categories];
-  el.innerHTML = cats.map(c => `<div class="filter-chip${c===activeCategory?" on":""}" data-c="${esc(c)}">${esc(c)}</div>`).join("");
+  el.innerHTML = cats.map(c => {
+    const dot = (activeProduct === "PICTURE_BOOK_MAKER" && CATEGORY_DOT_COLORS[c]) ? `<span class="cdot" style="background:${CATEGORY_DOT_COLORS[c]}"></span>` : "";
+    return `<div class="filter-chip${c===activeCategory?" on":""}" data-c="${esc(c)}">${dot}${esc(c)}</div>`;
+  }).join("");
   el.querySelectorAll(".filter-chip").forEach(chip => {
     chip.onclick = () => { activeCategory = chip.dataset.c; syncUrl(); renderFilters(); renderGrid(); };
   });
