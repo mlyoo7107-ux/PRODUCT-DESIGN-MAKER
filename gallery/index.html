@@ -51,13 +51,13 @@ main{max-width:1100px;margin:auto;padding:20px 15px 60px}
 .product-tab{flex:none}
 .product-tab{padding:9px 16px;border:1px solid var(--l);border-radius:20px;font-size:13.5px;font-weight:bold;cursor:pointer;background:white;transition:background .15s,border-color .15s,color .15s}
 .product-tab:hover{border-color:var(--a);color:var(--a)}
-.product-tab.on{background:var(--t);border-color:var(--t);color:white}
+.product-tab.on{background:var(--pc,var(--t));border-color:var(--pc,var(--t));color:white}
 .filters-row{display:flex;align-items:center;gap:8px}
 .filters{display:flex;gap:7px;flex-wrap:nowrap;overflow-x:auto;margin:0;flex:1;min-width:0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .filters::-webkit-scrollbar{display:none}
 .filter-chip{padding:8px 14px;border:1px solid var(--l);border-radius:20px;font-size:13px;cursor:pointer;background:white;transition:background .15s,border-color .15s,color .15s;flex:none;white-space:nowrap}
 .filter-chip:hover{border-color:var(--a);color:var(--a)}
-.filter-chip.on{background:var(--a);border-color:var(--a);color:white;font-weight:bold}
+.filter-chip.on{background:var(--pc,var(--a));border-color:var(--pc,var(--a));color:white;font-weight:bold}
 .empty .soon{display:block;font-size:13px;margin-top:8px;color:var(--ab)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
 .card-wrap{position:relative;min-width:0;max-width:100%}
@@ -127,15 +127,15 @@ const BUCKET = "gallery-images";
 
 const PRODUCTS = {
   PRODUCT_DESIGN: {
-    label: "🎨 제품디자인", makerUrl: "../index.html",
+    label: "🎨 제품디자인", makerUrl: "../index.html", color: "#ff2d86",
     categories: ["생활·가전","IT·스마트","가구·공간","헬스·뷰티","모빌리티","키즈·시니어","반려동물","스포츠·아웃도어","산업·공공","기타"]
   },
   CHARACTER_MAKER: {
-    label: "🧸 캐릭터디자인", makerUrl: null,
+    label: "🧸 캐릭터디자인", makerUrl: null, color: "#8b5cf6",
     categories: ["그림책","브랜드·마스코트","굿즈·상품","이모티콘","교육 콘텐츠","SNS 콘텐츠","영상·애니메이션","게임·콘텐츠","기타"]
   },
   PICTURE_BOOK_MAKER: {
-    label: "📖 마음색 그림책", makerUrl: null,
+    label: "📖 마음색 그림책", makerUrl: null, color: "#f97316",
     categories: ["기타"]
   }
 };
@@ -197,6 +197,7 @@ function renderBottomNav(){
 }
 
 function renderProductTabs(){
+  document.documentElement.style.setProperty("--pc", PRODUCTS[activeProduct].color);
   const el = document.getElementById("productTabs");
   el.innerHTML = PRODUCT_ORDER.map(key => `<div class="product-tab${key===activeProduct?" on":""}" data-p="${key}">${PRODUCTS[key].label}</div>`).join("");
   el.querySelectorAll(".product-tab").forEach(tab => {
