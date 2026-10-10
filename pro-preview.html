@@ -511,7 +511,7 @@ function startPayment(plan){
  PayApp.setParam('price',String(info.amount));
  PayApp.setParam('var1',orderId);
  // 환불 제한 안내 동의 기록 — 결제 완료 통보 때 서버에 함께 저장돼요 (문구 버전: 이용코드_관리_배포안내.md)
- PayApp.setParam('var2','agree-refund:pro:v1');
+ PayApp.setParam('var2','agree-refund:'+info.prefix+':v1');
  PayApp.setParam('feedbackurl',CONFIG.FEEDBACK_API_URL);
  PayApp.setParam('returnurl',CONFIG.FEEDBACK_API_URL+'return?orderId='+orderId);
  PayApp.setParam('checkretry','y');
