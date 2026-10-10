@@ -120,15 +120,57 @@ footer img{max-width:130px}
 .edu-contact .mail-tip{font-size:13px;color:var(--m)}
 .copied-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--t);color:#fff;padding:10px 20px;border-radius:30px;font-size:14px;font-weight:bold;z-index:99}
 @media(max-width:760px){.edu-grid{grid-template-columns:1fr}}</style>
+<style>
+/* 랜딩 상단 통일 레이아웃 (캐릭터 · 그림책 메이커와 같은 구조) */
+.lp-wrap{max-width:920px;margin:0 auto;padding:0 20px}
+.lp-nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--l)}
+.lp-nav .lp-wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.lp-nav img{height:34px;display:block}
+.lp-nav nav{display:flex;gap:4px;align-items:center}
+.lp-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--l);background:#fff;padding:10px 18px;border-radius:999px;font:inherit;font-weight:700;font-size:15px;text-decoration:none;color:var(--t);cursor:pointer;transition:background .15s,border-color .15s,transform .1s}
+.lp-btn:hover{border-color:var(--a);color:var(--a)}
+.lp-btn:active{transform:translateY(1px)}
+.lp-btn.primary{background:var(--a);border-color:var(--a);color:#fff}
+.lp-btn.primary:hover{background:#e0247a;border-color:#e0247a;color:#fff}
+.lp-btn.ghost{border-color:transparent;background:transparent;padding:8px 12px;font-size:14px;color:var(--m)}
+.lp-btn.ghost:hover{background:#ffe6f1;color:var(--a)}
+.lp-btn.lg{padding:15px 28px;font-size:16px}
+.lp-hero{text-align:center;padding:64px 0 56px;background:radial-gradient(1200px 400px at 50% -10%,#ffe0ee 0%,rgba(255,224,238,0) 70%),#fff;border-bottom:1px solid var(--l)}
+.lp-eyebrow{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.18em;color:var(--a);text-transform:uppercase}
+.lp-hero h1{font-size:clamp(30px,6vw,46px);line-height:1.25;margin:12px 0 14px;letter-spacing:-.02em;font-weight:900}
+.lp-hero h1 em{font-style:normal;color:var(--a)}
+.lp-hero p{font-size:17px;color:var(--m);margin:0 auto 26px;max-width:580px}
+.lp-hero .ctas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.lp-hero .hero-flow{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:34px auto 0;max-width:740px}
+.lp-hero .hero-flow span{font-size:12.5px;font-weight:700;color:var(--a);background:#ffe6f1;border-radius:999px;padding:5px 11px}
+.lp-hero .hero-flow span.hl{background:#fff1cf;color:#9a6b00}
+@media(max-width:560px){.hide-sm{display:none}.lp-hero{padding:48px 0 36px}}
+</style>
 </head><body>
-<header>
-<div class="wrap">
-<div class="eyebrow">COLOR.M · AI TOOL</div>
-<h1>나도 제품디자이너가<br class="mobile-break">될 수 있을까?</h1>
-<p>질문에 답하면, 막연한 아이디어가 제품디자인 프롬프트로 완성됩니다.</p>
-<a href="gallery/index.html" class="gallery-link">🖼️ 다른 사람들의 작품 구경하기 →</a>
+<div class="lp-nav">
+<div class="lp-wrap">
+<a href="landing.html" aria-label="COLOR.M 제품디자인 메이커 소개"><img src="logo-colorm.png" alt="COLOR.M"></a>
+<nav>
+<a class="lp-btn ghost" href="https://colorm.net" target="_blank" rel="noopener">🏠 홈페이지</a>
+<a class="lp-btn ghost hide-sm" href="gallery/index.html?product=PRODUCT_DESIGN">작품 갤러리</a>
+<a class="lp-btn primary" href="index.html">시작하기</a>
+</nav>
 </div>
-</header>
+</div>
+<section class="lp-hero">
+<div class="lp-wrap">
+<span class="lp-eyebrow">COLOR.M · AI PRODUCT DESIGN MAKER</span>
+<h1>나도 <em>제품디자이너</em>가<br>될 수 있을까?</h1>
+<p>질문에 답하면, 막연한 아이디어가 <b>제품디자인 프롬프트</b>로 완성됩니다.</p>
+<div class="ctas">
+<a class="lp-btn primary lg" href="index.html">무료로 시작하기 →</a>
+<a class="lp-btn lg" href="gallery/index.html?product=PRODUCT_DESIGN">🖼 다른 사람들의 작품 구경하기</a>
+</div>
+<div class="hero-flow" aria-label="디자인 과정">
+<span>제품</span><span>사용자</span><span>문제</span><span>기능</span><span>형태</span><span>CMF</span><span class="hl">🖼 스케치·레퍼런스 첨부</span><span>한글·영문 프롬프트</span>
+</div>
+</div>
+</section>
 
 <section class="wrap">
 <h2>이런 분께 필요해요</h2>
