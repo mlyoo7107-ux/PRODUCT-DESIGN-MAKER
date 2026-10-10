@@ -545,8 +545,9 @@ document.getElementById("output").addEventListener("click",updateOutputUI);
 updateOutputUI();
 function syncTopbarHeight(){
  const tb=document.querySelector(".top-bar");
+ const tl=document.querySelector(".top-bar-links");
  const sn=document.querySelector(".step-nav");
- const tbH=tb?tb.offsetHeight:65;
+ const tbH=(tb?tb.offsetHeight:65)+(tl?tl.offsetHeight:0);
  const snH=sn?sn.offsetHeight:50;
  document.documentElement.style.setProperty("--topbar-h",tbH+"px");
  document.documentElement.style.setProperty("--sticky-h",(tbH+snH+10)+"px");
