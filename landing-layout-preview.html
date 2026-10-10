@@ -1,6 +1,6 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>나도 제품디자이너가 될 수 있을까? — COLOR.M Product Design Maker</title>
-<meta name="description" content="질문에 답하면, 막연한 아이디어가 제품디자인 프롬프트로 완성됩니다. 9,900원.">
+<meta name="description" content="질문에 답하면, 막연한 아이디어가 제품디자인 프롬프트로 완성됩니다. 14,900원.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <script src="https://lite.payapp.kr/public/api/v2/payapp-lite.js"></script>
 <meta property="og:type" content="website">
@@ -123,11 +123,11 @@ header{position:sticky;top:0;z-index:50}
 </div>
 <div class="price-card" id="payCard">
 <div class="badge">⭐ 오픈 특가</div>
-<div class="amount">9,900<small>원</small></div>
+<div class="amount">14,900<small>원</small></div>
 <p style="color:var(--m);font-size:13px;margin:2px 0 0">1회 결제 · 추가 이용료 없음</p>
-<p style="color:var(--m);font-size:14px;margin:10px 0 0">커피 한 잔 가격으로, 횟수 제한 없이 계속 사용하세요.</p>
+<p style="color:var(--m);font-size:14px;margin:10px 0 0">커피 두 잔 값으로, 횟수 제한 없이 계속 사용하세요.</p>
 <label class="agree"><input type="checkbox" id="agreeRefund" onchange="syncPayBtn()"><span>디지털 콘텐츠 특성상 <b>이용 시작 후에는 청약철회(환불)가 제한</b>된다는 안내를 확인했으며, 무료 체험 3회로 충분히 확인한 뒤 결제합니다. <span style="color:var(--a)">(필수)</span></span></label>
-<button class="go" id="payBtn" onclick="startPayment()" disabled>9,900원 결제하고 시작하기</button>
+<button class="go" id="payBtn" onclick="startPayment()" disabled>14,900원 결제하고 시작하기</button>
 <a class="go go-outline" href="https://mlyoo7107-ux.github.io/PRODUCT-DESIGN-MAKER/" style="margin-top:10px">먼저 무료로 3회 체험하기 →</a>
 <div style="text-align:left;background:#f5f6fa;border:1px solid #e2e5ee;border-radius:10px;padding:12px 14px;margin-top:16px">
 <p class="notice" style="margin:0">📌 결제 후 전용 이용 링크가 발급되며 바로 사용하실 수 있습니다.<br>구매 전 무료 체험 3회로 충분히 확인해 주세요.<br>디지털 콘텐츠 특성상 이용 시작 후에는 환불이 제한될 수 있습니다.</p>
@@ -199,7 +199,7 @@ function startPayment(){
  }
  const orderId="basic-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);
  PayApp.setParam('goodname','COLOR.M BASIC · Product Design Maker');
- PayApp.setParam('price','9900');
+ PayApp.setParam('price','14900');
  PayApp.setParam('var1',orderId);
  // 환불 제한 안내 동의 기록 — 결제 완료 통보 때 서버에 함께 저장돼요 (문구 버전: 이용코드_관리_배포안내.md)
  PayApp.setParam('var2','agree-refund:basic:v1');
