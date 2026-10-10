@@ -107,7 +107,7 @@ function shareKakao(item, imgUrl){
   const urls = data.image_paths.map(imageUrl);
   const many = urls.length > 1;
   /* 작품을 만든 메이커로 연결 (메이커가 아직 없으면 버튼 숨김) */
-  const MAKER_URLS = { PRODUCT_DESIGN: "../index.html", CHARACTER_MAKER: "https://mlyoo7107-ux.github.io/CHARACTER-DESIGN-MAKER/" };
+  const MAKER_URLS = { PRODUCT_DESIGN: "../index.html", CHARACTER_MAKER: "https://mlyoo7107-ux.github.io/CHARACTER-DESIGN-MAKER/", PICTURE_BOOK_MAKER: "https://mlyoo7107-ux.github.io/PICTUREBOOK-MAKER/" };
   const makerUrl = MAKER_URLS[data.product || "PRODUCT_DESIGN"];
   content.innerHTML = `
     <div class="card">
