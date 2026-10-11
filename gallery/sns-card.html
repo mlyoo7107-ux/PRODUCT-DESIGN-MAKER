@@ -1,6 +1,8 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SNS 이미지 만들기 — COLOR.M GALLERY</title>
 <link rel="icon" type="image/svg+xml" href="../favicon-gallery.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
@@ -26,7 +28,8 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 .go:disabled{background:var(--ab);cursor:not-allowed}
 .preview-outer{display:flex;justify-content:center}
 .preview-wrap{width:360px;overflow:hidden;position:relative;border-radius:10px;box-shadow:0 4px 20px rgba(23,21,18,.12);background:#fff}
-#posterRoot{width:1080px;transform:scale(.33333);transform-origin:top left;position:absolute;top:0;left:0;background:#fff;display:flex;flex-direction:column}
+/* 저장되는 이미지는 어느 기기에서 만들어도 같은 글꼴로 */
+#posterRoot{font-family:"Noto Sans KR",sans-serif;width:1080px;transform:scale(.33333);transform-origin:top left;position:absolute;top:0;left:0;background:#fff;display:flex;flex-direction:column}
 .p-photo{position:relative;flex:1;overflow:hidden;background:#eee}
 .p-photo img{position:absolute;top:50%;left:50%;max-width:none;display:block;user-select:none;-webkit-user-drag:none}
 .preview-wrap{cursor:grab;touch-action:none}
@@ -356,10 +359,19 @@ function showSaveOverlay(src){
   document.body.appendChild(ov);
 }
 
+/* 글꼴을 다 받기 전에 저장하면 기기 기본 글꼴로 찍힘 — 이미지에 쓰는 굵기·글자를 먼저 받아둠 (최대 3초) */
+function posterFontsReady(){
+  if(!document.fonts) return Promise.resolve();
+  const text = document.getElementById("posterRoot").textContent;
+  const loads = [400, 600, 700, 900].map(w => document.fonts.load(`${w} 24px "Noto Sans KR"`, text));
+  return Promise.race([Promise.all(loads), new Promise(r => setTimeout(r, 3000))]).catch(() => {});
+}
+
 async function download(){
   const btn = document.getElementById("downloadBtn");
   if(pendingFile){ const f = pendingFile; clearPending(); return shareFile(f); }
   btn.disabled = true; btn.textContent = "생성 중...";
+  await posterFontsReady();
   const r = RATIOS[document.getElementById("f_ratio").value];
   const original = document.getElementById("posterRoot");
   const clone = original.cloneNode(true);
