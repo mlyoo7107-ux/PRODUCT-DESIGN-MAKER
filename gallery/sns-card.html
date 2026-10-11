@@ -48,6 +48,10 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 .p-foot .r b{font-size:calc(17px*var(--k,1));color:var(--a)}
 .p-foot .circle{width:calc(34px*var(--k,1));height:calc(34px*var(--k,1));border-radius:50%;background:var(--a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:calc(16px*var(--k,1));font-weight:900}
 .state{text-align:center;padding:100px 20px;color:var(--m)}
+.save-ov{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
+.save-ov p{margin:0;color:#fff;font-size:15px}
+.save-ov img{max-width:100%;max-height:72vh;border-radius:8px;-webkit-touch-callout:default}
+.save-ov button{padding:10px 28px;border:0;border-radius:20px;background:#fff;color:var(--t);font-size:14px;font-weight:bold;cursor:pointer}
 </style></head><body>
 <div class="topbar"><a href="index.html" id="backLink">← 갤러리로</a><h1>SNS 이미지 만들기</h1><span style="width:70px"></span></div>
 <div id="app"><div class="state">불러오는 중...</div></div>
@@ -307,6 +311,10 @@ function wire(){
   wireDrag();
   window.addEventListener("resize", applyRatio); // 화면 폭이 바뀌면 미리보기 크기 다시 맞춤
   document.getElementById("downloadBtn").onclick = download;
+  /* 저장 대기 중인 이미지가 있는데 내용을 바꾸면 버려서 옛날 이미지가 저장되지 않게 */
+  document.querySelector(".panel").addEventListener("input", clearPending);
+  document.querySelector(".panel").addEventListener("change", clearPending);
+  document.getElementById("preview-wrap-el").addEventListener("pointerdown", clearPending);
   document.getElementById("copyCaptionBtn").onclick = () => {
     navigator.clipboard.writeText(buildCaption())
       .then(() => alert("캡션이 복사됐어요! 인스타그램 캡션창에 붙여넣어 주세요."))
@@ -314,8 +322,43 @@ function wire(){
   };
 }
 
+const SAVE_LABEL = "⬇️ PNG로 저장";
+/* 휴대폰(터치 화면)이면 공유 시트로 저장 — 아이폰은 일반 다운로드로는 사진 앱에 저장이 안 됨 */
+const IS_TOUCH = matchMedia("(pointer:coarse)").matches;
+/* 이미지 만드는 시간이 길면 브라우저가 공유를 막음 → 만든 파일을 들고 있다가 한 번 더 누르면 공유 */
+let pendingFile = null;
+function clearPending(){
+  if(!pendingFile) return;
+  pendingFile = null;
+  document.getElementById("downloadBtn").textContent = SAVE_LABEL;
+}
+
+async function shareFile(file){
+  try{
+    await navigator.share({files:[file]});
+  }catch(e){
+    if(e.name === "AbortError") return; // 사용자가 공유 창을 닫음
+    if(e.name === "NotAllowedError"){
+      pendingFile = file;
+      document.getElementById("downloadBtn").textContent = "📲 사진 저장하기 (한 번 더 눌러주세요)";
+      return;
+    }
+    showSaveOverlay(URL.createObjectURL(file));
+  }
+}
+
+/* 공유도 다운로드도 막힌 곳(카카오톡·인스타그램 앱 안 브라우저 등) — 이미지를 길게 눌러 저장 */
+function showSaveOverlay(src){
+  const ov = document.createElement("div");
+  ov.className = "save-ov";
+  ov.innerHTML = `<p>이미지를 <b>길게 눌러</b> 저장해 주세요</p><img src="${src}" alt="SNS 이미지"><button type="button">닫기</button>`;
+  ov.querySelector("button").onclick = () => ov.remove();
+  document.body.appendChild(ov);
+}
+
 async function download(){
   const btn = document.getElementById("downloadBtn");
+  if(pendingFile){ const f = pendingFile; clearPending(); return shareFile(f); }
   btn.disabled = true; btn.textContent = "생성 중...";
   const r = RATIOS[document.getElementById("f_ratio").value];
   const original = document.getElementById("posterRoot");
@@ -329,15 +372,27 @@ async function download(){
   document.body.appendChild(clone);
   try{
     const canvas = await html2canvas(clone, {width:r.w, height:r.h, scale:1, useCORS:true, backgroundColor:"#ffffff"});
-    const link = document.createElement("a");
-    link.download = (ITEM.title||"colorm-sns").replace(/[^a-zA-Z0-9가-힣]+/g,"_") + ".png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+    const name = (ITEM.title||"colorm-sns").replace(/[^a-zA-Z0-9가-힣]+/g,"_") + ".png";
+    const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
+    const file = new File([blob], name, {type:"image/png"});
+    btn.disabled = false; btn.textContent = SAVE_LABEL;
+    if(IS_TOUCH){
+      if(navigator.canShare && navigator.canShare({files:[file]})) await shareFile(file);
+      else showSaveOverlay(canvas.toDataURL("image/png"));
+    }else{
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.download = name;
+      link.href = url;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    }
   }catch(e){
     alert("이미지 생성에 실패했어요: " + e.message);
   }finally{
     document.body.removeChild(clone);
-    btn.disabled = false; btn.textContent = "⬇️ PNG로 저장";
+    btn.disabled = false;
+    if(!pendingFile) btn.textContent = SAVE_LABEL;
   }
 }
 
