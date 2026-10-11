@@ -116,7 +116,9 @@ function buildCaption(){
   const hashtags = [...new Set([...tagHashtags, PRODUCT_HASHTAGS[ITEM.product] || "", "#COLORM", "#AI메이커", "#AIMAKERGALLERY"].filter(Boolean))];
   const lines = [title];
   if(desc) lines.push(desc);
-  lines.push("", `${byLabel} ${nick}`, "", hashtags.join(" "));
+  /* SNS에서 보고 갤러리 작품 페이지로 바로 들어올 수 있게 */
+  const link = new URL("detail.html?id=" + encodeURIComponent(ITEM.id), location.href).href;
+  lines.push("", `${byLabel} ${nick}`, "", `👉 작품 보러 가기: ${link}`, "", hashtags.join(" "));
   return lines.join("\n");
 }
 
