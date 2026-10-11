@@ -39,6 +39,11 @@ h1{font-size:21px;margin:0 0 6px}
 .share-btn{flex:1;padding:12px;border:1px solid var(--l);border-radius:20px;background:white;font-size:13px;cursor:pointer;text-align:center}
 .share-btn:hover{border-color:var(--a);color:var(--a)}
 .state{text-align:center;padding:100px 20px;color:var(--m)}
+.bottom-back{display:block;text-align:center;margin-top:18px;padding:12px;border:1px solid var(--l);border-radius:20px;background:white;color:var(--t);font-size:13px;font-weight:bold;text-decoration:none}
+.bottom-back:hover{border-color:var(--a);color:var(--a)}
+.top-btn{position:fixed;right:18px;bottom:18px;width:46px;height:46px;border-radius:50%;border:0;background:var(--a);color:white;font-size:20px;cursor:pointer;box-shadow:0 4px 14px rgba(23,21,18,.22);display:none;align-items:center;justify-content:center;z-index:50}
+.top-btn.show{display:flex}
+.top-btn:hover{background:#e0247a}
 footer{text-align:center;padding:36px 15px 44px;border-top:1px solid var(--l)}
 footer img{max-width:120px;opacity:.85}
 footer p{margin:12px 0 0;font-size:12px;color:var(--m)}
@@ -49,6 +54,7 @@ footer a{color:var(--m)}
 <div id="content"><div class="state">불러오는 중...</div></div>
 </div>
 <footer><img src="../logo-colorm.png" alt="COLOR.M"><p>© 2026 COLOR.M · <a href="https://colorm.net" target="_blank" rel="noopener">colorm.net</a></p></footer>
+<button type="button" class="top-btn" id="topBtn" aria-label="맨 위로">↑</button>
 <script>
 const SUPABASE_URL = "https://cdrbxkwouxihsxzhhnbz.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_9BNpTY7OIbFN7iMmCg9TlQ_Glu4_s9G";
@@ -102,7 +108,8 @@ function shareKakao(item, imgUrl){
   }
 
   /* 작품이 속한 메이커 탭(캐릭터·제품 등)의 갤러리로 돌아가기 */
-  if(/^[A-Z_]+$/.test(data.product || "")) document.getElementById("backLink").href = "index.html?product=" + data.product;
+  const backHref = /^[A-Z_]+$/.test(data.product || "") ? "index.html?product=" + data.product : "index.html";
+  document.getElementById("backLink").href = backHref;
   const imgUrl = imageUrl(data.image_paths[0]);
   const urls = data.image_paths.map(imageUrl);
   const many = urls.length > 1;
@@ -130,6 +137,7 @@ function shareKakao(item, imgUrl){
         <a href="request-edit.html?id=${esc(data.id)}&title=${esc(encodeURIComponent(data.title))}" style="display:block;text-align:center;margin-top:14px;color:var(--m);font-size:12px;text-decoration:underline">✏️ 내 작품 내용 수정 요청하기</a>
       </div>
     </div>
+    <a class="bottom-back" href="${esc(backHref)}">← 갤러리로 돌아가기</a>
     <div class="lightbox" id="lightbox">
       <button type="button" class="lb-close" id="lbClose" aria-label="닫기">✕</button>
       <div class="lb-stage">
@@ -188,6 +196,16 @@ function shareKakao(item, imgUrl){
     });
   }
   document.title = data.title + " — COLOR.M GALLERY";
+})();
+
+/* 맨 위로 버튼: 일정 거리 이상 스크롤하면 나타나고, 누르면 맨 위로 부드럽게 이동 */
+(function(){
+  const btn = document.getElementById("topBtn");
+  if(!btn) return;
+  window.addEventListener("scroll", () => {
+    btn.classList.toggle("show", window.scrollY > 400);
+  }, { passive: true });
+  btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 })();
 </script>
 </body></html>
