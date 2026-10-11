@@ -12,7 +12,11 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 .topbar a:hover{color:var(--a)}
 .topbar h1{font-size:15px;margin:0}
 .layout{max-width:1200px;margin:auto;padding:24px 20px 80px;display:grid;grid-template-columns:360px 1fr;gap:28px;align-items:start}
-@media(max-width:860px){.layout{grid-template-columns:1fr}}
+@media(max-width:860px){
+  .layout{grid-template-columns:1fr;padding-top:0}
+  /* 휴대폰: 미리보기를 입력칸 위에 두고, 스크롤해도 화면 위에 붙어 있게 */
+  .preview-outer{order:-1;position:sticky;top:0;z-index:10;background:var(--b);padding:12px 0;margin:0 -20px;box-shadow:0 6px 10px -8px rgba(23,21,18,.25)}
+}
 .panel{background:white;border:1px solid var(--l);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px}
 .field label{display:block;font-size:12.5px;font-weight:bold;margin-bottom:6px;color:var(--t)}
 .field input,.field select{width:100%;padding:9px 10px;border:1px solid var(--l);border-radius:8px;font-size:13px;font-family:inherit;background:white}
@@ -148,8 +152,11 @@ let previewScale = 1/3;
 function applyRatio(){
   const key = document.getElementById("f_ratio").value;
   const r = RATIOS[key];
-  const room = document.querySelector(".preview-outer").clientWidth || 360;
-  const viewW = Math.min(r.w > r.h ? 560 : 360, room);
+  const outer = document.querySelector(".preview-outer");
+  const room = (outer.clientWidth || 360) - (getComputedStyle(outer).position === "sticky" ? 32 : 0);
+  let viewW = Math.min(r.w > r.h ? 560 : 360, room);
+  /* 휴대폰에선 미리보기가 화면 위에 붙어 있으니 높이를 화면의 45% 이하로 — 아래 입력칸이 보이게 */
+  if(getComputedStyle(outer).position === "sticky") viewW = Math.min(viewW, window.innerHeight * 0.45 * r.w / r.h);
   previewScale = viewW / r.w;
   const root = document.getElementById("posterRoot");
   root.style.width = r.w + "px";
