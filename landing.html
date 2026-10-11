@@ -273,7 +273,7 @@ section.lp+section.lp{border-top:1px solid var(--line)}
       <p>학급·기관 1년 이용권은 1학급 연 79,000원부터 협의해요.</p>
       <div class="mail-row">
         <a class="mail-addr" href="mailto:mlyoo71@naver.com?subject=%5BCOLOR.M%20%EC%A0%9C%ED%92%88%EB%94%94%EC%9E%90%EC%9D%B8%20%EB%A9%94%EC%9D%B4%EC%BB%A4%5D%20%EB%8B%A8%EC%B2%B4%C2%B7%EC%88%98%EC%97%85%20%EC%9D%B4%EC%9A%A9%20%2F%20%EA%B5%90%EC%9C%A1%20%EB%AC%B8%EC%9D%98">✉️ mlyoo71@naver.com</a>
-        <button type="button" class="btn small" id="copyMail">주소 복사</button>
+        <button type="button" class="btn small copy-mail-btn" id="copyMail">주소 복사</button>
       </div>
       <p class="mail-tip">메일 제목에 [단체·수업 이용] 또는 [교육 문의], 내용에 기관명 · 대상과 인원 · 희망 일정을 적어 주시면 빠르게 안내해 드려요.</p>
     </div>
@@ -387,6 +387,7 @@ section.lp+section.lp{border-top:1px solid var(--line)}
           <li>COLOR.M이 직접 진행하는 강의·워크숍 함께 문의 가능</li>
         </ul>
         <a class="btn lg" href="mailto:mlyoo71@naver.com?subject=%5BCOLOR.M%20%EC%A0%9C%ED%92%88%EB%94%94%EC%9E%90%EC%9D%B8%20%EB%A9%94%EC%9D%B4%EC%BB%A4%5D%20%EB%8B%A8%EC%B2%B4%C2%B7%EC%88%98%EC%97%85%20%EC%9D%B4%EC%9A%A9%20%2F%20%EA%B5%90%EC%9C%A1%20%EB%AC%B8%EC%9D%98">✉️ 이메일로 문의하기</a>
+        <button type="button" class="btn small copy-mail-btn">주소 복사</button>
         <p class="mail-sub">mlyoo71@naver.com · 기관명 · 인원 · 희망 기간을 적어 주세요</p>
       </div>
     </div>
@@ -493,11 +494,13 @@ PayApp.payrequest();
 </script>
 <script>
 /* 문의 이메일 주소 복사 (메일 앱이 없는 PC·웹메일 사용자용) */
-document.getElementById('copyMail').addEventListener('click', function(){
-  var btn = this, addr = 'mlyoo71@naver.com';
+document.querySelectorAll('.copy-mail-btn').forEach(function(btn){
+btn.addEventListener('click', function(){
+  var addr = 'mlyoo71@naver.com';
   function done(){ btn.textContent = '복사됨 ✓'; setTimeout(function(){ btn.textContent = '주소 복사'; }, 1600); }
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(addr).then(done, done);
   else { var t = document.createElement('textarea'); t.value = addr; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (e) {} t.remove(); done(); }
+});
 });
 </script>
 </body></html>
