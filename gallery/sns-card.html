@@ -25,7 +25,7 @@ body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;co
 #posterRoot{width:1080px;transform:scale(.33333);transform-origin:top left;position:absolute;top:0;left:0;background:#fff;display:flex;flex-direction:column}
 .p-photo{position:relative;flex:1;overflow:hidden;background:#eee}
 .p-photo img{position:absolute;top:50%;left:50%;max-width:none;display:block;user-select:none;-webkit-user-drag:none}
-.preview-wrap{cursor:grab}
+.preview-wrap{cursor:grab;touch-action:none}
 .preview-wrap.dragging{cursor:grabbing}
 .drag-hint{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:#fff;font-size:11px;padding:5px 10px;border-radius:12px;pointer-events:none;z-index:5;white-space:nowrap}
 .p-scrim{position:absolute;left:0;right:0;bottom:0;height:62%;background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.38) 45%,rgba(0,0,0,0) 100%)}
@@ -174,13 +174,20 @@ function containerW(){
   return RATIOS[document.getElementById("f_ratio").value].w;
 }
 
+const TOP_BIAS = 0.6; // 0 = 가운데, 1 = 사진 맨 위에 맞춤
 function fitImageToContainer(){
   if(!imgView.naturalW) return;
   const h = containerH();
-  const coverScale = Math.max(containerW()/imgView.naturalW, h/imgView.naturalH) * 1.15;
+  const sx = containerW()/imgView.naturalW, sy = h/imgView.naturalH;
+  /* 사진과 틀 모양이 비슷하면 15% 더 키워 옮길 여유를 줌. 세로 사진을 가로 틀에 넣을 때처럼
+     이미 많이 잘리는 경우엔 더 키우면 얼굴까지 잘려서 키우지 않음 */
+  const extra = Math.max(sx, sy) / Math.min(sx, sy) >= 1.15 ? 1 : 1.15;
+  const coverScale = Math.max(sx, sy) * extra;
   imgView.baseW = imgView.naturalW * coverScale;
   imgView.baseH = imgView.naturalH * coverScale;
-  imgView.zoom = 1; imgView.panX = 0; imgView.panY = 0;
+  imgView.zoom = 1; imgView.panX = 0;
+  /* 위아래가 잘릴 땐 위쪽을 더 보여줌 — 캐릭터 얼굴은 대개 사진 위쪽에 있음 */
+  imgView.panY = Math.max(0, imgView.baseH - h) / 2 * TOP_BIAS;
   document.getElementById("f_zoom").value = 100;
   applyImgTransform();
 }
@@ -221,22 +228,52 @@ function loadImageForEditing(src){
 function wireDrag(){
   const wrap = document.getElementById("preview-wrap-el");
 
-  let dragging = false, start = {x:0,y:0}, startPan = {x:0,y:0};
-  wrap.addEventListener("mousedown", e => {
-    dragging = true; wrap.classList.add("dragging");
-    start = {x:e.clientX, y:e.clientY};
+  /* 마우스·터치 공통(Pointer Events) — 한 손가락은 이동, 두 손가락은 확대/축소 */
+  const pts = new Map();
+  let start = {x:0,y:0}, startPan = {x:0,y:0}, startDist = 0, startZoom = 1;
+  function center(){
+    let x = 0, y = 0;
+    pts.forEach(p => { x += p.x; y += p.y; });
+    return {x: x/pts.size, y: y/pts.size};
+  }
+  function dist(){
+    const [a, b] = [...pts.values()];
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  }
+  /* 손가락 수가 바뀔 때마다 기준점을 다시 잡아야 사진이 튀지 않음 */
+  function rebase(){
+    start = center();
     startPan = {x:imgView.panX, y:imgView.panY};
+    startZoom = imgView.zoom;
+    startDist = pts.size >= 2 ? dist() : 0;
+  }
+  wrap.addEventListener("pointerdown", e => {
+    if(e.pointerType === "mouse" && e.button !== 0) return;
+    wrap.setPointerCapture(e.pointerId);
+    pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    wrap.classList.add("dragging");
+    rebase();
     e.preventDefault();
   });
-  window.addEventListener("mousemove", e => {
-    if(!dragging) return;
-    const dx = (e.clientX - start.x) / previewScale;
-    const dy = (e.clientY - start.y) / previewScale;
-    imgView.panX = startPan.x + dx;
-    imgView.panY = startPan.y + dy;
+  wrap.addEventListener("pointermove", e => {
+    if(!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    if(pts.size >= 2 && startDist > 0){
+      const z = Math.max(1, Math.min(2.5, startZoom * dist() / startDist));
+      imgView.zoom = z;
+      document.getElementById("f_zoom").value = Math.round(z * 100);
+    }
+    const c = center();
+    imgView.panX = startPan.x + (c.x - start.x) / previewScale;
+    imgView.panY = startPan.y + (c.y - start.y) / previewScale;
     applyImgTransform();
   });
-  window.addEventListener("mouseup", () => { dragging = false; wrap.classList.remove("dragging"); });
+  function end(e){
+    if(!pts.delete(e.pointerId)) return;
+    if(pts.size) rebase(); else wrap.classList.remove("dragging");
+  }
+  wrap.addEventListener("pointerup", end);
+  wrap.addEventListener("pointercancel", end);
 }
 
 function wire(){
