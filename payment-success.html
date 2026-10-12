@@ -8,6 +8,7 @@
 <meta property="og:image" content="https://mlyoo7107-ux.github.io/PRODUCT-DESIGN-MAKER/kakao-thumb-v3.webp">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <style>
 :root{--a:#ff2d86;--b:#f5f1e8;--l:#e8e1d3;--t:#171512;--m:#7a7268}
 *{box-sizing:border-box}
@@ -123,16 +124,20 @@ function escapeHtml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,
           <div class="icon">🎉</div>
           <h1>결제가 완료됐어요!</h1>
           <p>${escapeHtml(planLabel)} 이용이 바로 시작돼요. 이 기기에서는 지금 바로 이용하실 수 있어요.</p>
-          <a class="go" href="${makerUrl}">메이커로 이동하기 →</a>
           ${deviceLink ? `
           <div class="box">
-            <div style="font-weight:bold;margin-bottom:8px">📱 다른 기기(폰 등)에서도 쓰고 싶으신가요?</div>
-            <p style="margin:0 0 10px">아래 주소를 복사해서 그 기기의 브라우저 주소창에 붙여넣으면 똑같이 이용하실 수 있어요. 이 링크로 <b>기기 3대까지</b> 이용할 수 있으니 본인만 사용해 주세요.</p>
+            <div style="font-weight:bold;margin-bottom:8px">📱 다른 기기(폰 등)에서도 함께 쓰고 싶으신가요?</div>
+            <p style="margin:0 0 10px">지금 폰 카메라로 아래 QR코드를 찍으면 바로 연결돼요. 창을 닫으면 이 링크를 다시 찾기 어려우니, <b>지금 스캔하거나 복사</b>해 두세요.</p>
+            <div id="qrCode" style="display:flex;justify-content:center;margin:4px 0 12px"></div>
             <div id="deviceLinkText" style="word-break:break-all;background:#faf7f0;border:1px solid var(--l);border-radius:8px;padding:10px;font-size:12px">${escapeHtml(deviceLink)}</div>
             <button class="go go-outline" style="margin-top:10px" onclick="copyDeviceLink()">🔗 링크 복사하기</button>
-            <p class="notice">📌 지금 복사 못 하셔도 괜찮아요 — 이 화면을 즐겨찾기하거나 캡처해두시면 나중에 이 주소로 다시 들어와서 확인할 수 있어요. 그래도 못 찾으시면 결제하신 정보로 문의해 주세요.</p>
+            <p class="notice">📌 이 링크로 <b>기기 3대까지</b> 이용할 수 있으니 본인만 사용해 주세요. 지금 못 챙기셨다면, 결제하신 정보로 문의해 주세요.</p>
           </div>` : `<p class="notice">다른 기기(폰 등)에서도 쓰고 싶으시면, 결제하신 이메일로 문의해 주세요. 이용 링크를 보내드릴게요.</p>`}
+          <a class="go" href="${makerUrl}">메이커로 이동하기 →</a>
         `);
+        if(deviceLink && window.QRCode){
+          try{ new QRCode(document.getElementById('qrCode'), {text: deviceLink, width:130, height:130, correctLevel: QRCode.CorrectLevel.M}); }catch(e){}
+        }
         window.__deviceLink = deviceLink;
         return;
       }
