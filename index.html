@@ -19,6 +19,8 @@ textarea{resize:vertical}
 .dropdown-menu{display:contents}
 .dropdown-menu a,.dropdown-menu button{font:inherit;font-size:13px;font-weight:bold;color:var(--m);text-decoration:none;text-align:left;background:none;border:0;cursor:pointer;padding:8px 12px;border-radius:999px;white-space:nowrap;transition:background .15s,color .15s}
 .dropdown-menu a:hover,.dropdown-menu button:hover{background:#ffe6f1;color:var(--a)}
+.dropdown-menu .menu-danger{color:#c43d3d}
+.dropdown-menu .menu-danger:hover{background:#fdeaea;color:#a32d2d}
 .dropdown-menu hr{display:none}
 .step-nav{position:sticky;top:var(--topbar-h,65px);z-index:40;display:flex;gap:4px;overflow-x:auto;padding:14px 24px;max-width:1240px;margin:0 auto;background:var(--b);-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .step-nav::-webkit-scrollbar{display:none}
@@ -90,7 +92,7 @@ textarea{resize:vertical}
 <div class="dropdown-menu" id="dropdownMenu">
 <button type="button" onclick="document.getElementById('topLoadProject').click()">불러오기</button>
 <button type="button" onclick="saveJSON()">저장</button>
-<button type="button" onclick="newProject()">새 작업</button>
+<button type="button" class="menu-danger" onclick="newProject()">새로 시작하기</button>
 <hr>
 <a href="gallery/index.html">작품 갤러리</a>
 <a href="https://colorm.net" target="_blank" rel="noopener">COLOR.M 홈페이지</a>
