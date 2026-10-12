@@ -1152,12 +1152,19 @@ const FREE_LIMIT=3;
 // 결제 성공 화면에서 자동으로 이 형태의 링크를 보여줘요. 이 주문번호가 실제로
 // 결제된 게 맞는지 매번 서버(Workers)에 물어봐서 확인하기 때문에, 남이 봐도
 // 자기 결제로는 못 풀고 그 주문 본인만 풀 수 있어요.
+function cmDeviceId(){
+ try{
+  let id=localStorage.getItem("cmDeviceId");
+  if(!id){id=crypto.randomUUID?crypto.randomUUID().replace(/-/g,""):Date.now().toString(36)+Math.random().toString(36).slice(2,14);localStorage.setItem("cmDeviceId",id);}
+  return id;
+ }catch(e){return "";}
+}
 (function applyOrderUnlockParam(){
  try{
   const q=new URLSearchParams(location.search);
   const orderId=q.get("order");
   if(!orderId||!CONFIG.PAYMENT_STATUS_API_URL)return;
-  fetch(CONFIG.PAYMENT_STATUS_API_URL+"?orderId="+encodeURIComponent(orderId))
+  fetch(CONFIG.PAYMENT_STATUS_API_URL+"?orderId="+encodeURIComponent(orderId)+"&device="+encodeURIComponent(cmDeviceId()))
    .then(r=>r.json()).then(data=>{
     if(data&&data.paid&&data.plan==="basic"){
      localStorage.setItem("cmPdmPaid","1");
