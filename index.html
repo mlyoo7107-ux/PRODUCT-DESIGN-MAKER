@@ -857,8 +857,8 @@ function buildSketchStagePrompts(){
  const feature=txt("feature",v("featureText")), featureEn=txtEn("feature",v("featureText"));
  const form=formMode==="p1"?txt("form",v("formOther")):formMode==="p2"?(v("formText")||""):"";
  const formEn=formMode==="p1"?txtEn("form",v("formOther")):formMode==="p2"?(v("formText")||""):"";
- const baseKo=`${category?category+" 분야의 ":""}'${product}' 제품디자인 아이디어 스케치. 집중 디자인 과제: ${challenge}.${feature!=="미정"?` 핵심 기능: ${feature}.`:""}${form?` 형태 방향: ${form}.`:""}`;
- const baseEn=`Idea sketch for a ${categoryEn?categoryEn+" category ":""}${productEn} product design. Primary design challenge: ${challengeEn}.${featureEn!=="unspecified"?` Core functions: ${featureEn}.`:""}${formEn?` Form direction: ${formEn}.`:""}`;
+ const baseKo=`${category?category+" 분야의 ":""}'${product}' 제품디자인 아이디어 스케치. 집중 디자인 과제: ${challenge}.${feature!=="미정"?` 핵심 기능: ${feature}.`:""}${form&&form!=="미정"?` 형태 방향: ${form}.`:""}`;
+ const baseEn=`Idea sketch for a ${categoryEn?categoryEn+" category ":""}${productEn} product design. Primary design challenge: ${challengeEn}.${featureEn!=="unspecified"?` Core functions: ${featureEn}.`:""}${formEn&&formEn!=="unspecified"?` Form direction: ${formEn}.`:""}`;
  const styleKo=style!=="미정"?`[스타일] ${style}.\n\n`:"";
  const styleEnLine=styleEn!=="unspecified"?`STYLE: ${styleEn}.\n\n`:"";
  const avoidKo="같은 이미지 안에 서로 다른 제품을 섞어 그리거나, 불필요한 텍스트·로고·워터마크를 넣지 않는다.";
