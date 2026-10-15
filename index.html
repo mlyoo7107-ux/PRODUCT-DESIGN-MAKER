@@ -1172,10 +1172,10 @@ function cmDeviceId(){
      localStorage.setItem("cmPdmPaid","1");
      updateFreeStatus();
     }
-   }).catch(()=>{}).finally(()=>{
-    const url=new URL(location.href); url.searchParams.delete("order");
-    history.replaceState(null,"",url.toString());
-   });
+   }).catch(()=>{});
+  // 주소의 ?order=...는 일부러 안 지워요 — 지우면 카톡 등에서 "다른 브라우저로 열기"로 넘길 때
+  // 정보가 사라져서 결제 인식이 안 되는 문제가 생겨요. 링크를 여러 번 열어도 이미 등록된 기기면
+  // 그대로 인식되고, 새 기기여도 한도 안에서는 그대로 등록되니 남겨둬도 안전해요.
  }catch(e){}
 })();
 // 고정 비밀 코드 — 개인 링크를 못 쓰는 특수한 경우의 수동 대응용입니다. (결제 고객 · 평생 이용)
