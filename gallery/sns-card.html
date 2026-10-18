@@ -86,8 +86,8 @@ const BY_LABELS = {
 };
 let ratioManuallySet = false;
 const RATIOS = {
-  "4:5": {w:1080,h:1350,label:"4:5 (세로형, 추천)",use:"인스타그램 피드"},
-  "3:4": {w:1080,h:1440,label:"3:4 (세로형, 긴)",use:"인스타그램 · 스레드"},
+  "3:4": {w:1080,h:1440,label:"3:4 (세로형, 추천)",use:"인스타그램 피드 · 스레드"},
+  "4:5": {w:1080,h:1350,label:"4:5 (세로형)",use:"인스타그램 피드"},
   "1:1": {w:1080,h:1080,label:"1:1 (정사각형)",use:"인스타그램 · 카카오"},
   "16:9": {w:1920,h:1080,label:"16:9 (가로형)",use:"유튜브 · 블로그 · 발표 자료"},
   "1.91:1": {w:1910,h:1000,label:"1.91:1 (가로형, 링크 공유)",use:"페이스북 · 블로그 대표 이미지"}
@@ -240,7 +240,7 @@ function loadImageForEditing(src){
     imgView.naturalH = probe.naturalHeight;
     if(!ratioManuallySet){
       const ar = probe.naturalWidth / probe.naturalHeight;
-      const key = ar >= 1.3 ? "16:9" : ar >= 0.95 ? "1:1" : "4:5";
+      const key = ar >= 1.3 ? "16:9" : ar >= 0.95 ? "1:1" : "3:4";
       document.getElementById("f_ratio").value = key;
       applyRatio();
     }
