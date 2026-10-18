@@ -8,14 +8,20 @@
 <style>
 :root{--a:#ff2d86;--ab:#ffb3d1;--b:#f5f6fa;--l:#e2e5ee;--t:#171512;--m:#7a7268}
 *{box-sizing:border-box}
-body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all}
+body{margin:0;background:var(--b);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--t);word-break:keep-all;overflow-x:clip;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* 버튼을 빠르게 두 번 눌러도 화면이 확대되지 않게 (두 손가락 확대는 그대로) */
+html,button,select,label,a{touch-action:manipulation}
 .topbar{background:white;border-bottom:1px solid var(--l);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
 .topbar a{color:var(--m);font-size:13px;font-weight:bold;text-decoration:none}
 .topbar a:hover{color:var(--a)}
 .topbar h1{font-size:15px;margin:0}
 .layout{max-width:1200px;margin:auto;padding:24px 20px 80px;display:grid;grid-template-columns:360px 1fr;gap:28px;align-items:start}
+/* 그리드 칸이 내용 폭만큼 늘어나 화면보다 넓어지지 않게 */
+.layout > *{min-width:0}
 @media(max-width:860px){
   .layout{grid-template-columns:1fr;padding-top:0}
+  /* 아이폰은 16px보다 작은 입력칸을 누르면 화면을 확대해 버려서 16px로 */
+  .panel .field input:not([type=range]):not([type=checkbox]),.panel .field select,.panel .field textarea{font-size:16px}
   /* 휴대폰: 미리보기를 입력칸 위에 두고, 스크롤해도 화면 위에 붙어 있게 */
   .preview-outer{order:-1;position:sticky;top:0;z-index:10;background:var(--b);padding:12px 0;margin:0 -20px;box-shadow:0 6px 10px -8px rgba(23,21,18,.25)}
 }
