@@ -852,21 +852,34 @@ let sketchStagePromptsData=[];
 function buildSketchStagePrompts(){
  const category=sel("category")[0]||"", categoryEn=category?(EN.category[category]||category):"";
  const product=v("product")||"새로운 제품", productEn=v("product")||"new product";
- const style=txt("style",v("styleText")), styleEn=txtEn("style",v("styleText"));
+ const productNoteVal=v("productNote");
+ const user=txt("user",v("userText")), userEn=txtEn("user",v("userText"));
+ const problem=txt("problem",v("problemText")), problemEn=txtEn("problem",v("problemText"));
  const challenge=sel("challenge").join(", ")||"전체 디자인", challengeEn=selEn("challenge").join(", ")||"overall design";
+ const ch=v("challengeText")||"", chEn=v("challengeText")||"";
+ const con=v("constraints"), conEn=v("constraints");
+ const structureRaw=`조작: ${txt("control")}; 움직임: ${txt("motion")}; 설치·고정: ${txt("mount")}; ${v("structureText")}`.trim();
+ const structureEnRaw=`control: ${txtEn("control")}; motion: ${txtEn("motion")}; mounting: ${txtEn("mount")}; ${v("structureText")}`.trim();
+ const hasStructure=txt("control")!=="미정"||txt("motion")!=="미정"||txt("mount")!=="미정"||!!v("structureText");
  const feature=txt("feature",v("featureText")), featureEn=txtEn("feature",v("featureText"));
  const form=formMode==="p1"?txt("form",v("formOther")):formMode==="p2"?(v("formText")||""):"";
  const formEn=formMode==="p1"?txtEn("form",v("formOther")):formMode==="p2"?(v("formText")||""):"";
- const baseKo=`${category?category+" 분야의 ":""}'${product}' 제품디자인 아이디어 스케치. 집중 디자인 과제: ${challenge}.${feature!=="미정"?` 핵심 기능: ${feature}.`:""}${form&&form!=="미정"?` 형태 방향: ${form}.`:""}`;
- const baseEn=`Idea sketch for a ${categoryEn?categoryEn+" category ":""}${productEn} product design. Primary design challenge: ${challengeEn}.${featureEn!=="unspecified"?` Core functions: ${featureEn}.`:""}${formEn&&formEn!=="unspecified"?` Form direction: ${formEn}.`:""}`;
- const styleKo=style!=="미정"?`[스타일] ${style}.\n\n`:"";
- const styleEnLine=styleEn!=="unspecified"?`STYLE: ${styleEn}.\n\n`:"";
+ const style=txt("style",v("styleText")), styleEn=txtEn("style",v("styleText"));
+ const colorVal=txt("colorChips",v("color")), materialVal=txt("materialChips",v("material")), finishVal=txt("finishChips",v("finish"));
+ const materialValEn=txtEn("materialChips",v("material")), finishValEn=txtEn("finishChips",v("finish"));
+ const hasCmf=colorVal!=="미정"||materialVal!=="미정"||finishVal!=="미정";
+ const cmfKo=hasCmf?`Color: ${buildColorClauseKo()}. Material: ${materialVal==="미정"?"적합하게 제안":materialVal}. Finish: ${finishVal==="미정"?"적합하게 제안":finishVal}.`:"";
+ const cmfEn=hasCmf?`Color: ${buildColorClauseEn()}. Material: ${materialValEn==="unspecified"?"to be proposed appropriately":materialValEn}. Finish: ${finishValEn==="unspecified"?"to be proposed appropriately":finishValEn}.`:"";
+ const baseKo=`${category?category+" 분야의 ":""}'${product}' 제품디자인 아이디어 스케치.${productNoteVal?` (${productNoteVal})`:""}\n사용자: ${user}. 해결할 문제: ${problem}.\n집중 디자인 과제: ${challenge}${ch?`: ${ch}`:""}.${con?` 필수 조건: ${con}.`:""}${hasStructure?` 사용·구조: ${structureRaw}.`:""}${feature!=="미정"?` 핵심 기능: ${feature}.`:""}${form&&form!=="미정"?` 형태 방향: ${form}.`:""}`;
+ const baseEn=`Idea sketch for a ${categoryEn?categoryEn+" category ":""}${productEn} product design.${productNoteVal?` (${productNoteVal})`:""}\nUser: ${userEn}. Problem to solve: ${problemEn}.\nPrimary design challenge: ${challengeEn}${chEn?`: ${chEn}`:""}.${conEn?` Mandatory constraints: ${conEn}.`:""}${hasStructure?` Use/structure: ${structureEnRaw}.`:""}${featureEn!=="unspecified"?` Core functions: ${featureEn}.`:""}${formEn&&formEn!=="unspecified"?` Form direction: ${formEn}.`:""}`;
+ const styleKo=(style!=="미정"||hasCmf)?`[스타일/CMF] ${style!=="미정"?style+". ":""}${cmfKo}\n\n`:"";
+ const styleEnLine=(styleEn!=="unspecified"||hasCmf)?`STYLE/CMF: ${styleEn!=="unspecified"?styleEn+"; ":""}${cmfEn}\n\n`:"";
  const avoidKo="같은 이미지 안에 서로 다른 제품을 섞어 그리거나, 불필요한 텍스트·로고·워터마크를 넣지 않는다.";
  const avoidEn="AVOID: mixing unrelated products in the same sheet, adding text, logos or watermarks.";
  sketchStagePromptsData=SKETCH_STAGES.map(s=>({
   label:s.label,icon:s.icon,
-  ko:`${baseKo}\n${styleKo}[스케치 단계] ${s.ko}\n\n${avoidKo}`,
-  en:`${baseEn}\n${styleEnLine}SKETCH STAGE: ${s.en}\n\n${avoidEn}`
+  ko:`${baseKo}\n\n${styleKo}[스케치 단계] ${s.ko}\n\n${avoidKo}`,
+  en:`${baseEn}\n\n${styleEnLine}SKETCH STAGE: ${s.en}\n\n${avoidEn}`
  }));
  return sketchStagePromptsData;
 }
